@@ -22,7 +22,7 @@ logging.basicConfig(handlers=[file_log], level=logging.INFO,
                     format="{asctime}:{levelname}:{name}:{message}", style="{")
 
 
-def commands():
+def commands(content):
     command_link = "https://docs.google.com/document/d/1TLSf6pbiqqNrKha85TxqoJWIluovDWGaLId8_jTB4to/edit?usp=sharing"
     print(f"Commands can be found here: {command_link}")
 

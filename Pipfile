@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 twitchio = "*"
+google-api-python-client = "*"
 
 [requires]
 python_version = "3.9"

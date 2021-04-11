@@ -32,7 +32,7 @@ class InputParser:
         first_word = content.split()[0]  # Gets the first word of the input to determine the command it should run
         output = ""
         if first_word in self.commands.keys():
-            output = f"{source}: {self.commands[first_word](content)}"
+            output = f"{source}: {self.commands[first_word](to_parse)}"
         else:
             logging.info(f"[Input Parser] {first_word} is not a valid command.")
 
