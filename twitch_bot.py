@@ -1,4 +1,5 @@
 # twitch_bot.py
+import asyncio
 import os  # for importing env vars for the bot to use
 from twitchio.ext import commands
 
@@ -38,3 +39,9 @@ class TwitchBot(commands.bot.Bot):
         await ctx.channel.send(self.parser.parse_input("twitch", ctx))
 
         return
+
+    def send_message(self, message):
+        for channel in self.initial_channels:
+            receiver_channel = self.get_channel(channel)
+            loop = asyncio.get_event_loop()
+            loop.create_task(receiver_channel.send(message))

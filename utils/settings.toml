@@ -1,0 +1,11 @@
+[links]
+zephnos_arc = "https://www.youtube.com/watch?v=dY1Eg364LZk"
+commands = "https://docs.google.com/document/d/1TLSf6pbiqqNrKha85TxqoJWIluovDWGaLId8_jTB4to/edit?usp=sharing"
+
+[directories]
+values = "values"
+campfire = "values/campfire.txt"
+shields_file = "values/shields.txt"
+points_file = "values/points.json"
+votes_file = "values/vote.json"
+logs_file = "values/logs.json"
