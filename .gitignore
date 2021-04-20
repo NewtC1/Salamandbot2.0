@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # value files (user specific)
-value/*
+value/
