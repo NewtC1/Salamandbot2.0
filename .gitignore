@@ -129,4 +129,8 @@ dmypy.json
 .pyre/
 
 # value files (user specific)
-value/
+value/campfire.txt
+value/logs.json
+value/points.json
+value/shields.txt
+value/vote.json
