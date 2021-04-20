@@ -1,12 +1,12 @@
 import time
 import threading
 
-
 class Clock(threading.Thread):
     """
     This is a simple clock that executes functions that it's been given based on frequency. By default this is every
     minute.
     """
+
     def __init__(self, logger, tick_frequency=60, function_dict=None):
         super(Clock, self).__init__()
         self.logger = logger

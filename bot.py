@@ -76,14 +76,14 @@ if __name__ == "__main__":
 
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clock")
-    clock = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=60)
-    clock.run()
+    clock_thread = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=60)
+    clock_thread.start()
 
     # create any files that are missing
     generate_missing_values()
 
     # add commands
-    # TODO: Automated this later so we don't have to add these one by one
+    # TODO: Automate this later so we don't have to add these one by one
     logging.info("[Bot] Adding commands")
     parser.add_command("!commands", command_list.commands)
     parser.add_command("!addlogs", command_list.addlogs)
