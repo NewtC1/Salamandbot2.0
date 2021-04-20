@@ -4,6 +4,7 @@ import os
 import utils.commands as command_list
 import utils.helper_functions as helper_functions
 
+from inspect import getmembers, isfunction
 from utils.clock import Clock
 from input_parser import InputParser as Input
 from pathlib import Path
@@ -83,12 +84,10 @@ if __name__ == "__main__":
     generate_missing_values()
 
     # add commands
-    # TODO: Automate this later so we don't have to add these one by one
     logging.info("[Bot] Adding commands")
-    parser.add_command("!commands", command_list.commands)
-    parser.add_command("!addlogs", command_list.addlogs)
-    parser.add_command("!zephnos", command_list.zephnos)
-    parser.add_command("!campfire", command_list.campfire)
+    commands = getmembers(command_list, isfunction)
+    for command in commands:
+        parser.add_command(f"!{command[0]}", command[1])
 
     bots = [TwitchBot(parser)]
 
