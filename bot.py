@@ -1,10 +1,10 @@
 import argparse
-import json
 import logging
 import os
 import utils.commands as command_list
 import utils.helper_functions as helper_functions
 
+from utils.clock import Clock
 from input_parser import InputParser as Input
 from pathlib import Path
 from twitch_bot import TwitchBot
@@ -53,6 +53,15 @@ def generate_missing_values():
     generate_value(votes_dir, "{}")
     generate_value(logs_dir, "{}")
 
+
+def tick():
+    """
+    This is the function handed to the global clock.
+    :return:
+    """
+    return
+
+
 args = parse_args()
 
 file_log = logging.FileHandler(args.logfile, encoding='utf-8')
@@ -60,8 +69,22 @@ logging.basicConfig(handlers=[file_log], level=logging.INFO,
                     format="{asctime}:{levelname}:{name}:{message}", style="{")
 
 if __name__ == "__main__":
+
+    # parses inputs
+    logging.info("[Bot] Creating input parser")
     parser = Input(logger=logging.getLogger())
+
+    # ticks on a seperate thread and handles functions as they are resolved.
+    logging.info("[Bot] Creating clock")
+    clock = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=60)
+    clock.run()
+
+    # create any files that are missing
     generate_missing_values()
+
+    # add commands
+    # TODO: Automated this later so we don't have to add these one by one
+    logging.info("[Bot] Adding commands")
     parser.add_command("!commands", command_list.commands)
     parser.add_command("!addlogs", command_list.addlogs)
     parser.add_command("!zephnos", command_list.zephnos)
@@ -69,6 +92,6 @@ if __name__ == "__main__":
 
     bots = [TwitchBot(parser)]
 
-    logging.info("")
+    logging.info("[Bot] Starting bots...")
     for bot in bots:
         bot.run()
