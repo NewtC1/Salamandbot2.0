@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 import logging
 import os
 import utils.commands as command_list
@@ -9,8 +10,10 @@ from utils.clock import Clock
 from input_parser import InputParser as Input
 from pathlib import Path
 from twitch_bot import TwitchBot
+from twitchAPI.twitch import Twitch
 
 settings = helper_functions.load_settings()
+
 
 def parse_args():
     """
@@ -60,25 +63,18 @@ def tick():
     This is the function handed to the global clock.
     :return:
     """
+    print("Tick!")
     return
 
 
-args = parse_args()
-
-file_log = logging.FileHandler(args.logfile, encoding='utf-8')
-logging.basicConfig(handlers=[file_log], level=logging.INFO,
-                    format="{asctime}:{levelname}:{name}:{message}", style="{")
-
-if __name__ == "__main__":
-
+async def start_loop():
     # parses inputs
     logging.info("[Bot] Creating input parser")
     parser = Input(logger=logging.getLogger())
 
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clock")
-    clock_thread = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=60)
-    clock_thread.start()
+    clock = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=3)
 
     # create any files that are missing
     generate_missing_values()
@@ -89,8 +85,15 @@ if __name__ == "__main__":
     for command in commands:
         parser.add_command(f"!{command[0]}", command[1])
 
-    bots = [TwitchBot(parser)]
-
     logging.info("[Bot] Starting bots...")
-    for bot in bots:
-        bot.run()
+    await asyncio.gather(clock.run(), TwitchBot(parser).start())
+
+
+args = parse_args()
+
+file_log = logging.FileHandler(args.logfile, encoding='utf-8')
+logging.basicConfig(handlers=[file_log], level=logging.INFO,
+                    format="{asctime}:{levelname}:{name}:{message}", style="{")
+
+if __name__ == "__main__":
+    asyncio.run(start_loop())
