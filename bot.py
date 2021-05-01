@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import json
 import logging
 import os
 import utils.commands as command_list
@@ -10,7 +11,6 @@ from utils.clock import Clock
 from input_parser import InputParser as Input
 from pathlib import Path
 from twitch_bot import TwitchBot
-from twitchAPI.twitch import Twitch
 
 settings = helper_functions.load_settings()
 
@@ -55,7 +55,8 @@ def generate_missing_values():
     generate_value(shield_dir, "0")
     generate_value(points_dir, "{}")
     generate_value(votes_dir, "{}")
-    generate_value(logs_dir, "{}")
+    default_log_value = {}
+    generate_value(logs_dir, json.dumps(default_log_value))
 
 
 def tick():
@@ -63,7 +64,6 @@ def tick():
     This is the function handed to the global clock.
     :return:
     """
-    print("Tick!")
     return
 
 
@@ -74,7 +74,7 @@ async def start_loop():
 
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clock")
-    clock = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=3)
+    clock = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=60)
 
     # create any files that are missing
     generate_missing_values()

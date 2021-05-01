@@ -12,6 +12,8 @@ def load_settings(file=settings_file):
 
 settings = load_settings()
 campfire_file = os.path.join(os.path.dirname(__file__), '..' ,settings['directories']['campfire'])
+logs_file = os.path.join(os.path.dirname(__file__), '..' ,settings['directories']['logs_file'])
+
 
 def get_vote_option_value(option):
     global vote_location
@@ -105,3 +107,30 @@ def get_campfire_count():
 def set_campfire_count(new_count: int):
     with open(campfire_file, encoding='utf-8-sig', mode='w') as file:
         file.write(str(new_count))
+
+
+def load_logs():
+    with open(logs_file) as file:
+        data = json.load(file)
+
+    return data
+
+
+def get_log_count(user):
+    data = load_logs()
+
+    if user in data.keys():
+        return data[user]
+    else:
+        return 0
+
+
+def set_log_count(user, value):
+    data = load_logs()
+    data[user.lower()] = value
+    update_logs(data)
+
+
+def update_logs(data):
+    with open(logs_file, "w+") as output_file:
+        json.dump(data, output_file, indent="\t")

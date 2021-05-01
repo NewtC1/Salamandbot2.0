@@ -1,6 +1,16 @@
+[strings]
+charity_name = "Rainforest Trust"
+
 [links]
 zephnos_arc = "https://www.youtube.com/watch?v=dY1Eg364LZk"
 commands = "https://docs.google.com/document/d/1TLSf6pbiqqNrKha85TxqoJWIluovDWGaLId8_jTB4to/edit?usp=sharing"
+charity = "https://live.justgiving.com/pages/donate/a0d3a8bc-6d9e-4572-b809-fd334796621b"
+discord = "https://discord.gg/JMPnhBK"
+
+[events]
+rimeheart = "Us !raffle x to join the current raffle. !addlogs to the campfire to raise your donation count, or !vote on any game. The three who donated the most will win a game of their choosing on any platform."
+encore = "Like the game we're streaming? Put woodchips towards the encore community challenge to keep it going after we beat it!"
+festival = "Welcome to the Festival of Stories! During this event, we're telling stories around the fire after every break. You can submit stories for me to tell, or select one submitted by another user! Commands can be found in !commands."
 
 [directories]
 values = "values"
