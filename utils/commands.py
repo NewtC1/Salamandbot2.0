@@ -1,5 +1,6 @@
 import os
 import toml
+import re
 from utils import helper_functions
 
 settings = toml.load(os.path.join(os.path.dirname(__file__), "settings.toml"))
@@ -137,25 +138,32 @@ def givelogs(to_parse):
     :return:
     """
     message = to_parse.content
-    target = message.split()[1]
-    amount = int(message.split()[2])
-    output = "Something went wrong"
+    matches = re.match("!givelogs (\w*) (\d+)", message)
 
-    log_data = helper_functions.load_logs()
+    if matches:
+        # target = message.split()[1]
+        # amount = int(message.split()[2])
+        target = matches.group(1)
+        amount = int(matches.group(2))
+        output = "Something went wrong"
 
-    users = log_data.keys()
-    author_name = to_parse.author.name
+        log_data = helper_functions.load_logs()
 
-    # set the values
-    if author_name.lower() in users:
-        if log_data[to_parse.author.name.lower()] > amount:
-            helper_functions.set_log_count(target, helper_functions.get_log_count(target) + amount)
-            helper_functions.set_log_count(to_parse.author.name,
-                                           helper_functions.get_log_count(to_parse.author.name.lower()) - amount)
-            output = f"{to_parse.author.name} gave {amount} logs to {target.lower()}."
+        users = log_data.keys()
+        author_name = to_parse.author.name
+
+        # set the values
+        if author_name.lower() in users:
+            if log_data[to_parse.author.name.lower()] > amount:
+                helper_functions.set_log_count(target, helper_functions.get_log_count(target) + amount)
+                helper_functions.set_log_count(to_parse.author.name,
+                                               helper_functions.get_log_count(to_parse.author.name.lower()) - amount)
+                output = f"{to_parse.author.name} gave {amount} logs to {target.lower()}."
+            else:
+                output = f"{to_parse.author.name}, you don't have the logs to do that."
         else:
-            output = f"{to_parse.author.name}, you don't have the logs to do that."
-    else:
-        output = f"{to_parse.author.name} doesn't yet have any logs. Stick around to earn more."
+            output = f"{to_parse.author.name} doesn't yet have any logs. Stick around to earn more."
 
-    return output
+        return output
+    else:
+        return "Correct syntax is !givelogs <target> <amount>"

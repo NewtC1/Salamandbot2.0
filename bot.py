@@ -69,18 +69,18 @@ def tick():
 
 async def start_loop():
     # parses inputs
-    logging.info("[Bot] Creating input parser")
+    logging.info("[Bot] Creating input parser...")
     parser = Input(logger=logging.getLogger())
 
     # ticks on a seperate thread and handles functions as they are resolved.
-    logging.info("[Bot] Creating clock")
+    logging.info("[Bot] Creating clock...")
     clock = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=60)
 
     # create any files that are missing
     generate_missing_values()
 
     # add commands
-    logging.info("[Bot] Adding commands")
+    logging.info("[Bot] Adding commands...")
     commands = getmembers(command_list, isfunction)
     for command in commands:
         parser.add_command(f"!{command[0]}", command[1])
