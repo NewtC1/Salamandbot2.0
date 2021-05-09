@@ -77,6 +77,27 @@ def festival(to_parse=None):
     return output
 
 
+def followage(to_parse=None):
+    """
+    Returns a string which displays how long the user has been following the stream.
+    :param to_parse:
+    :return:
+    """
+
+    output = f"https://decapi.me/twitch/followed?channel={settings['strings']['channel_name'].lower()}&user={to_parse.author.name}"
+    return output
+
+
+def humble(to_parse=None):
+    """
+    Displays the Humble Bundle Link
+    :param to_parse:
+    :return:
+    """
+    output = f"Humble Bundle link: {settings['links']['humble_bundle']}"
+    return output
+
+
 def info(to_parse=None):
     """
     Displays all info for the stream.
@@ -88,6 +109,122 @@ def info(to_parse=None):
              "World Anvil: https://www.worldanvil.com/w/the-dark-forest-newtc \n " \
              "Humble Bundle: https://www.humblebundle.com/?partner=newtc \n " \
              "YouTube: https://www.youtube.com/watch?v=7RNeMl9qLMY&feature=youtu.be"
+    return output
+
+
+def logs(to_parse=None):
+    """
+    Displays the user's log count
+    :param to_parse:
+    :return:
+    """
+    output = f"{to_parse.author.name} has gathered {helper_functions.get_log_count(to_parse.author.name.lower())} logs."
+    return output
+
+
+def lurk(to_parse=None):
+    """
+    Display a lurk message. Also gives the user a single log if they don't already have one.
+    :param to_parse:
+    :return:
+    """
+    output = f"{to_parse.author.name} pulls up a log and sits down to enjoy the stories."
+
+    log_data = helper_functions.load_logs()
+
+    users = log_data.keys()
+    author_name = to_parse.author.name
+
+    if author_name in users:
+        if helper_functions.get_log_count(author_name) == 0:
+            helper_functions.set_log_count(author_name.lower(), 1)
+    else:
+        helper_functions.set_log_count(author_name.lower(), 1)
+
+    return output
+
+
+def modlist(to_parse=None):
+    """
+    Gives a link to the list of Oblivion mods.
+    :param to_parse:
+    :return:
+    """
+    output = f"Modlist: {settings['links']['modlist']}"
+    return output
+
+
+def moonrise(to_parse=None):
+    """
+    Displays the Moonrise text.
+    :param to_parse:
+    :return:
+    """
+    output = f"{settings['events']['moonrise']}"
+    return output
+
+
+def overheat(to_parse=None):
+    """
+    Displays the overheat text.
+    :param to_parse:
+    :return:
+    """
+    output = f"{settings['events']['overheat']}"
+    return output
+
+
+def patreon(to_parse=None):
+    """
+    Displays the link to Patreon
+    :param to_parse:
+    :return:
+    """
+    output = f"{settings['links']['patreon']}"
+    return output
+
+
+def planttrees(to_parse=None):
+    """
+    Plants some trees.
+    TODO: Makes this do something more significant.
+    :param to_parse:
+    :return:
+    """
+    output = f"{settings['strings']['plant_trees']}"
+    return output
+
+
+def pobox(to_parse=None):
+    """
+    Returns the mailing address for the PO box
+    :param to_parse:
+    :return:
+    """
+    output = "You can send stuff to me at the following address: \n" \
+             "7241 185th Ave NE \n" \
+             "# 2243 \n" \
+             "Redmond, WA 98073"
+    return output
+
+
+def prizechoice(to_parse=None):
+    """
+    Returns the list of prizes users can choose from for Rimeheart
+    :param to_parse:
+    :return:
+    """
+    output = f"{settings['strings']['prize_choice']}"
+    return output
+
+
+def worldanvil(to_parse=None):
+    """
+    REturns the link to WorldAnvil.
+    :param to_parse:
+    :return:
+    """
+    output = f"Want to read more about the Dark Forest? Look here: {settings['links']['worldanvil']}"
     return output
 
 
@@ -115,7 +252,8 @@ def addlogs(to_parse):
         add_value = int(to_parse.content.lower().split()[1])
         campfire_count = helper_functions.get_campfire_count() + add_value
         helper_functions.set_campfire_count(campfire_count)
-        output = f"{to_parse.author.name} added {add_value} logs to the campfire. There are now {campfire_count} logs in the fire."
+        output = f"{to_parse.author.name} added {add_value} logs to the campfire. " \
+                 f"There are now {campfire_count} logs in the fire."
 
     return output
 
@@ -167,3 +305,24 @@ def givelogs(to_parse):
         return output
     else:
         return "Correct syntax is !givelogs <target> <amount>"
+
+
+def vote(to_parse=None):
+    """
+    Handles voting behavior for users.
+    :param to_parse:
+    :return:
+    """
+    pass
+
+
+def shields(to_parse=None):
+    """
+    Returns the current number of shields around the fire.
+    :param to_parse:
+    :return:
+    """
+    shield_count = helper_functions.get_shield_count()
+    output = f"There are {shield_count} shields around the fire. Keep them safe and they'll keep you safe."
+
+    return output

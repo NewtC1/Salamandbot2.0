@@ -1,16 +1,25 @@
 [strings]
 charity_name = "Rainforest Trust"
+channel_name = "NewtC"
+plant_trees = "You plant a few trees around the Campgrounds. Thank you for keeping the Dark Forest growing."
+prise_choice = "Prey, Skyrim, Morrowind, Fallout 2, Echo, Styx: Master of Shadows, System Shock 2, Detention, Dungeon Siege 2, Subnautica, Supreme Commander: Forged Alliance, Bioshock 1 & 2, Cultist Simulator, Monster Hunter World, Dishonored 1 or 2, Devil May Cry 4 or 5, State of Mind. Darkwood, Sekiro"
 
 [links]
 zephnos_arc = "https://www.youtube.com/watch?v=dY1Eg364LZk"
 commands = "https://docs.google.com/document/d/1TLSf6pbiqqNrKha85TxqoJWIluovDWGaLId8_jTB4to/edit?usp=sharing"
 charity = "https://live.justgiving.com/pages/donate/a0d3a8bc-6d9e-4572-b809-fd334796621b"
 discord = "https://discord.gg/JMPnhBK"
+humble_bundle = "https://www.humblebundle.com/?partner=newtc"
+modlist = "https://docs.google.com/document/d/122_Tw7VVZVwxSr60Ilo9wkxKrPpl15E3U5Wqs4BqOB4/edit?usp=sharing"
+patreon = "https://www.patreon.com/NewtC"
+worldanvil = "https://www.worldanvil.com/w/the-dark-forest-newtc"
 
 [events]
 rimeheart = "Us !raffle x to join the current raffle. !addlogs to the campfire to raise your donation count, or !vote on any game. The three who donated the most will win a game of their choosing on any platform."
 encore = "Like the game we're streaming? Put woodchips towards the encore community challenge to keep it going after we beat it!"
 festival = "Welcome to the Festival of Stories! During this event, we're telling stories around the fire after every break. You can submit stories for me to tell, or select one submitted by another user! Commands can be found in !commands."
+moonrise = "The forest is under attack! Help Bjorn and Soil stop the attacks by killing or delaying the attackers. Make sure the attackers don't take down too many shields! They're your only lifeline!"
+overheat = "The Salamander has gone into overdrive, and is consuming parts of the Campgrounds to generate shields. Feed it slowly to generate them faster. Feed it too fast and the fire will explode, destroying a few shields."
 
 [directories]
 values = "values"

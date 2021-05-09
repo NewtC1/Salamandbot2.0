@@ -13,6 +13,7 @@ def load_settings(file=settings_file):
 settings = load_settings()
 campfire_file = os.path.join(os.path.dirname(__file__), '..' ,settings['directories']['campfire'])
 logs_file = os.path.join(os.path.dirname(__file__), '..' ,settings['directories']['logs_file'])
+shields_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['shields_file'])
 
 
 def get_vote_option_value(option):
@@ -134,3 +135,15 @@ def set_log_count(user, value):
 def update_logs(data):
     with open(logs_file, "w+") as output_file:
         json.dump(data, output_file, indent="\t")
+
+
+def get_shield_count():
+    with open(shields_file, "r", encoding="utf-8-sig") as file:
+        shields = int(file.read())
+
+    return shields
+
+
+def set_shield_count(value):
+    with open(shields_file, "w+", encoding="utf-8-sig") as file:
+        file.write(value)
