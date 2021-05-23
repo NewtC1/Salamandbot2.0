@@ -25,6 +25,6 @@ overheat = "The Salamander has gone into overdrive, and is consuming parts of th
 values = "values"
 campfire = "values/campfire.txt"
 shields_file = "values/shields.txt"
-points_file = "values/points.json"
+woodchips_file = "values/points.json"
 votes_file = "values/vote.json"
 logs_file = "values/logs.json"

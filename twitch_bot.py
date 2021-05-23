@@ -1,7 +1,9 @@
 # twitch_bot.py
 import asyncio
 import os  # for importing env vars for the bot to use
+import requests
 from twitchio.ext import commands
+from twitchAPI.twitch import Twitch
 
 
 class TwitchBot(commands.bot.Bot):
@@ -42,3 +44,22 @@ class TwitchBot(commands.bot.Bot):
             receiver_channel = self.get_channel(channel)
             loop = asyncio.get_event_loop()
             loop.create_task(receiver_channel.send(message))
+
+    async def is_live(self) -> bool:
+        """
+        Returns if the reciever channel is live or not.
+        :return:
+        """
+        # requests.get(f"https://api.twitch.tv/helix/streams?client_id=id&channel={self.initial_channels}")
+        is_live = True
+
+        for channel in self.initial_channels:
+            reciever_channel = await self.get_stream(self.get_channel(channel))
+            if not reciever_channel:
+                is_live = False
+
+        return is_live
+
+    async def chat_is_active(self) -> bool:
+        response = requests.get("https://tmi.twitch.tv/group/user/newtc/chatters")
+        return len(response.json()["chatters"]["viewers"]) > 0
