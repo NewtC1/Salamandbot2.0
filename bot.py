@@ -115,10 +115,12 @@ async def tick():
     """
     global bots
     global is_active
+    global is_live
 
     # check for the bot going live.
-    await update_active_status()
-    if is_active:
+    # await update_active_status()
+    await update_live_status()
+    if is_live:
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
         await payout_logs(users_in_chat)
         await payout_woodchips(users_in_chat)
@@ -128,13 +130,10 @@ async def tick():
 
 async def update_active_status():
     """
-    Updates live status when called.
+    Updates active status when called.
     :return:
     """
     global is_active
-
-    if is_active:
-        print("The chat is active!")
 
     if not is_active:
         for key in bots.keys():
@@ -145,6 +144,23 @@ async def update_active_status():
             if await bots[key].chat_is_active():
                 no_live_stream = False
         is_active = not no_live_stream
+
+
+async def update_live_status():
+    """
+    Updates live status when called.
+    :return:
+    """
+    global is_live
+    channel_status = []
+
+    for key in bots.keys():
+        channel_status.append(await bots[key].is_live())
+
+    if any(channel_status):
+        is_live = True
+    else:
+        is_live = False
 
 
 async def start_loop():

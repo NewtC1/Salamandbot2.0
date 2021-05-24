@@ -3,7 +3,6 @@ import asyncio
 import os  # for importing env vars for the bot to use
 import requests
 from twitchio.ext import commands
-from twitchAPI.twitch import Twitch
 
 
 class TwitchBot(commands.bot.Bot):
@@ -18,7 +17,11 @@ class TwitchBot(commands.bot.Bot):
             nick=os.environ['BOT_NICK'],
             prefix=os.environ['BOT_PREFIX'],
             initial_channels=[os.environ['CHANNEL']],
-            loop=loop
+            loop=loop,
+            # webhook_server=False,
+            # local_host="localhost",
+            # port=8080,
+            # port=8080,
         )
         self.parser = parser
 
@@ -27,6 +30,7 @@ class TwitchBot(commands.bot.Bot):
         print(f"{os.environ['BOT_NICK']} opens its eyes, ready to accept commands!")
         ws = self._ws  # this is only needed to send messages within event_ready
         await ws.send_privmsg(os.environ['CHANNEL'], self.bot_startup)
+        await self.pubsub_subscribe(os.environ['TMI_TOKEN'], StreamChanged(user_id=479033546))
 
     async def event_message(self, ctx):
         """Runs every time a message is sent in chat."""
@@ -50,13 +54,24 @@ class TwitchBot(commands.bot.Bot):
         Returns if the reciever channel is live or not.
         :return:
         """
-        # requests.get(f"https://api.twitch.tv/helix/streams?client_id=id&channel={self.initial_channels}")
-        is_live = True
+        client_id = os.environ['CLIENT_ID']
+        client_secret = os.environ["CLIENTSECRET"]
+        target_user = os.environ['USERID']
+        headers = {
+            'client-id': client_id,
+            'Authorization': f'Bearer nhxogonvmlg5x2iq72ku6xctljkpmz'
+        }
 
-        for channel in self.initial_channels:
-            reciever_channel = await self.get_stream(self.get_channel(channel))
-            if not reciever_channel:
-                is_live = False
+        oauth_request = requests.post(
+            f"https://id.twitch.tv/oauth2/token?client_id={client_id}&client_secret={client_secret}&grant_type=client_credentials")
+        irc_token = oauth_request.json()['access_token']
+        headers['Authorization'] = f'Bearer {irc_token}'
+
+        response = requests.get(f"https://api.twitch.tv/helix/streams?user_id={target_user}", headers=headers)
+        if response.json()["data"]:
+            is_live = True
+        else:
+            is_live = False
 
         return is_live
 
