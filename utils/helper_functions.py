@@ -11,9 +11,10 @@ def load_settings(file=settings_file):
 
 
 settings = load_settings()
-campfire_file = os.path.join(os.path.dirname(__file__), '..' ,settings['directories']['campfire'])
-logs_file = os.path.join(os.path.dirname(__file__), '..' ,settings['directories']['logs_file'])
+campfire_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['campfire'])
+logs_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['logs_file'])
 shields_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['shields_file'])
+woodchips_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['woodchips_file'])
 
 
 def get_vote_option_value(option):
@@ -47,16 +48,16 @@ def change_points(user, amount):
 def load_points():
     """Loads the points json."""
 
-    with open(points_json, "r") as json_file:
-        points = json.load(json_file, encoding="utf-8-sig")
+    with open(woodchips_file, "r", encoding="utf-8-sig") as json_file:
+        points = json.load(json_file)
 
     return points
 
 
 def update_points(points_data):
     """Saves the data."""
-    with open(points_json, "w+") as json_file:
-        points = json.dumps(points_data, encoding="utf-8-sig", indent=4)
+    with open(woodchips_file, "w+", encoding="utf-8-sig") as json_file:
+        points = json.dumps(points_data, indent=4)
         json_file.write(points)
 
     return points
@@ -69,6 +70,12 @@ def get_points(user):
         return points["Users"][user]
     else:
         return 0
+
+
+def set_points(user, amount):
+    points = load_points()
+    points["Users"][user.lower()] = amount
+    update_points(points)
 
 
 def get_stream_is_live():

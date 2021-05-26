@@ -1,6 +1,7 @@
 # twitch_bot.py
 import asyncio
 import os  # for importing env vars for the bot to use
+import requests
 from twitchio.ext import commands
 
 
@@ -42,3 +43,28 @@ class TwitchBot(commands.bot.Bot):
             receiver_channel = self.get_channel(channel)
             loop = asyncio.get_event_loop()
             loop.create_task(receiver_channel.send(message))
+
+    async def is_live(self) -> bool:
+        """
+        Returns if the reciever channel is live or not.
+        :return:
+        """
+        client_id = os.environ['CLIENT_ID']
+        client_secret = os.environ["CLIENTSECRET"]
+        target_user = os.environ['USERID']
+        headers = {
+            'client-id': client_id
+        }
+
+        oauth_request = requests.post(
+            f"https://id.twitch.tv/oauth2/token?client_id={client_id}&client_secret={client_secret}&grant_type=client_credentials")
+        irc_token = oauth_request.json()['access_token']
+        headers['Authorization'] = f'Bearer {irc_token}'
+
+        response = requests.get(f"https://api.twitch.tv/helix/streams?user_id={target_user}", headers=headers)
+        if response.json()["data"]:
+            is_live = True
+        else:
+            is_live = False
+
+        return is_live

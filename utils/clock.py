@@ -23,9 +23,9 @@ class Clock:
         for function in self.function_dict.keys():
             # if the function has arguments to input, pull them from the dict. If not, run the function with nothing.
             if self.function_dict[function]:
-                function(self.function_dict[function])
+                await function(self.function_dict[function])
             else:
-                function()
+                await function()
 
     def add_function(self, function_to_add, arguments):
         self.function_dict[function_to_add] = arguments
