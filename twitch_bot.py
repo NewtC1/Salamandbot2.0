@@ -59,7 +59,6 @@ class TwitchBot(commands.bot.Bot):
         target_user = os.environ['USERID']
         headers = {
             'client-id': client_id,
-            'Authorization': f'Bearer nhxogonvmlg5x2iq72ku6xctljkpmz'
         }
 
         oauth_request = requests.post(
