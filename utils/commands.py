@@ -1,7 +1,9 @@
 import os
 import toml
 import re
-from utils import helper_functions
+import operator
+from utils import helper_functions as hf
+from voting.vote_manager import VoteObject, VoteManager
 
 settings = toml.load(os.path.join(os.path.dirname(__file__), "settings.toml"))
 
@@ -118,7 +120,7 @@ def logs(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{to_parse.author.name} has gathered {helper_functions.get_log_count(to_parse.author.name.lower())} logs."
+    output = f"{to_parse.author.name} has gathered {hf.get_log_count(to_parse.author.name.lower())} logs."
     return output
 
 
@@ -130,16 +132,16 @@ def lurk(to_parse=None):
     """
     output = f"{to_parse.author.name} pulls up a log and sits down to enjoy the stories."
 
-    log_data = helper_functions.load_logs()
+    log_data = hf.load_logs()
 
     users = log_data.keys()
     author_name = to_parse.author.name
 
     if author_name in users:
-        if helper_functions.get_log_count(author_name) == 0:
-            helper_functions.set_log_count(author_name.lower(), 1)
+        if hf.get_log_count(author_name) == 0:
+            hf.set_log_count(author_name.lower(), 1)
     else:
-        helper_functions.set_log_count(author_name.lower(), 1)
+        hf.set_log_count(author_name.lower(), 1)
 
     return output
 
@@ -250,8 +252,8 @@ def addlogs(to_parse):
 
     if len(to_parse.content.lower().split()) > 1:
         add_value = int(to_parse.content.lower().split()[1])
-        campfire_count = helper_functions.get_campfire_count() + add_value
-        helper_functions.set_campfire_count(campfire_count)
+        campfire_count = hf.get_campfire_count() + add_value
+        hf.set_campfire_count(campfire_count)
         output = f"{to_parse.author.name} added {add_value} logs to the campfire. " \
                  f"There are now {campfire_count} logs in the fire."
 
@@ -264,7 +266,7 @@ def campfire(to_parse=None):
     :param to_parse: None
     :return: The campfire value as an integer
     """
-    output = f"There are {helper_functions.get_campfire_count()} logs in the central bonfire."
+    output = f"There are {hf.get_campfire_count()} logs in the central bonfire."
 
     return output
 
@@ -285,7 +287,7 @@ def givelogs(to_parse):
         amount = int(matches.group(2))
         output = "Something went wrong"
 
-        log_data = helper_functions.load_logs()
+        log_data = hf.load_logs()
 
         users = log_data.keys()
         author_name = to_parse.author.name
@@ -293,9 +295,9 @@ def givelogs(to_parse):
         # set the values
         if author_name.lower() in users:
             if log_data[to_parse.author.name.lower()] > amount:
-                helper_functions.set_log_count(target, helper_functions.get_log_count(target) + amount)
-                helper_functions.set_log_count(to_parse.author.name,
-                                               helper_functions.get_log_count(to_parse.author.name.lower()) - amount)
+                hf.set_log_count(target, hf.get_log_count(target) + amount)
+                hf.set_log_count(to_parse.author.name,
+                                               hf.get_log_count(to_parse.author.name.lower()) - amount)
                 output = f"{to_parse.author.name} gave {amount} logs to {target.lower()}."
             else:
                 output = f"{to_parse.author.name}, you don't have the logs to do that."
@@ -307,13 +309,85 @@ def givelogs(to_parse):
         return "Correct syntax is !givelogs <target> <amount>"
 
 
-def vote(to_parse=None):
+def addvoteoption(to_parse):
     """
-    Handles voting behavior for users.
+    Adds a vote option to the currently active profile.
+    :param to_parse: Contains the option to be added.
+    :return:
+    """
+    message = to_parse.content
+    matches = re.match('!addvoteoption "(.+)"\s?(\d+)?', message)
+
+    if matches:
+        game_name = matches.group(1)
+        starting_amount = 0
+        if matches.group(2):
+            starting_amount = int(matches.group(2))
+
+        hf.add_vote_option(game_name, starting_amount, hf.get_active_profile())
+        return f"Successfully added {game_name}"
+    else:
+        return "No valid options found. Please put quotes around your option."
+
+
+def deletevoteoption(to_parse):
+    """
+    Deletes the targeted object, or returns an error if the vote doesn't exist.
     :param to_parse:
     :return:
     """
-    pass
+    message = to_parse.content
+    matches = re.match('!deletevoteoption (.+)', message)
+
+    if matches:
+        target = matches.group(1)
+
+        if hf.vote_exists(target):
+            if hf.delete_vote_option(target, hf.get_active_profile()):
+                return f"Successfully deleted {target}!"
+            else:
+                return f"Something went wrong."
+        else:
+            return f"Salamandbot couldn't find {target} in the current vote profile."
+    else:
+        return f"I don't understand what you're saying. Correct syntax is !deletevoteoption <game name>"
+
+
+def checkoptions(to_parse=None):
+    """
+    Displays all of the vote options, with how many logs each option has.
+    :param to_parse: Expected none
+    :return:
+    """
+    return_value = ''
+    votes = hf.get_vote_data()
+    active = hf.get_active_profile()
+    options = {}
+
+    # build a dictionary of values out of the options
+    for option in votes["Profiles"][active]:
+        options[option] = hf.get_vote_option_value(option)
+
+    if not len(options.keys()):
+        return "There's nothing in this profile. Add options with !addvoteoption."
+
+    # sort by the keys https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
+    sorted_files = sorted(options.items(), key=operator.itemgetter(1))
+
+    # add all sorted values to retval and return.
+    for x, y in reversed(sorted_files):
+        return_value += str(x)
+
+        # if the value is higher than 0, add the value
+        if options[x] > 0:
+            return_value += '('+str(y)+' logs)'
+
+        return_value += ', '
+
+    return_value = return_value[:-2]
+
+    # sends the final message
+    return return_value
 
 
 def shields(to_parse=None):
@@ -322,7 +396,94 @@ def shields(to_parse=None):
     :param to_parse:
     :return:
     """
-    shield_count = helper_functions.get_shield_count()
+    shield_count = hf.get_shield_count()
     output = f"There are {shield_count} shields around the fire. Keep them safe and they'll keep you safe."
 
     return output
+
+
+def vote(to_parse, vote_manager: VoteManager):
+    """
+    Handles voting behavior for users.
+    :param to_parse: Expected data to input into the Vote Manager
+    :param vote_manager: The vote manager to add the vote to.
+    :return:
+    """
+
+    def vote_until_amount(user, target, amount):
+        vote_object_to_add = VoteObject(user, amount, target)
+        vote_manager.add_vote(vote_object_to_add)
+
+    def vote_all(user, target):
+        """
+        Votes until a user can't vote anymore.
+        :param user: The user who's doing the voting.
+        :param target: The user
+        :return:
+        """
+        pass
+
+    message = to_parse.content
+    user = to_parse.author.name
+    matches = re.match('!vote (.+) (\d+)|!vote (.+) (all)|!vote stop', message)
+
+    output = ""
+
+    if matches:
+        amount = matches.group(2)
+        target = matches.group(1)
+
+        if matches.group(0) == "!vote stop":
+            pass
+        elif amount == "all":
+            # vote_all(user, )
+            pass
+        else:
+            try:
+                amount = int(amount)
+                max_vote_rate = settings['settings']['max_vote_rate']
+                cooldown_time = settings['settings']['cooldown_time']
+                if amount > max_vote_rate:
+                    hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
+                    vote_until_amount(user, target, amount)
+
+                    seconds_to_completion = int(
+                        ((amount - float(max_vote_rate)) / float(max_vote_rate)) * cooldown_time)
+                    minutes_to_completion = 0
+                    hours_to_completion = 0
+                    if seconds_to_completion > 60:
+                        minutes_to_completion = seconds_to_completion / 60
+                        seconds_to_completion = seconds_to_completion % 60
+                    if minutes_to_completion > 60:
+                        hours_to_completion = minutes_to_completion / 60
+                        minutes_to_completion = minutes_to_completion % 60
+
+                    # send users a message to inform them how long logs will add for.
+                    if hours_to_completion != 0:
+                        output += ("You have been added to the continuous add list. "
+                                   "Logs will continue to add for " +
+                                   str(hours_to_completion) + " hours and " +
+                                   str(minutes_to_completion) + ' minutes and ' +
+                                   str(seconds_to_completion) +
+                                   ' seconds. Type "!vote stop" to stop voting on this choice. ')
+                    elif minutes_to_completion != 0:
+                        output += ("You have been added to the continuous add list. " +
+                                   'Logss will continue to add for ' +
+                                   str(minutes_to_completion) + ' minutes and ' +
+                                   str(seconds_to_completion) +
+                                   ' seconds. Type "!vote stop" to stop voting on this choice. ')
+                    else:
+                        output += ("You have been added to the continuous add list. " +
+                                   'Logs will continue to add for ' +
+                                   str(seconds_to_completion) +
+                                   ' seconds. Type "!vote stop" to stop voting on this choice. ')
+                else:
+                    hf.set_vote_option_value(target, hf.get_vote_option_value(target) + amount)
+                    output += f"{user} added {amount} logs to {target}'s campfire. It now sits at " \
+                              f"{hf.get_vote_option_value(target)}"
+                return output
+            except ValueError as e:
+                return f"The value {amount} is not an integer. Please enter an integer."
+
+    else:
+        return "Salamandbot shakes its head. It scratches several words in the sand: !vote <name> <amount>."

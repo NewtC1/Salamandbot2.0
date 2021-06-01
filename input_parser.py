@@ -5,12 +5,14 @@ class InputParser:
     input_queue = []
     commands = {}
 
-    def __init__(self, logger=None):
+    def __init__(self, logger=None, active_clock=None, vote_manager=None):
         """
         Listens for results fired from input sources
         :param input_sources: The bots that are sending events to the input parser
         """
         self.logger = logger
+        self.clock = active_clock
+        self.vote_manager = vote_manager
 
     def parse_input(self, source, to_parse=None):
         """
@@ -33,10 +35,10 @@ class InputParser:
 
         first_word = content.split()[0]  # Gets the first word of the input to determine the command it should run
         output = ""
-        if first_word in self.commands.keys():
+        if first_word == "!vote": # requires special command lines due to needing access to the vote manager
+            output = f"{output_prefix}{self.commands[first_word](to_parse, vote_manager=self.vote_manager)}"
+        elif first_word in self.commands.keys():
             output = f"{output_prefix}{self.commands[first_word](to_parse)}"
-        # else:
-            # logging.info(f"[Input Parser] {first_word} is not a valid command.")
 
         return output
 

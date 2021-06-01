@@ -2,6 +2,7 @@ import json
 import os
 import codecs
 import toml
+import time
 
 settings_file = os.path.join(os.path.dirname(__file__), "settings.toml")
 
@@ -15,10 +16,10 @@ campfire_file = os.path.join(os.path.dirname(__file__), '..', settings['director
 logs_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['logs_file'])
 shields_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['shields_file'])
 woodchips_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['woodchips_file'])
+votes_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['votes_file'])
 
 
 def get_vote_option_value(option):
-    global vote_location
     option_value = 0
     data = get_vote_data()
     active = data["Active Profile"]
@@ -78,17 +79,16 @@ def set_points(user, amount):
     update_points(points)
 
 
-def get_stream_is_live():
-    global stream_is_live
-
-    return stream_is_live
-
-
 def get_vote_data():
-    with codecs.open(os.path.join(vote_location, "vote.json"), encoding='utf-8-sig', mode='r') as f:
-        vote_data = json.load(f, encoding='utf-8-sig')
+    with open(votes_file, encoding='utf-8-sig', mode='r') as f:
+        vote_data = json.load(f)
 
     return vote_data
+
+
+def update_vote_data(data):
+    with open(votes_file, encoding='utf-8-sig', mode='w+') as file:
+        json.dump(data, file, indent='\t')
 
 
 def vote_exists(target):
@@ -99,10 +99,46 @@ def vote_exists(target):
         return False
 
 
-def get_active_profile():
-    global vote_location
+def set_vote_option_value(target, new_value):
     data = get_vote_data()
-    return data["Active Profile"]
+    if vote_exists(target):
+        data["Profiles"][get_active_profile()][target]['vote value'] = new_value
+    update_vote_data(data)
+
+
+def get_active_profile():
+    data = get_vote_data()
+    return_value = data["Active Profile"]
+    return return_value
+
+
+def add_vote_option(target, value, profile):
+    data = get_vote_data()
+    data['Profiles'][profile][target] = {
+        "vote value": value,
+        "length of game": 0,
+        "votes list": {
+        },
+        "last added": time.time(),
+        "contributor": ""
+    }
+    update_vote_data(data)
+
+
+def delete_vote_option(target, profile):
+    data = get_vote_data()
+    if data['Profiles'][profile].pop(target, None):
+        update_vote_data(data)
+        return True
+    else:
+        return False
+
+
+def set_vote_time(target, new_value):
+    data = get_vote_data()
+    if vote_exists(target):
+        data["Profiles"][get_active_profile()][target]['last added'] = new_value
+    update_vote_data(data)
 
 
 def get_campfire_count():

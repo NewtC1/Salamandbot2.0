@@ -3,14 +3,15 @@ import asyncio
 import json
 import logging
 import os
-import utils.commands as command_list
-import utils.helper_functions as helper_functions
 
 from inspect import getmembers, isfunction
 from utils.clock import Clock
 from input_parser import InputParser as Input
 from pathlib import Path
 from twitch_bot import TwitchBot
+import utils.commands as command_list
+import utils.helper_functions as helper_functions
+from voting.vote_manager import VoteManager
 
 settings = helper_functions.load_settings()
 bots = {}
@@ -60,15 +61,17 @@ def generate_missing_values():
     generate_value(campfire_dir, "0")
     generate_value(shield_dir, "0")
     points_template = json.dumps({
-        "Challenges": {
-
-        },
-        "Users": {
-
-        }
+        "Challenges": {},
+        "Users": {}
     })
     generate_value(points_dir, points_template)
-    generate_value(votes_dir, "{}")
+    votes_template = json.dumps({
+        "Active Profile": "Default",
+        "Profiles": {
+            "Default": {}
+        }
+    })
+    generate_value(votes_dir, votes_template)
     default_log_value = {}
     generate_value(logs_dir, json.dumps(default_log_value))
 
@@ -165,13 +168,17 @@ async def update_live_status():
 
 
 async def start_loop():
-    # parses inputs
-    logging.info("[Bot] Creating input parser...")
-    parser = Input(logger=logging.getLogger())
+    # manages votes as users input them
+    logging.info("[Bot] Creating vote manager...")
+    vote_manager = VoteManager(logger=logging.getLogger(), votes=asyncio.Queue())
 
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clocks...")
-    clock = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=BOT_TICK_RATE)
+    clock = Clock(logger=logging.getLogger(), function_dict={tick: "", vote_manager.tick_vote: ""}, tick_frequency=BOT_TICK_RATE)
+
+    # parses inputs
+    logging.info("[Bot] Creating input parser...")
+    parser = Input(logger=logging.getLogger(), vote_manager=vote_manager)
 
     # create any files that are missing
     generate_missing_values()
