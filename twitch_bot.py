@@ -30,7 +30,6 @@ class TwitchBot(commands.bot.Bot):
         print(f"{os.environ['BOT_NICK']} opens its eyes, ready to accept commands!")
         ws = self._ws  # this is only needed to send messages within event_ready
         await ws.send_privmsg(os.environ['CHANNEL'], self.bot_startup)
-        await self.pubsub_subscribe(os.environ['TMI_TOKEN'], StreamChanged(user_id=479033546))
 
     async def event_message(self, ctx):
         """Runs every time a message is sent in chat."""

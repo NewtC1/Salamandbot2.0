@@ -11,8 +11,8 @@ def load_settings(file=settings_file):
 
 
 settings = load_settings()
-campfire_file = os.path.join(os.path.dirname(__file__), '..' ,settings['directories']['campfire'])
-logs_file = os.path.join(os.path.dirname(__file__), '..' ,settings['directories']['logs_file'])
+campfire_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['campfire'])
+logs_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['logs_file'])
 shields_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['shields_file'])
 woodchips_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['woodchips_file'])
 
