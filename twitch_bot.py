@@ -17,7 +17,11 @@ class TwitchBot(commands.bot.Bot):
             nick=os.environ['BOT_NICK'],
             prefix=os.environ['BOT_PREFIX'],
             initial_channels=[os.environ['CHANNEL']],
-            loop=loop
+            loop=loop,
+            # webhook_server=False,
+            # local_host="localhost",
+            # port=8080,
+            # port=8080,
         )
         self.parser = parser
 
@@ -53,7 +57,7 @@ class TwitchBot(commands.bot.Bot):
         client_secret = os.environ["CLIENTSECRET"]
         target_user = os.environ['USERID']
         headers = {
-            'client-id': client_id
+            'client-id': client_id,
         }
 
         oauth_request = requests.post(
@@ -68,3 +72,7 @@ class TwitchBot(commands.bot.Bot):
             is_live = False
 
         return is_live
+
+    async def chat_is_active(self) -> bool:
+        response = requests.get("https://tmi.twitch.tv/group/user/newtc/chatters")
+        return len(response.json()["chatters"]["viewers"]) > 0

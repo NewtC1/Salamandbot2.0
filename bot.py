@@ -21,7 +21,6 @@ TWITCH_CHANNEL = os.environ['CHANNEL']
 BOT_TICK_RATE = 600
 WOODCHIP_PAYOUT_RATE = 32
 
-
 def parse_args():
     """
     Parses launcher arguments
