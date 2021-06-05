@@ -445,8 +445,10 @@ def vote(to_parse, vote_manager: VoteManager):
                 cooldown_time = settings['settings']['cooldown_time']
                 if amount > max_vote_rate:
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
+                    hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
                     vote_until_amount(user, target, amount)
 
+                    # time calculation
                     seconds_to_completion = int(
                         ((amount - float(max_vote_rate)) / float(max_vote_rate)) * cooldown_time)
                     minutes_to_completion = 0
@@ -468,7 +470,7 @@ def vote(to_parse, vote_manager: VoteManager):
                                    ' seconds. Type "!vote stop" to stop voting on this choice. ')
                     elif minutes_to_completion != 0:
                         output += ("You have been added to the continuous add list. " +
-                                   'Logss will continue to add for ' +
+                                   'Logs will continue to add for ' +
                                    str(minutes_to_completion) + ' minutes and ' +
                                    str(seconds_to_completion) +
                                    ' seconds. Type "!vote stop" to stop voting on this choice. ')
@@ -479,6 +481,7 @@ def vote(to_parse, vote_manager: VoteManager):
                                    ' seconds. Type "!vote stop" to stop voting on this choice. ')
                 else:
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target) + amount)
+                    hf.set_log_count(user, hf.get_log_count(user) - amount)
                     output += f"{user} added {amount} logs to {target}'s campfire. It now sits at " \
                               f"{hf.get_vote_option_value(target)}"
                 return output

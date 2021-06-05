@@ -16,10 +16,11 @@ class VoteObject:
 
     async def apply_vote(self):
         max_vote_rate = settings['settings']['max_vote_rate']
-        amount_to_reduce = max_vote_rate if self.amount > max_vote_rate else self.amount
-        hf.set_vote_option_value(self.target, hf.get_vote_option_value(self.target) - amount_to_reduce)
+        amount_to_increase = max_vote_rate if self.amount > max_vote_rate else self.amount
+        hf.set_vote_option_value(self.target, hf.get_vote_option_value(self.target) + amount_to_increase)
+        hf.set_log_count(self.voter, hf.get_log_count(self.voter) - amount_to_increase)
 
-        self.amount = self.amount - amount_to_reduce
+        self.amount = self.amount - amount_to_increase
 
         return self if self.amount > 0 else None
 
@@ -30,7 +31,7 @@ class VoteManager:
         self.vote_list = votes
         self.logger = logger
 
-    async def add_vote(self, vote: VoteObject):
+    def add_vote(self, vote: VoteObject):
         self.vote_list.put_nowait(vote)
 
     async def tick_vote(self):
