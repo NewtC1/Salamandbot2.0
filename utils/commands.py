@@ -3,7 +3,7 @@ import toml
 import re
 import operator
 from utils import helper_functions as hf
-from voting.vote_manager import VoteObject, VoteManager
+from voting.vote_manager import VoteObject, VoteManager, OutOfLogsException
 
 settings = toml.load(os.path.join(os.path.dirname(__file__), "settings.toml"))
 
@@ -425,6 +425,7 @@ def vote(to_parse, vote_manager: VoteManager):
 
     message = to_parse.content
     user = to_parse.author.name
+
     matches = re.match('!vote (.+) (\d+)|!vote (.+) (all)|!vote stop', message)
 
     output = ""
@@ -433,19 +434,29 @@ def vote(to_parse, vote_manager: VoteManager):
         amount = matches.group(2)
         target = matches.group(1)
 
+        if user in hf.get_active_voters() and matches.group(0) != "!vote stop":
+            return "You are already voting on something. Type !vote stop to stop voting."
+
         if matches.group(0) == "!vote stop":
-            pass
+            if hf.remove_active_voter(user):
+                return f"{user} has been removed from continuous voting. You may now vote freely."
+            else:
+                return "You were not voting on anything."
         elif amount == "all":
             # vote_all(user, )
             pass
         else:
             try:
                 amount = int(amount)
+                if amount > hf.get_log_count(user):
+                    return "You don't have enough logs for that."
+
                 max_vote_rate = settings['settings']['max_vote_rate']
                 cooldown_time = settings['settings']['cooldown_time']
                 if amount > max_vote_rate:
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
                     hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
+                    hf.add_vote_contributor(target, user, amount)
                     vote_until_amount(user, target, amount)
 
                     # time calculation
@@ -482,6 +493,7 @@ def vote(to_parse, vote_manager: VoteManager):
                 else:
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target) + amount)
                     hf.set_log_count(user, hf.get_log_count(user) - amount)
+                    hf.add_vote_contributor(target, user, amount)
                     output += f"{user} added {amount} logs to {target}'s campfire. It now sits at " \
                               f"{hf.get_vote_option_value(target)}"
                 return output

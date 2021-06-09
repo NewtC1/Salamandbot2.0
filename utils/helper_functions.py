@@ -17,6 +17,7 @@ logs_file = os.path.join(os.path.dirname(__file__), '..', settings['directories'
 shields_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['shields_file'])
 woodchips_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['woodchips_file'])
 votes_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['votes_file'])
+base_cooldown = settings['settings']['cooldown_time']
 
 
 def get_vote_option_value(option):
@@ -106,6 +107,28 @@ def set_vote_option_value(target, new_value):
     update_vote_data(data)
 
 
+def get_active_voters():
+    data = get_vote_data()
+    return data['Active Voters']
+
+
+def add_active_voter(voter: str):
+    data = get_vote_data()
+    data['Active Voters'][voter] = time.time()
+    update_vote_data(data)
+
+
+def remove_active_voter(voter: str):
+    data = get_vote_data()
+    if voter in data['Active Voters']:
+        del data['Active Voters'][voter]
+
+        update_vote_data(data)
+        return True
+    else:
+        return False
+
+
 def get_active_profile():
     data = get_vote_data()
     return_value = data["Active Profile"]
@@ -138,6 +161,15 @@ def set_vote_time(target, new_value):
     data = get_vote_data()
     if vote_exists(target):
         data["Profiles"][get_active_profile()][target]['last added'] = new_value
+    update_vote_data(data)
+
+
+def add_vote_contributor(target, user, amount):
+    data = get_vote_data()
+    if user in data['Profiles'][get_active_profile()][target]['votes list'].keys():
+        data['Profiles'][get_active_profile()][target]['votes list'][user] += amount
+    else:
+        data['Profiles'][get_active_profile()][target]['votes list'][user] = amount
     update_vote_data(data)
 
 

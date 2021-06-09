@@ -65,6 +65,7 @@ def generate_missing_values():
     })
     generate_value(points_dir, points_template)
     votes_template = json.dumps({
+        "Active Voters": {},
         "Active Profile": "Default",
         "Profiles": {
             "Default": {}
@@ -169,11 +170,12 @@ async def update_live_status():
 async def start_loop():
     # manages votes as users input them
     logging.info("[Bot] Creating vote manager...")
-    vote_manager = VoteManager(logger=logging.getLogger(), votes=asyncio.Queue())
+    vote_manager = VoteManager(logger=logging.getLogger())
 
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clocks...")
-    clock = Clock(logger=logging.getLogger(), function_dict={tick: "", vote_manager.tick_vote: ""}, tick_frequency=BOT_TICK_RATE)
+    clock = Clock(logger=logging.getLogger(), function_dict={tick: "", vote_manager.cleanup: ""}, tick_frequency=BOT_TICK_RATE)
+    vote_clock = Clock(logger=logging.getLogger(), function_dict={vote_manager.tick_vote: ""}, tick_frequency=1)
 
     # parses inputs
     logging.info("[Bot] Creating input parser...")
@@ -191,7 +193,7 @@ async def start_loop():
     logging.info("[Bot] Starting bots...")
     bots["twitch"] = TwitchBot(parser)
 
-    await asyncio.gather(clock.run(), bots["twitch"].start())
+    await asyncio.gather(clock.run(), bots["twitch"].start(), vote_clock.run())
 
 
 args = parse_args()
@@ -201,4 +203,8 @@ logging.basicConfig(handlers=[file_log], level=logging.INFO,
                     format="{asctime}:{levelname}:{name}:{message}", style="{")
 
 if __name__ == "__main__":
-    asyncio.run(start_loop())
+    try:
+        asyncio.run(start_loop())
+    finally:
+        for active_voter in helper_functions.get_active_voters():
+            helper_functions.remove_active_voter(active_voter)
