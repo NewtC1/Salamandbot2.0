@@ -66,6 +66,7 @@ def generate_missing_values():
     generate_value(points_dir, points_template)
     votes_template = json.dumps({
         "Active Voters": {},
+        "Users On Cooldwon": {},
         "Active Profile": "Default",
         "Profiles": {
             "Default": {}
@@ -174,8 +175,11 @@ async def start_loop():
 
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clocks...")
-    clock = Clock(logger=logging.getLogger(), function_dict={tick: "", vote_manager.cleanup: ""}, tick_frequency=BOT_TICK_RATE)
-    vote_clock = Clock(logger=logging.getLogger(), function_dict={vote_manager.tick_vote: ""}, tick_frequency=1)
+    clock = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=BOT_TICK_RATE)
+    vote_clock = Clock(logger=logging.getLogger(),
+                       function_dict={vote_manager.tick_vote: "",
+                                      vote_manager.remove_from_cooldown: ""},
+                       tick_frequency=1)
 
     # parses inputs
     logging.info("[Bot] Creating input parser...")
@@ -192,6 +196,7 @@ async def start_loop():
 
     logging.info("[Bot] Starting bots...")
     bots["twitch"] = TwitchBot(parser)
+    vote_manager.bots = [bots["twitch"]]
 
     await asyncio.gather(clock.run(), bots["twitch"].start(), vote_clock.run())
 
