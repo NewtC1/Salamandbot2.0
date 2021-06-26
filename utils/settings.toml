@@ -32,3 +32,5 @@ logs_file = "values/logs.json"
 [settings]
 max_vote_rate = 100
 cooldown_time = 600
+decay_days = 7
+decay_amount = 1

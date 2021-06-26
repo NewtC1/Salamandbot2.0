@@ -65,7 +65,7 @@ def generate_missing_values():
     })
     generate_value(points_dir, points_template)
     votes_template = json.dumps({
-        "Active Voters": {},
+        "Last Decay": 0,
         "Users On Cooldwon": {},
         "Active Profile": "Default",
         "Profiles": {
@@ -178,7 +178,8 @@ async def start_loop():
     clock = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=BOT_TICK_RATE)
     vote_clock = Clock(logger=logging.getLogger(),
                        function_dict={vote_manager.tick_vote: "",
-                                      vote_manager.remove_from_cooldown: ""},
+                                      vote_manager.remove_users_from_cooldown: "",
+                                      vote_manager.decay: ""},
                        tick_frequency=1)
 
     # parses inputs
@@ -211,5 +212,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(start_loop())
     finally:
-        for active_voter in helper_functions.get_active_voters():
-            helper_functions.remove_active_voter(active_voter)
+        pass

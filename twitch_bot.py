@@ -39,7 +39,6 @@ class TwitchBot(commands.bot.Bot):
             return
 
         await ctx.channel.send(self.parser.parse_input("twitch", ctx))
-        await ctx.channel.send(self.parser.parse_input("twitch", ctx))
 
         return
 

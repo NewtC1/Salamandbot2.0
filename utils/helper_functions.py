@@ -18,6 +18,7 @@ shields_file = os.path.join(os.path.dirname(__file__), '..', settings['directori
 woodchips_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['woodchips_file'])
 votes_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['votes_file'])
 base_cooldown = settings['settings']['cooldown_time']
+max_vote_rate = settings['settings']['max_vote_rate']
 
 
 def get_vote_option_value(option):
@@ -107,28 +108,6 @@ def set_vote_option_value(target, new_value):
     update_vote_data(data)
 
 
-def get_active_voters():
-    data = get_vote_data()
-    return data['Active Voters']
-
-
-def add_active_voter(voter: str):
-    data = get_vote_data()
-    data['Active Voters'][voter] = time.time()
-    update_vote_data(data)
-
-
-def remove_active_voter(voter: str):
-    data = get_vote_data()
-    if voter in data['Active Voters']:
-        del data['Active Voters'][voter]
-
-        update_vote_data(data)
-        return True
-    else:
-        return False
-
-
 def get_active_profile():
     data = get_vote_data()
     return_value = data["Active Profile"]
@@ -157,7 +136,7 @@ def delete_vote_option(target, profile):
         return False
 
 
-def set_vote_time(target, new_value):
+def set_last_vote_time(target, new_value):
     data = get_vote_data()
     if vote_exists(target):
         data["Profiles"][get_active_profile()][target]['last added'] = new_value
@@ -166,10 +145,11 @@ def set_vote_time(target, new_value):
 
 def add_vote_contributor(target, user, amount):
     data = get_vote_data()
+    amount_to_add = amount if not type(amount) == str else max_vote_rate
     if user in data['Profiles'][get_active_profile()][target]['votes list'].keys():
-        data['Profiles'][get_active_profile()][target]['votes list'][user] += amount
+        data['Profiles'][get_active_profile()][target]['votes list'][user] += amount_to_add
     else:
-        data['Profiles'][get_active_profile()][target]['votes list'][user] = amount
+        data['Profiles'][get_active_profile()][target]['votes list'][user] = amount_to_add
     update_vote_data(data)
 
 
@@ -222,3 +202,33 @@ def get_shield_count():
 def set_shield_count(value):
     with open(shields_file, "w+", encoding="utf-8-sig") as file:
         file.write(value)
+
+
+def get_users_on_cooldown() -> list:
+    return list(get_vote_data()["Users On Cooldown"].keys())
+
+
+def add_user_to_cooldown(user, cooldown_end, target, amount):
+    data = get_vote_data()
+    data["Users On Cooldown"][user] = {
+                                       "cooldown end": cooldown_end,
+                                       "target": target,
+                                       "amount": amount
+                                       }
+    update_vote_data(data)
+
+
+def remove_user_from_cooldown(user) -> bool:
+    data = get_vote_data()
+
+    if user in data["Users On Cooldown"].keys():
+        del data["Users On Cooldown"][user]
+        update_vote_data(data)
+        return True
+    else:
+        return False
+
+
+def get_dynamic_cooldown_amount(amount) -> int:
+    dynamic_cooldown_amount = int((amount/max_vote_rate)*base_cooldown)
+    return dynamic_cooldown_amount

@@ -1,9 +1,10 @@
 import os
 import toml
+import time
 import re
 import operator
 from utils import helper_functions as hf
-from voting.vote_manager import VoteObject, VoteManager, OutOfLogsException
+from voting.vote_manager import VoteManager, OutOfLogsException
 
 settings = toml.load(os.path.join(os.path.dirname(__file__), "settings.toml"))
 
@@ -278,7 +279,7 @@ def givelogs(to_parse):
     :return:
     """
     message = to_parse.content
-    matches = re.match("!givelogs (\w*) (\d+)", message)
+    matches = re.match("!givelogs (\w*) (\d+)", message, flags=re.I)
 
     if matches:
         # target = message.split()[1]
@@ -316,7 +317,7 @@ def addvoteoption(to_parse):
     :return:
     """
     message = to_parse.content
-    matches = re.match('!addvoteoption "(.+)"\s?(\d+)?', message)
+    matches = re.match('!addvoteoption "(.+)"\s?(\d+)?', message, flags=re.I)
 
     if matches:
         game_name = matches.group(1)
@@ -337,7 +338,7 @@ def deletevoteoption(to_parse):
     :return:
     """
     message = to_parse.content
-    matches = re.match('!deletevoteoption (.+)', message)
+    matches = re.match('!deletevoteoption (.+)', message, flags=re.I)
 
     if matches:
         target = matches.group(1)
@@ -410,90 +411,90 @@ def vote(to_parse, vote_manager: VoteManager):
     :return:
     """
 
-    def vote_until_amount(user, target, amount):
-        vote_object_to_add = VoteObject(user, amount, target)
-        vote_manager.add_vote(vote_object_to_add)
+    def convert_seconds(amount):
+        # time calculation
+        seconds_to_completion = int(
+            ((amount - float(max_vote_rate)) / float(max_vote_rate)) * cooldown_time)
+        minutes_to_completion = 0
+        hours_to_completion = 0
+        if seconds_to_completion > 60:
+            minutes_to_completion = seconds_to_completion / 60
+            seconds_to_completion = seconds_to_completion % 60
+        if minutes_to_completion > 60:
+            hours_to_completion = minutes_to_completion / 60
+            minutes_to_completion = minutes_to_completion % 60
 
-    def vote_all(user, target):
-        """
-        Votes until a user can't vote anymore.
-        :param user: The user who's doing the voting.
-        :param target: The user
-        :return:
-        """
-        pass
+        # send users a message to inform them how long logs will add for.
+        if hours_to_completion != 0:
+            return f"You have been added to the continuous add list. Logs will continue to add for " \
+                   f"{hours_to_completion} hours and {minutes_to_completion} minutes and " \
+                   f"{seconds_to_completion} seconds. Type \"!vote stop\" to stop voting on this choice. "
+        elif minutes_to_completion != 0:
+            return f"You have been added to the continuous add list. Logs will continue to add for " \
+                   f"{minutes_to_completion} minutes and " \
+                   f"{seconds_to_completion} seconds. Type \"!vote stop\" to stop voting on this choice. "
+        else:
+            return f"You have been added to the continuous add list. Logs will continue to add for " \
+                   f"{seconds_to_completion} seconds. Type \"!vote stop\" to stop voting on this choice. "
+
+    max_vote_rate = settings['settings']['max_vote_rate']
+    cooldown_time = settings['settings']['cooldown_time']
 
     message = to_parse.content
     user = to_parse.author.name
 
-    matches = re.match('!vote (.+) (\d+)|!vote (.+) (all)|!vote stop', message)
+    vote_data = hf.get_vote_data()
+
+    matches = re.match('!vote (.+) (all)|!vote (.+) (\d+)|!vote stop', message, flags=re.I)
 
     output = ""
 
     if matches:
-        amount = matches.group(2)
-        target = matches.group(1)
+        if user in hf.get_users_on_cooldown() and matches.group(0).lower() != "!vote stop":
+            cooldown_end = vote_data["Users On Cooldown"][user]["cooldown end"]
+            return f"You won't be able to vote for another {cooldown_end - time.time()} seconds."
 
-        if user in hf.get_active_voters() and matches.group(0) != "!vote stop":
-            return "You are already voting on something. Type !vote stop to stop voting."
+        vote_all = matches.group(2) != None
+        amount = matches.group(4)
+        target = matches.group(3) if not vote_all else matches.group(1)
 
-        if matches.group(0) == "!vote stop":
-            if hf.remove_active_voter(user):
-                return f"{user} has been removed from continuous voting. You may now vote freely."
+        if matches.group(0).lower() == "!vote stop":
+            if user in hf.get_users_on_cooldown():
+                vote_manager.stop_voting(user)
+                return f"{user} has been removed from continuous voting. " \
+                       f"You may now vote freely once the cooldown expires."
             else:
-                return "You were not voting on anything."
-        elif amount == "all":
-            # vote_all(user, )
-            pass
+                return f"You are not currently voting on anything."
+        elif vote_all:
+            hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
+            hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
+            hf.add_vote_contributor(target, user, "all")
+            hf.set_last_vote_time(target, time.time())
+            cooldown = hf.get_dynamic_cooldown_amount(max_vote_rate)
+            hf.add_user_to_cooldown(user, time.time() + cooldown, target, "all")
+            output += f"You've been added to continuous adding. You will add to {target} until you run out of logs. " \
+                      f"Type \"!vote stop\" to stop adding at any time."
+            return output
         else:
             try:
                 amount = int(amount)
                 if amount > hf.get_log_count(user):
                     return "You don't have enough logs for that."
 
-                max_vote_rate = settings['settings']['max_vote_rate']
-                cooldown_time = settings['settings']['cooldown_time']
                 if amount > max_vote_rate:
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
                     hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
                     hf.add_vote_contributor(target, user, amount)
-                    vote_until_amount(user, target, amount)
+                    hf.add_user_to_cooldown(user, time.time() + hf.get_dynamic_cooldown_amount(max_vote_rate), target, amount)
+                    hf.set_last_vote_time(target, time.time())
+                    output += convert_seconds(amount)
 
-                    # time calculation
-                    seconds_to_completion = int(
-                        ((amount - float(max_vote_rate)) / float(max_vote_rate)) * cooldown_time)
-                    minutes_to_completion = 0
-                    hours_to_completion = 0
-                    if seconds_to_completion > 60:
-                        minutes_to_completion = seconds_to_completion / 60
-                        seconds_to_completion = seconds_to_completion % 60
-                    if minutes_to_completion > 60:
-                        hours_to_completion = minutes_to_completion / 60
-                        minutes_to_completion = minutes_to_completion % 60
-
-                    # send users a message to inform them how long logs will add for.
-                    if hours_to_completion != 0:
-                        output += ("You have been added to the continuous add list. "
-                                   "Logs will continue to add for " +
-                                   str(hours_to_completion) + " hours and " +
-                                   str(minutes_to_completion) + ' minutes and ' +
-                                   str(seconds_to_completion) +
-                                   ' seconds. Type "!vote stop" to stop voting on this choice. ')
-                    elif minutes_to_completion != 0:
-                        output += ("You have been added to the continuous add list. " +
-                                   'Logs will continue to add for ' +
-                                   str(minutes_to_completion) + ' minutes and ' +
-                                   str(seconds_to_completion) +
-                                   ' seconds. Type "!vote stop" to stop voting on this choice. ')
-                    else:
-                        output += ("You have been added to the continuous add list. " +
-                                   'Logs will continue to add for ' +
-                                   str(seconds_to_completion) +
-                                   ' seconds. Type "!vote stop" to stop voting on this choice. ')
                 else:
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target) + amount)
                     hf.set_log_count(user, hf.get_log_count(user) - amount)
                     hf.add_vote_contributor(target, user, amount)
+                    cooldown = hf.get_dynamic_cooldown_amount(amount)
+                    hf.add_user_to_cooldown(user, time.time() + cooldown, target, 0)
                     output += f"{user} added {amount} logs to {target}'s campfire. It now sits at " \
                               f"{hf.get_vote_option_value(target)}"
                 return output
