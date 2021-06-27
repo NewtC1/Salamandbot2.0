@@ -424,6 +424,10 @@ def vote(to_parse, vote_manager: VoteManager):
             hours_to_completion = minutes_to_completion / 60
             minutes_to_completion = minutes_to_completion % 60
 
+        hours_to_completion = int(hours_to_completion)
+        minutes_to_completion = int(minutes_to_completion)
+        seconds_to_completion = int(seconds_to_completion)
+
         # send users a message to inform them how long logs will add for.
         if hours_to_completion != 0:
             return f"You have been added to the continuous add list. Logs will continue to add for " \
@@ -452,7 +456,7 @@ def vote(to_parse, vote_manager: VoteManager):
     if matches:
         if user in hf.get_users_on_cooldown() and matches.group(0).lower() != "!vote stop":
             cooldown_end = vote_data["Users On Cooldown"][user]["cooldown end"]
-            return f"You won't be able to vote for another {cooldown_end - time.time()} seconds."
+            return f"You won't be able to vote for another {int(cooldown_end - time.time())} seconds."
 
         vote_all = matches.group(2) != None
         amount = matches.group(4)
@@ -460,9 +464,10 @@ def vote(to_parse, vote_manager: VoteManager):
 
         if matches.group(0).lower() == "!vote stop":
             if user in hf.get_users_on_cooldown():
-                vote_manager.stop_voting(user)
-                return f"{user} has been removed from continuous voting. " \
-                       f"You may now vote freely once the cooldown expires."
+                if hf.get_vote_data()["Users On Cooldown"][user]["amount"] != 0:
+                    vote_manager.stop_voting(user)
+                    return f"{user} has been removed from continuous voting. " \
+                           f"You may now vote freely once the cooldown expires."
             else:
                 return f"You are not currently voting on anything."
         elif vote_all:

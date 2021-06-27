@@ -81,7 +81,7 @@ class VoteManager:
                         continue
                 # resets the time for the next cooldown
                 cooldown = hf.get_dynamic_cooldown_amount(max_vote_rate)
-                if amount != "all":
+                if amount != "all" and amount < max_vote_rate:
                     cooldown = hf.get_dynamic_cooldown_amount(amount)
                 hf.add_user_to_cooldown(voter, time.time() + cooldown, target, amount)
 
@@ -92,8 +92,6 @@ class VoteManager:
         for user in users_on_cooldown:
             user_data = vote_data["Users On Cooldown"][user]
             now = time.time()
-            print(f"Now: {now}")
-            print(f"Cooldown end: {user_data['cooldown end']}")
             if user_data["cooldown end"] < now and user_data["amount"] <= 0:
                 hf.remove_user_from_cooldown(user)
 
