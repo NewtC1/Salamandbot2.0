@@ -66,7 +66,7 @@ def generate_missing_values():
     generate_value(points_dir, points_template)
     votes_template = json.dumps({
         "Last Decay": 0,
-        "Users On Cooldwon": {},
+        "Users On Cooldown": {},
         "Active Profile": "Default",
         "Profiles": {
             "Default": {}

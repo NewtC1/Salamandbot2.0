@@ -166,7 +166,7 @@ def set_campfire_count(new_count: int):
 
 
 def load_logs():
-    with open(logs_file) as file:
+    with open(logs_file, encoding='utf-8-sig', mode="r") as file:
         data = json.load(file)
 
     return data
@@ -175,10 +175,11 @@ def load_logs():
 def get_log_count(user):
     data = load_logs()
 
-    if user in data.keys():
-        return data[user]
-    else:
-        return 0
+    if data:
+        if user in data.keys():
+            return data[user]
+
+    return 0
 
 
 def set_log_count(user, value):
