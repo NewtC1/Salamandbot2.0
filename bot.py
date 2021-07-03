@@ -82,9 +82,10 @@ async def payout_logs(users=None):
     data = helper_functions.load_logs()
 
     users_in_chat = users
+    logging.info(f"[Logs] Users in chat: {users_in_chat}")
     if not users:
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
-    for user in users_in_chat[8]:
+    for user in users_in_chat[1]:
         helper_functions.set_log_count(user, helper_functions.get_log_count(user) + shields)
         logging.info(f"[Logs] {user} gained {shields} logs.")
 
@@ -92,9 +93,10 @@ async def payout_logs(users=None):
 async def payout_woodchips(users=None):
     data = helper_functions.load_points()
     users_in_chat = users
+    logging.info(f"[Woodchips] Users in chat: {users_in_chat}")
     if not users:
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
-    for user in users_in_chat[8]:
+    for user in users_in_chat[1]:
         helper_functions.set_points(user, helper_functions.get_log_count(user) + WOODCHIP_PAYOUT_RATE)
         logging.info(f"[Woodchips] {user} gained {WOODCHIP_PAYOUT_RATE} woodchips.")
 

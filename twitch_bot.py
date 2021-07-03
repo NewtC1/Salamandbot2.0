@@ -55,16 +55,17 @@ class TwitchBot(commands.bot.Bot):
         """
         client_id = os.environ['CLIENT_ID']
         client_secret = os.environ["CLIENTSECRET"]
-        target_user = os.environ['USERID']
-        headers = {
-            'client-id': client_id,
-        }
+        target_channel = os.environ["CHANNEL"]
 
         oauth_request = requests.post(
             f"https://id.twitch.tv/oauth2/token?client_id={client_id}&client_secret={client_secret}&grant_type=client_credentials")
         irc_token = oauth_request.json()['access_token']
-        headers['Authorization'] = f'Bearer {irc_token}'
 
+        headers = {
+            'client-id': client_id,
+            'Authorization': f'Bearer {irc_token}'
+        }
+        target_user = requests.get(f"https://api.twitch.tv/helix/users?login={target_channel}", headers=headers).json()['data'][0]['id']
         response = requests.get(f"https://api.twitch.tv/helix/streams?user_id={target_user}", headers=headers)
         if response.json()["data"]:
             is_live = True

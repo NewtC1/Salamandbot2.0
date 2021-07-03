@@ -508,3 +508,13 @@ def vote(to_parse, vote_manager: VoteManager):
 
     else:
         return "Salamandbot shakes its head. It scratches several words in the sand: !vote <name> <amount>."
+
+# ======================================== Woodchips ===================================================================
+def woodchips(to_parse=None):
+    """
+    Displays how many woodchips a user has.
+    :param to_parse:
+    :return:
+    """
+    output = f"{to_parse.author.name} has gathered {hf.get_points(to_parse.author.name.lower())} woodchips."
+    return output
