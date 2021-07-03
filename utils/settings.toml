@@ -28,6 +28,7 @@ shields_file = "values/shields.txt"
 woodchips_file = "values/points.json"
 votes_file = "values/vote.json"
 logs_file = "values/logs.json"
+sfx_file = "C:\\Users\\james\\Dropbox\\Stream Assets\\Sounds"
 
 [settings]
 max_vote_rate = 100

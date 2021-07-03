@@ -1,8 +1,8 @@
 import json
 import os
-import codecs
 import toml
 import time
+from playsound import playsound
 
 settings_file = os.path.join(os.path.dirname(__file__), "settings.toml")
 
@@ -17,6 +17,7 @@ logs_file = os.path.join(os.path.dirname(__file__), '..', settings['directories'
 shields_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['shields_file'])
 woodchips_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['woodchips_file'])
 votes_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['votes_file'])
+sfx_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['sfx_file'])
 base_cooldown = settings['settings']['cooldown_time']
 max_vote_rate = settings['settings']['max_vote_rate']
 
@@ -233,3 +234,11 @@ def remove_user_from_cooldown(user) -> bool:
 def get_dynamic_cooldown_amount(amount) -> int:
     dynamic_cooldown_amount = int((amount/max_vote_rate)*base_cooldown)
     return dynamic_cooldown_amount
+
+
+def play_audio(target: str):
+    if not os.path.exists(target):
+        return False
+
+    playsound(target)
+    return True

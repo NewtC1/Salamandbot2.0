@@ -11,6 +11,7 @@ from pathlib import Path
 from twitch_bot import TwitchBot
 import utils.commands as command_list
 import utils.helper_functions as helper_functions
+import utils.sfx as sfx
 from voting.vote_manager import VoteManager
 
 settings = helper_functions.load_settings()
@@ -196,6 +197,23 @@ async def start_loop():
     commands = getmembers(command_list, isfunction)
     for command in commands:
         parser.add_command(f"!{command[0]}", command[1])
+
+    # add sfx commands
+    logging.info("[Bot] Adding sfx commands...")
+    sfx_files = os.listdir(helper_functions.sfx_file)
+    for sfx in sfx_files:
+        # create the function with the same name as the sfx file
+        sfx_file_path = os.path.join(helper_functions.sfx_file, sfx)
+
+        def play_sfx(to_parse=None):
+            x = f"def x():" \
+                f"  helper_functions.playsound(r'{sfx_file_path}')"
+            exec(x)
+
+        # add the function to the parser
+        parser.add_command(f"!{sfx.split('.')[0].lower()}", play_sfx)
+
+    print(f"Commands: {parser.commands}")
 
     logging.info("[Bot] Starting bots...")
     bots["twitch"] = TwitchBot(parser)

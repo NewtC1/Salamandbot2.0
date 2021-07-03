@@ -7,8 +7,8 @@ name = "pypi"
 twitchio = "*"
 google-api-python-client = "*"
 toml = "*"
-twitchapi = "*"
 irc = "*"
+playsound = "*"
 
 [requires]
 python_version = "3.9"
