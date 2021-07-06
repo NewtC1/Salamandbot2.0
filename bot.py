@@ -140,11 +140,11 @@ async def tick():
 async def overheat_tick():
     global is_live
 
-    # if is_live:
-    overheat_output = overheat.overheat()
-    if overheat_output:
-        for bot in bots.keys():
-            await bots[bot].send_message(overheat_output)
+    if is_live:
+        overheat_output = overheat.overheat()
+        if overheat_output:
+            for bot in bots.keys():
+                await bots[bot].send_message(overheat_output)
 
 
 async def update_active_status():
