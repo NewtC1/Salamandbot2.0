@@ -254,7 +254,7 @@ def addlogs(to_parse):
     if len(to_parse.content.lower().split()) > 1:
         user = to_parse.author.name
         add_value = int(to_parse.content.lower().split()[1])
-        if hf.get_log_count(user) > add_value > 0:
+        if hf.get_log_count(user) >= add_value > 0:
             campfire_count = hf.get_campfire_count() + add_value
             hf.set_campfire_count(campfire_count)
             hf.set_log_count(user, hf.get_log_count(user) - add_value)
