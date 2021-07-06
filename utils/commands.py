@@ -169,11 +169,11 @@ def moonrise(to_parse=None):
 
 def overheat(to_parse=None):
     """
-    Displays the overheat text.
+    Displays the overheat.py text.
     :param to_parse:
     :return:
     """
-    output = f"{settings['events']['overheat']}"
+    output = f"{settings['events']['overheat.py']}"
     return output
 
 

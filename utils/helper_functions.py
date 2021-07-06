@@ -1,6 +1,5 @@
 import json
 import os
-import codecs
 import toml
 import time
 
@@ -202,7 +201,7 @@ def get_shield_count():
 
 def set_shield_count(value):
     with open(shields_file, "w+", encoding="utf-8-sig") as file:
-        file.write(value)
+        file.write(str(value))
 
 
 def get_users_on_cooldown() -> list:

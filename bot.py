@@ -12,6 +12,7 @@ from twitch_bot import TwitchBot
 import utils.commands as command_list
 import utils.helper_functions as helper_functions
 from voting.vote_manager import VoteManager
+import events.overheat as overheat
 
 settings = helper_functions.load_settings()
 bots = {}
@@ -87,7 +88,7 @@ async def payout_logs(users=None):
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
     for user in users_in_chat[1]:
         helper_functions.set_log_count(user, helper_functions.get_log_count(user) + shields)
-        logging.info(f"[Logs] {user} gained {shields} logs.")
+        # logging.info(f"[Logs] {user} gained {shields} logs.")
 
 
 async def payout_woodchips(users=None):
@@ -98,7 +99,7 @@ async def payout_woodchips(users=None):
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
     for user in users_in_chat[1]:
         helper_functions.set_points(user, helper_functions.get_log_count(user) + WOODCHIP_PAYOUT_RATE)
-        logging.info(f"[Woodchips] {user} gained {WOODCHIP_PAYOUT_RATE} woodchips.")
+        # logging.info(f"[Woodchips] {user} gained {WOODCHIP_PAYOUT_RATE} woodchips.")
 
 
 async def user_is_in_chat(user):
@@ -115,6 +116,7 @@ async def user_is_in_chat(user):
     return retval
 
 
+# Tick functions
 async def tick():
     """
     This is the function handed to the global clock.
@@ -133,6 +135,16 @@ async def tick():
         await payout_woodchips(users_in_chat)
 
     return
+
+
+async def overheat_tick():
+    global is_live
+
+    # if is_live:
+    overheat_output = overheat.overheat()
+    if overheat_output:
+        for bot in bots.keys():
+            await bots[bot].send_message(overheat_output)
 
 
 async def update_active_status():
@@ -181,7 +193,9 @@ async def start_loop():
     vote_clock = Clock(logger=logging.getLogger(),
                        function_dict={vote_manager.tick_vote: "",
                                       vote_manager.remove_users_from_cooldown: "",
-                                      vote_manager.decay: ""},
+                                      vote_manager.decay: "",
+                                      overheat_tick: ""
+                                      },
                        tick_frequency=1)
 
     # parses inputs
