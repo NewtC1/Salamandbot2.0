@@ -64,13 +64,13 @@ def overheat():
 
                 hf.set_campfire_count(hf.get_campfire_count() - shield_threshold)
                 hf.set_shield_count(hf.get_shield_count()+1)
-                output = random.choice(creation_fluff)
+                output += random.choice(creation_fluff)
 
             # if explosions are turned on
             elif hf.get_campfire_count() >= ((explosion_threshold - hf.get_shield_count()) + safety_threshold):
                 blast_size = hf.get_campfire_count()/2
                 blast_damage = int(blast_size/200)
-                if blast_damage > hf.get_campfire_count():
+                if blast_damage >= hf.get_shield_count():
                     blast_damage = hf.get_shield_count()
 
                 explosion_fluff = ["The Salamander hisses and begins to glow white-hot. "
@@ -83,7 +83,7 @@ def overheat():
                                    " shield trees were lost in"
                                    "the blast."]
 
-                output = random.choice(explosion_fluff)
+                output =+ random.choice(explosion_fluff)
                 hf.set_shield_count(hf.get_shield_count() - blast_damage)
                 hf.set_campfire_count(int(hf.get_campfire_count()*0.25))
                 queued_crits = queued_crits + blast_damage
@@ -94,7 +94,7 @@ def overheat():
                 hf.set_campfire_count(hf.get_campfire_count() - shield_threshold)
                 hf.set_shield_count(hf.get_shield_count()+1)
 
-                output = random.choice(creation_fluff)
+                output += random.choice(creation_fluff)
     return output
 
 
