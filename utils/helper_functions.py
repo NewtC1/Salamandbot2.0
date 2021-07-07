@@ -164,7 +164,7 @@ def set_campfire_count(new_count: int):
         file.write(str(new_count))
 
 
-def load_logs():
+def load_logs() -> dict:
     with open(logs_file, encoding='utf-8-sig', mode="r") as file:
         data = json.load(file)
 

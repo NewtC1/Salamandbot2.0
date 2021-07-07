@@ -221,6 +221,25 @@ def prizechoice(to_parse=None):
     return output
 
 
+def top5(to_parse=None):
+    output = ""
+
+    log_counts = hf.load_logs()
+    sorted_log_count = reversed(sorted(log_counts.items(), key=lambda kv: kv[1]))
+    count = 1
+
+    for k, v in sorted_log_count:
+        output += f"{count}: {k}({v})"
+        count += 1
+
+        if count == 6:
+            break
+        else:
+            output += ", "
+
+    return output
+
+
 def worldanvil(to_parse=None):
     """
     REturns the link to WorldAnvil.
