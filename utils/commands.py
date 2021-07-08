@@ -3,6 +3,7 @@ import toml
 import time
 import re
 import operator
+import requests
 from utils import helper_functions as hf
 from voting.vote_manager import VoteManager, OutOfLogsException
 
@@ -219,6 +220,34 @@ def prizechoice(to_parse=None):
     """
     output = f"{settings['strings']['prize_choice']}"
     return output
+
+
+def shoutout(to_parse=None):
+    """
+    Shouts out the given user.
+    :param to_parse:
+    :return:
+    """
+    target_channel = to_parse.content.split()[1]
+
+    headers = {
+        'client-id': hf.client_id,
+        'Authorization': f'Bearer {hf.irc_token}'
+    }
+
+    target_user = requests.get(f"https://api.twitch.tv/helix/users?login={target_channel}", headers=headers).json()['data'][0]['id']
+    response = requests.get(f"https://api.twitch.tv/helix/channels?broadcaster_id={target_user}", headers=headers).json()
+    user = response["data"][0]["broadcaster_name"]
+    game = response["data"][0]["game_name"]
+    user_login = response["data"][0]["broadcaster_login"]
+    output = f"{user} is a friend of the Campgrounds. Last they were seen, they were telling the story of " \
+             f"{game}. Check them out at https://www.twitch.tv/{user_login}"
+
+    return output
+
+
+def so(to_parse=None):
+    return shoutout(to_parse)
 
 
 def top5(to_parse=None):

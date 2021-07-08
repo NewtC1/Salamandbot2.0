@@ -2,8 +2,17 @@ import json
 import os
 import toml
 import time
+import requests
 
 settings_file = os.path.join(os.path.dirname(__file__), "settings.toml")
+
+client_id = os.environ['CLIENT_ID']
+client_secret = os.environ["CLIENTSECRET"]
+target_channel = os.environ["CHANNEL"]
+
+oauth_request = requests.post(
+    f"https://id.twitch.tv/oauth2/token?client_id={client_id}&client_secret={client_secret}&grant_type=client_credentials")
+irc_token = oauth_request.json()['access_token']
 
 
 def load_settings(file=settings_file):
