@@ -9,6 +9,7 @@ google-api-python-client = "*"
 toml = "*"
 twitchapi = "*"
 irc = "*"
+"discord.py" = "*"
 
 [requires]
 python_version = "3.9"

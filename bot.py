@@ -9,6 +9,7 @@ from utils.clock import Clock
 from input_parser import InputParser as Input
 from pathlib import Path
 from twitch_bot import TwitchBot
+from discord_bot import DiscordBot
 import utils.commands as command_list
 import utils.helper_functions as helper_functions
 from voting.vote_manager import VoteManager
@@ -211,11 +212,13 @@ async def start_loop():
     for command in commands:
         parser.add_command(f"!{command[0]}", command[1])
 
+    # starting bots
     logging.info("[Bot] Starting bots...")
     bots["twitch"] = TwitchBot(parser)
+    discord = DiscordBot(parser)
     vote_manager.bots = [bots["twitch"]]
 
-    await asyncio.gather(clock.run(), bots["twitch"].start(), vote_clock.run())
+    await asyncio.gather(clock.run(), bots["twitch"].start(), discord.start(os.environ["DISCORD_TOKEN"]), vote_clock.run())
 
 
 args = parse_args()
