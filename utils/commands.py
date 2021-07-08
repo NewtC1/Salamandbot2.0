@@ -230,6 +230,7 @@ def top5(to_parse=None):
 
     for k, v in sorted_log_count:
         output += f"{count}: {k}({v})"
+        output += f"{count}: {k}({v})"
         count += 1
 
         if count == 6:
@@ -266,7 +267,6 @@ def addlogs(to_parse):
     Adds this number of logs to the fire
     :param to_parse: The string with the command output.
     :return:
-    TODO: Remove logs from the user's log count
     """
     output = ""
 
@@ -469,7 +469,7 @@ def vote(to_parse, vote_manager: VoteManager):
     cooldown_time = settings['settings']['cooldown_time']
 
     message = to_parse.content
-    user = to_parse.author.name
+    user = to_parse.author.name.lower()
 
     vote_data = hf.get_vote_data()
 
@@ -507,7 +507,8 @@ def vote(to_parse, vote_manager: VoteManager):
         else:
             try:
                 amount = int(amount)
-                if amount > hf.get_log_count(user):
+                user_logs = hf.get_log_count(user)
+                if amount >= user_logs:
                     return "You don't have enough logs for that."
 
                 if amount > max_vote_rate:
