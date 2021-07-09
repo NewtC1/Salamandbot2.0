@@ -2,6 +2,7 @@
 import asyncio
 import os  # for importing env vars for the bot to use
 import requests
+import utils.helper_functions as hf
 from twitchio.ext import commands
 
 
@@ -59,19 +60,12 @@ class TwitchBot(commands.bot.Bot):
         Returns if the reciever channel is live or not.
         :return:
         """
-        client_id = os.environ['CLIENT_ID']
-        client_secret = os.environ["CLIENTSECRET"]
-        target_channel = os.environ["CHANNEL"]
-
-        oauth_request = requests.post(
-            f"https://id.twitch.tv/oauth2/token?client_id={client_id}&client_secret={client_secret}&grant_type=client_credentials")
-        irc_token = oauth_request.json()['access_token']
 
         headers = {
-            'client-id': client_id,
-            'Authorization': f'Bearer {irc_token}'
+            'client-id': hf.client_id,
+            'Authorization': f'Bearer {hf.irc_token}'
         }
-        target_user = requests.get(f"https://api.twitch.tv/helix/users?login={target_channel}", headers=headers).json()['data'][0]['id']
+        target_user = requests.get(f"https://api.twitch.tv/helix/users?login={hf.target_channel}", headers=headers).json()['data'][0]['id']
         response = requests.get(f"https://api.twitch.tv/helix/streams?user_id={target_user}", headers=headers)
         if response.json()["data"]:
             is_live = True
