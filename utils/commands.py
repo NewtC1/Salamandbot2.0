@@ -230,6 +230,9 @@ def shoutout(to_parse=None):
     """
     target_channel = to_parse.content.split()[1]
 
+    if target_channel[0] == "@":
+        target_channel = target_channel[1:]
+
     headers = {
         'client-id': hf.client_id,
         'Authorization': f'Bearer {hf.irc_token}'
