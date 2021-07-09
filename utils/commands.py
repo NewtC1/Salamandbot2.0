@@ -174,7 +174,7 @@ def overheat(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{settings['events']['overheat.py']}"
+    output = f"{settings['events']['overheat']}"
     return output
 
 
