@@ -90,7 +90,7 @@ async def payout_logs(users=None):
     for user in users_in_chat[1]:
         logs_gained = int(shields*log_gain_multiplier)
         helper_functions.set_log_count(user, helper_functions.get_log_count(user) + logs_gained)
-        logging.info(f"[Logs] {user} gained {logs_gained} logs.")
+        # logging.info(f"[Logs] {user} gained {logs_gained} logs.")
 
 
 async def payout_woodchips(users=None):
