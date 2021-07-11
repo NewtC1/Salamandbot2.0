@@ -75,7 +75,7 @@ class VoteManager:
                 except OutOfLogsException as e:
                     if self.bots:
                         for bot in self.bots:
-                            bot.send_message(f"{voter} has run out of logs.")
+                            await bot.send_message(f"{voter} has run out of logs.")
                         hf.remove_user_from_cooldown(voter)
                         continue
                 # resets the time for the next cooldown
