@@ -32,7 +32,7 @@ explosions = true
 shield_threshold = 1000
 safety_threshold = 50
 explosion_threshold = 1200
-multiplication_threshold = 4000
+multiplication_threshold = 100
 
 # number of seconds to multiply by
 time_multiplier = 2
@@ -59,3 +59,4 @@ max_vote_rate = 100
 cooldown_time = 600
 decay_days = 7
 decay_amount = 1
+log_gain_multiplier = 0.2

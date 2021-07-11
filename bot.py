@@ -81,15 +81,16 @@ def generate_missing_values():
 
 async def payout_logs(users=None):
     shields = helper_functions.get_shield_count()
-    data = helper_functions.load_logs()
+    log_gain_multiplier = settings["settings"]["log_gain_multiplier"]
 
     users_in_chat = users
     logging.info(f"[Logs] Users in chat: {users_in_chat}")
     if not users:
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
     for user in users_in_chat[1]:
-        helper_functions.set_log_count(user, helper_functions.get_log_count(user) + shields)
-        # logging.info(f"[Logs] {user} gained {shields} logs.")
+        logs_gained = int(shields*log_gain_multiplier)
+        helper_functions.set_log_count(user, helper_functions.get_log_count(user) + logs_gained)
+        logging.info(f"[Logs] {user} gained {logs_gained} logs.")
 
 
 async def payout_woodchips(users=None):
