@@ -8,8 +8,8 @@ from inspect import getmembers, isfunction
 from utils.clock import Clock
 from input_parser import InputParser as Input
 from pathlib import Path
-from twitch_bot import TwitchBot
-from discord_bot import DiscordBot
+from bots.twitch_bot import TwitchBot
+from bots.discord_bot import DiscordBot
 import utils.commands as command_list
 import utils.helper_functions as helper_functions
 from voting.vote_manager import VoteManager
