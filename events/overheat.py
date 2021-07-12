@@ -35,7 +35,7 @@ def overheat():
     global queued_crits
     shields = hf.get_shield_count()
     attack_damage = random.randint(min_range, max_range)  # randomly generate how much to damage the target by
-    adjusted_attack_damage = attack_damage - shields
+    adjusted_attack_damage = attack_damage - int(shields*1.5)
     output = ""
 
     if time.time() > next_attack:
