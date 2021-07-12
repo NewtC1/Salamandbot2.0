@@ -262,7 +262,6 @@ def top5(to_parse=None):
 
     for k, v in sorted_log_count:
         output += f"{count}: {k}({v})"
-        output += f"{count}: {k}({v})"
         count += 1
 
         if count == 6:
