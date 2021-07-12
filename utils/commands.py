@@ -518,6 +518,11 @@ def vote(to_parse, vote_manager: VoteManager):
         amount = matches.group(4)
         target = matches.group(3) if not vote_all else matches.group(1)
 
+        vote_options = vote_data["Profiles"][hf.get_active_profile()].keys()
+        if target not in vote_options:
+            return "Salamandbot scratches in the dirt. Spelling? Capitalization? A missing number? " \
+                   "It didn't know what that story was."
+
         if matches.group(0).lower() == "!vote stop":
             if user in hf.get_users_on_cooldown():
                 if hf.get_vote_data()["Users On Cooldown"][user]["amount"] != 0:
