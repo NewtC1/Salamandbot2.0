@@ -518,9 +518,6 @@ def vote(to_parse, vote_manager: VoteManager):
         target = matches.group(3) if not vote_all else matches.group(1)
 
         vote_options = vote_data["Profiles"][hf.get_active_profile()].keys()
-        if target not in vote_options:
-            return "Salamandbot scratches in the dirt. Spelling? Capitalization? A missing number? " \
-                   "It didn't know what that story was."
 
         if matches.group(0).lower() == "!vote stop":
             if user in hf.get_users_on_cooldown():
@@ -530,7 +527,12 @@ def vote(to_parse, vote_manager: VoteManager):
                            f"You may now vote freely once the cooldown expires."
             else:
                 return f"You are not currently voting on anything."
-        elif vote_all:
+
+        if target not in vote_options:
+            return "Salamandbot scratches in the dirt. Spelling? Capitalization? A missing number? " \
+                   "It didn't know what that story was."
+
+        if vote_all:
             hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
             hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
             hf.add_vote_contributor(target, user, "all")
@@ -551,9 +553,11 @@ def vote(to_parse, vote_manager: VoteManager):
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
                     hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
                     hf.add_vote_contributor(target, user, amount)
-                    hf.add_user_to_cooldown(user, time.time() + hf.get_dynamic_cooldown_amount(max_vote_rate), target, amount)
+                    continuous_cooldown = time.time() + hf.get_dynamic_cooldown_amount(max_vote_rate)
+                    hf.add_user_to_cooldown(user, continuous_cooldown,
+                                            target, amount - max_vote_rate)
                     hf.set_last_vote_time(target, time.time())
-                    output += convert_seconds(amount)
+                    output += convert_seconds(amount + max_vote_rate)
 
                 else:
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target) + amount)
