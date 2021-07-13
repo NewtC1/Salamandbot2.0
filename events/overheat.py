@@ -35,7 +35,7 @@ def overheat():
     global queued_crits
     shields = hf.get_shield_count()
     attack_damage = random.randint(min_range, max_range)  # randomly generate how much to damage the target by
-    adjusted_attack_damage = attack_damage - int(shields*1.5)
+    adjusted_attack_damage = attack_damage - int(shields*2)
     output = ""
 
     if time.time() > next_attack:
@@ -53,48 +53,49 @@ def overheat():
         if adjusted_attack_damage > 0:
             output += feed(adjusted_attack_damage, crit < base_critical_chance)
 
-        creation_fluff = ["Flames scorch the ground around the central bonfire as a twisted " +
-                          "tree emerges from it, curling protectively around the Campgrounds.",
-                          "Another shield tree ascends, its branches meshing with the ones already around it.",
-                          "The Salamander hisses as the purple flames are hidden deeper inside the branches of another "
-                          "shield tree."]
-        if explosions:
-            if shield_threshold + safety_threshold < hf.get_campfire_count() < \
-                    ((explosion_threshold - hf.get_shield_count()) + safety_threshold):
+            creation_fluff = ["Flames scorch the ground around the central bonfire as a twisted " +
+                              "tree emerges from it, curling protectively around the Campgrounds.",
+                              "Another shield tree ascends, its branches meshing with the ones already around it.",
+                              "The Salamander hisses as the purple flames are hidden deeper inside the branches of another "
+                              "shield tree."]
 
-                hf.set_campfire_count(hf.get_campfire_count() - shield_threshold)
-                hf.set_shield_count(hf.get_shield_count()+1)
-                output += random.choice(creation_fluff)
+            if explosions:
+                if shield_threshold + safety_threshold < hf.get_campfire_count() < \
+                        ((explosion_threshold - hf.get_shield_count()) + safety_threshold):
 
-            # if explosions are turned on
-            elif hf.get_campfire_count() >= ((explosion_threshold - hf.get_shield_count()) + safety_threshold):
-                blast_size = hf.get_campfire_count()/2
-                blast_damage = int(blast_size/200)
-                if blast_damage >= hf.get_shield_count():
-                    blast_damage = hf.get_shield_count()
+                    hf.set_campfire_count(hf.get_campfire_count() - shield_threshold)
+                    hf.set_shield_count(hf.get_shield_count()+1)
+                    output += random.choice(creation_fluff)
 
-                explosion_fluff = ["The Salamander hisses and begins to glow white-hot. "
-                                   "The sparks crackle from its spines as a massive explosion ripples"
-                                   " out from the Campgrounds. "+str(blast_damage)+" shields were lost in the blast.",
-                                   "A blast of heat ripples across the Campgrounds, followed by a much "
-                                   "stronger blast of flame. "+str(blast_damage)+" shields were lost in the damage.",
-                                   "A pulse of flame ignites several of the trees around the Campfire. The Salamander "
-                                   "giggles maliciously, all kindness has left its eyes. " + str(blast_damage) +
-                                   " shield trees were lost in"
-                                   "the blast."]
+                # if explosions are turned on
+                elif hf.get_campfire_count() >= ((explosion_threshold - hf.get_shield_count()) + safety_threshold):
+                    blast_size = hf.get_campfire_count()/2
+                    blast_damage = int(blast_size/200)
+                    if blast_damage >= hf.get_shield_count():
+                        blast_damage = hf.get_shield_count()
 
-                output =+ random.choice(explosion_fluff)
-                hf.set_shield_count(hf.get_shield_count() - blast_damage)
-                hf.set_campfire_count(int(hf.get_campfire_count()*0.25))
-                queued_crits = queued_crits + blast_damage
+                    explosion_fluff = ["The Salamander hisses and begins to glow white-hot. "
+                                       "The sparks crackle from its spines as a massive explosion ripples"
+                                       " out from the Campgrounds. "+str(blast_damage)+" shields were lost in the blast.",
+                                       "A blast of heat ripples across the Campgrounds, followed by a much "
+                                       "stronger blast of flame. "+str(blast_damage)+" shields were lost in the damage.",
+                                       "A pulse of flame ignites several of the trees around the Campfire. The Salamander "
+                                       "giggles maliciously, all kindness has left its eyes. " + str(blast_damage) +
+                                       " shield trees were lost in"
+                                       "the blast."]
 
-        else:
-            if safety_threshold < hf.get_campfire_count() - shield_threshold:
+                    output =+ random.choice(explosion_fluff)
+                    hf.set_shield_count(hf.get_shield_count() - blast_damage)
+                    hf.set_campfire_count(int(hf.get_campfire_count()*0.25))
+                    queued_crits = queued_crits + blast_damage
 
-                hf.set_campfire_count(hf.get_campfire_count() - shield_threshold)
-                hf.set_shield_count(hf.get_shield_count()+1)
+            else:
+                if safety_threshold < hf.get_campfire_count() - shield_threshold:
 
-                output += random.choice(creation_fluff)
+                    hf.set_campfire_count(hf.get_campfire_count() - shield_threshold)
+                    hf.set_shield_count(hf.get_shield_count()+1)
+
+                    output += random.choice(creation_fluff)
     return output
 
 

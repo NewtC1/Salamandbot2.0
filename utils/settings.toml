@@ -35,7 +35,7 @@ explosion_threshold = 1200
 multiplication_threshold = 100
 
 # number of seconds to multiply by
-time_multiplier = 2
+time_multiplier = 10
 
 # attack values
 min_range = 130
