@@ -267,15 +267,17 @@ def get_user_id(username) -> str:
 
 def register_alias(alias, user_id):
     accounts = load_accounts()
-    accounts[user_id]["aliases"].append(alias)
 
-    old_user_id = get_user_id(alias)
-    if old_user_id:
-        accounts[user_id]["logs"] += accounts[old_user_id]["logs"]
-        accounts[user_id]["woodchips"] += accounts[old_user_id]["woodchips"]
-        del accounts[old_user_id]
+    if alias not in accounts[user_id]["aliases"]:
+        accounts[user_id]["aliases"].append(alias)
 
-    update_accounts(accounts)
+        old_user_id = get_user_id(alias)
+        if old_user_id:
+            accounts[user_id]["logs"] += accounts[old_user_id]["logs"]
+            accounts[user_id]["woodchips"] += accounts[old_user_id]["woodchips"]
+            del accounts[old_user_id]
+
+        update_accounts(accounts)
 
 
 def create_new_user(alias, woodchips=0, logs=0):
