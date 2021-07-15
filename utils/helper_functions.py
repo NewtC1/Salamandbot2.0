@@ -292,3 +292,17 @@ def get_user_list() -> list:
         usernames.extend(accounts[account]["aliases"])
 
     return usernames
+
+
+def load_logs() -> dict:
+    with open(logs_file, "r", encoding="utf-8-sig") as file_stream:
+        data = json.load(file_stream)
+
+    return data
+
+
+def load_woodchips() -> dict:
+    with open(woodchips_file, "r", encoding="utf-8-sig") as file_stream:
+        data = json.load(file_stream)
+
+    return data
