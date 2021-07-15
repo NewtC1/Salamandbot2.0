@@ -3,6 +3,7 @@ import os
 import toml
 import time
 import requests
+import uuid
 
 settings_file = os.path.join(os.path.dirname(__file__), "settings.toml")
 
@@ -25,6 +26,7 @@ logs_file = os.path.join(os.path.dirname(__file__), '..', settings['directories'
 shields_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['shields_file'])
 woodchips_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['woodchips_file'])
 votes_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['votes_file'])
+accounts_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['accounts_file'])
 base_cooldown = settings['settings']['cooldown_time']
 max_vote_rate = settings['settings']['max_vote_rate']
 
@@ -39,33 +41,32 @@ def get_vote_option_value(option):
     return option_value
 
 
-def change_points(user, amount):
-    points = load_points()
+def change_woodchips(user, amount):
+    accounts = load_accounts()
+    user_id = get_user_id(user)
 
-    if user in points["Users"].keys():
-        if (points["Users"][user] + amount) < 0:
+    if user_id:
+        if (accounts[user_id]["woodchips"] + amount) < 0:
             return False
 
-    if user in points["Users"].keys():
-        points["Users"][user] += amount
+        accounts[user_id]["woodchips"] += amount
+        update_accounts(accounts)
     else:
-        points["Users"][user] = amount
-
-    update_points(points)
+        create_new_user(user, woodchips=amount)
 
     return True
 
 
-def load_points():
+def load_challenges():
     """Loads the points json."""
 
     with open(woodchips_file, "r", encoding="utf-8-sig") as json_file:
-        points = json.load(json_file)
+        woodchips = json.load(json_file)
 
-    return points
+    return woodchips
 
 
-def update_points(points_data):
+def update_challenges(points_data):
     """Saves the data."""
     with open(woodchips_file, "w+", encoding="utf-8-sig") as json_file:
         points = json.dumps(points_data, indent=4)
@@ -74,19 +75,25 @@ def update_points(points_data):
     return points
 
 
-def get_points(user):
-    points = load_points()
+def get_woodchips(user):
+    accounts = load_accounts()
+    user_id = get_user_id(user)
 
-    if user in points["Users"].keys():
-        return points["Users"][user]
+    if user_id:
+        return accounts[user_id]["woodchips"]
     else:
         return 0
 
 
-def set_points(user, amount):
-    points = load_points()
-    points["Users"][user.lower()] = amount
-    update_points(points)
+def set_woodchip_count(user, amount):
+    accounts = load_accounts()
+    user_id = get_user_id(user)
+
+    if user_id:
+        accounts[user_id]["woodchips"] = amount
+        update_accounts(accounts)
+    else:
+        create_new_user(user, amount)
 
 
 def get_vote_data():
@@ -173,32 +180,25 @@ def set_campfire_count(new_count: int):
         file.write(str(new_count))
 
 
-def load_logs() -> dict:
-    with open(logs_file, encoding='utf-8-sig', mode="r") as file:
-        data = json.load(file)
-
-    return data
-
-
 def get_log_count(user):
-    data = load_logs()
+    data = load_accounts()
 
-    if data:
-        if user in data.keys():
-            return data[user]
+    user_id = get_user_id(user)
 
-    return 0
+    if user_id:
+        return data[user_id]["logs"]
+    else:
+        return 0
 
 
 def set_log_count(user, value):
-    data = load_logs()
-    data[user.lower()] = value
-    update_logs(data)
-
-
-def update_logs(data):
-    with open(logs_file, "w+") as output_file:
-        json.dump(data, output_file, indent="\t")
+    data = load_accounts()
+    user_id = get_user_id(user)
+    if user_id:
+        data[user_id]["logs"] = value
+        update_accounts(data)
+    else:
+        create_new_user(user, 0, value)
 
 
 def get_shield_count():
@@ -241,3 +241,54 @@ def remove_user_from_cooldown(user) -> bool:
 def get_dynamic_cooldown_amount(amount) -> int:
     dynamic_cooldown_amount = int((amount/max_vote_rate)*base_cooldown)
     return dynamic_cooldown_amount
+
+
+def load_accounts() -> dict:
+    with open(accounts_file, "r", encoding="utf-8-sig") as file_stream:
+        data = json.load(file_stream)
+
+    return data
+
+
+def update_accounts(data: dict):
+    with open(accounts_file, "w+", encoding="utf-8-sig") as file_stream:
+        json.dump(data, file_stream, indent="\t")
+
+
+def get_user_id(username) -> str:
+    accounts = load_accounts()
+    matching_account = ""
+    for account in accounts.keys():
+        if username in accounts[account]['aliases']:
+            matching_account = account
+
+    return matching_account
+
+
+def register_alias(alias, user_id):
+    accounts = load_accounts()
+    accounts[user_id]["aliases"].append(alias)
+
+    old_user_id = get_user_id(alias)
+    if old_user_id:
+        accounts[user_id]["logs"] += accounts[old_user_id]["logs"]
+        accounts[user_id]["woodchips"] += accounts[old_user_id]["woodchips"]
+        del accounts[old_user_id]
+
+    update_accounts(accounts)
+
+
+def create_new_user(alias, woodchips=0, logs=0):
+    accounts = load_accounts()
+    accounts[str(uuid.uuid1())] = {"aliases": [alias], "woodchips": woodchips, "logs": logs, "active_name": alias}
+    update_accounts(accounts)
+
+
+def get_user_list() -> list:
+    accounts = load_accounts()
+    usernames = []
+
+    for account in accounts:
+        usernames.extend(accounts[account]["aliases"])
+
+    return usernames

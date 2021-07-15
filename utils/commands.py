@@ -5,7 +5,7 @@ import re
 import operator
 import requests
 from utils import helper_functions as hf
-from voting.vote_manager import VoteManager, OutOfLogsException
+from voting.vote_manager import VoteManager
 
 settings = toml.load(os.path.join(os.path.dirname(__file__), "settings.toml"))
 
@@ -134,9 +134,7 @@ def lurk(to_parse=None):
     """
     output = f"{to_parse.author.name} pulls up a log and sits down to enjoy the stories."
 
-    log_data = hf.load_logs()
-
-    users = log_data.keys()
+    users = hf.get_user_list()
     author_name = to_parse.author.name
 
     if author_name in users:
@@ -256,7 +254,11 @@ def so(to_parse=None):
 def top5(to_parse=None):
     output = ""
 
-    log_counts = hf.load_logs()
+    accounts = hf.load_accounts()
+    log_counts = {}
+    for account in accounts:
+        log_counts[accounts[account]["active_name"]] = accounts[account]["logs"]
+
     sorted_log_count = reversed(sorted(log_counts.items(), key=lambda kv: kv[1]))
     count = 1
 
@@ -290,6 +292,31 @@ def zephnos(to_parse=None):
     """
     output = f"Curious about the Dark Forest? Watch the recap video for Zephnos' arc here: {settings['links']['zephnos_arc']}"
     return output
+
+
+# ============================================== Account Linking =======================================================
+def linkaccount(to_parse):
+    account_id = to_parse.content.split()[1]
+    alias_to_add = to_parse.author.name
+
+    matches = re.match("[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}", account_id)
+
+    if matches:
+        hf.register_alias(alias_to_add, account_id)
+        return "Successfully linked account!"
+    else:
+        return "Invalid account id. Please fix any typos and try again."
+
+
+def accountid(to_parse):
+    author = to_parse.author.name
+    user_id = hf.get_user_id(author)
+
+    if not user_id:
+        hf.create_new_user(author, 0, 0)
+        user_id = hf.get_user_id(author)
+
+    return f"To link, go to the platform you want to link and type !linkaccount {user_id} to finish the linking process."
 
 
 # ============================================= Campgrounds Functions ==================================================
@@ -343,14 +370,12 @@ def givelogs(to_parse):
         amount = int(matches.group(2))
         output = "Something went wrong"
 
-        log_data = hf.load_logs()
-
-        users = log_data.keys()
+        users = hf.get_user_list()
         author_name = to_parse.author.name
 
         # set the values
         if author_name.lower() in users:
-            if log_data[to_parse.author.name.lower()] > amount:
+            if hf.get_log_count(author_name) > amount:
                 hf.set_log_count(target, hf.get_log_count(target) + amount)
                 hf.set_log_count(to_parse.author.name,
                                                hf.get_log_count(to_parse.author.name.lower()) - amount)
@@ -500,7 +525,7 @@ def vote(to_parse, vote_manager: VoteManager):
     cooldown_time = settings['settings']['cooldown_time']
 
     message = to_parse.content
-    user = to_parse.author.name.lower()
+    user = to_parse.author.name
 
     vote_data = hf.get_vote_data()
 
@@ -574,6 +599,7 @@ def vote(to_parse, vote_manager: VoteManager):
     else:
         return "Salamandbot shakes its head. It scratches several words in the sand: !vote <name> <amount>."
 
+
 # ======================================== Woodchips ===================================================================
 def woodchips(to_parse=None):
     """
@@ -581,5 +607,5 @@ def woodchips(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{to_parse.author.name} has gathered {hf.get_points(to_parse.author.name.lower())} woodchips."
+    output = f"{to_parse.author.name} has gathered {hf.get_woodchips(to_parse.author.name.lower())} woodchips."
     return output
