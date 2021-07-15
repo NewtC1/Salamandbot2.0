@@ -122,7 +122,7 @@ def logs(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{to_parse.author.name} has gathered {hf.get_log_count(to_parse.author.name.lower())} logs."
+    output = f"{to_parse.author.name} has gathered {hf.get_log_count(to_parse.author.name)} logs."
     return output
 
 
