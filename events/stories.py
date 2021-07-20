@@ -14,7 +14,7 @@ class StoryManager:
         """Required tick function"""
         # roll a new story every 3 hours
         if time.time() > self.story_timer + self.tick_rate:
-            if hf.get_selected_stories_list() > 0:
+            if hf.get_selected_stories_list():
                 hf.roll_story()
 
             self.story_timer = time.time() + 3600
