@@ -46,6 +46,11 @@ crits = true
 crit_chance = 0
 crit_destruction = true
 
+##################
+# Story settings #
+##################
+submission_reward = 50
+
 [directories]
 values = "values"
 campfire = "values/campfire.txt"
@@ -54,6 +59,7 @@ woodchips_file = "values/points.json"
 votes_file = "values/vote.json"
 logs_file = "values/logs.json"
 accounts_file = "values/accounts.json"
+story_file = "values/stories.json"
 
 [settings]
 max_vote_rate = 100

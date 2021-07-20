@@ -609,3 +609,72 @@ def woodchips(to_parse=None):
     """
     output = f"{to_parse.author.name} has gathered {hf.get_woodchips(to_parse.author.name.lower())} woodchips."
     return output
+
+
+# ============================================ Story ===================================================================
+def story(to_parse):
+
+    output = ''
+
+    message = to_parse.content
+    message_args = message.split()
+    arg_count = len(message_args)
+    user = to_parse.author.name
+
+    # parse the input to something usable by the script
+    data_input = message.split()[2:]
+    title = ' '.join(data_input)
+
+    # two word commands
+    if arg_count == 2:
+        if message_args[1].lower() == "display":
+            return hf.display_story_list()
+        if message_args[1].lower() == "selected":
+            story_list = hf.load_story_list()
+            output = ""
+            for story in hf.get_selected_stories_list():
+                output += f"{story_list[story]['name']},"
+            return output[:-1]
+        if message_args[1].lower() == "roll":
+            if hf.get_selected_stories_list():
+                output = hf.roll_story()[1]
+                return output
+            else:
+                output = hf.roll_unselected_story()[1]
+                return output
+        if message_args[1].lower() == "pending":
+            return hf.display_pending_list()
+        if message_args[1].lower() == "links":
+            return hf.display_pending_links()
+
+    # single word commands
+    if arg_count == 1:
+        return hf.display_story_list()
+
+    # variable length commands
+    if arg_count > 1:
+        if message_args[1].lower() == "info":
+            return f"Info for {title}: {hf.story_info(data_input)}"
+        if message_args[1].lower() == "select":
+            story_added = hf.select_story(title, user)
+            if story_added:
+                return f"Added {title} to the next story spin."
+            else:
+                return "That story is already in the next story spin."
+        if message_args[1].lower() == "add":
+            title = ' '.join(data_input[:-1])
+            # get the final value and save is as the link
+            info = message_args[arg_count - 1].lower()
+
+            if data_input:
+                return hf.add_story(title, info, user)
+        if message_args[1].lower() == ("remove" or "subtract"):
+            return hf.remove_story(title)
+        if message_args[1].lower() == "restore":
+            return hf.re_add(title)
+        if message_args[1].lower() == "approve":
+            return hf.approve_story(title)
+
+
+def stories(to_parse):
+    return story(to_parse)

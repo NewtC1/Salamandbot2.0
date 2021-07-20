@@ -14,6 +14,7 @@ import utils.commands as command_list
 import utils.helper_functions as helper_functions
 from voting.vote_manager import VoteManager
 import events.overheat as overheat
+import events.stories as stories
 
 settings = helper_functions.load_settings()
 bots = {}
@@ -77,6 +78,16 @@ def generate_missing_values():
     generate_value(votes_dir, votes_template)
     accounts_template = {}
     generate_value(accounts_dir, json.dumps(accounts_template))
+    accounts_template = {
+        }
+    generate_value(accounts_dir, json.dumps(accounts_template))
+    stories_template = json.dumps({
+        "removed": {},
+        "selected": [],
+        "approved": {},
+        "pending": {}
+    })
+    generate_value(helper_functions.story_file, stories_template)
 
 
 async def payout_logs(users=None):
@@ -132,6 +143,7 @@ async def tick():
     # await update_active_status()
     await update_live_status()
     if is_live:
+        # TODO: Make this channel type agnostic.
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
         await payout_logs(users_in_chat)
         await payout_woodchips(users_in_chat)
@@ -189,9 +201,12 @@ async def start_loop():
     logging.info("[Bot] Creating vote manager...")
     vote_manager = VoteManager(logger=logging.getLogger())
 
+    story_manager = stories.StoryManager()
+
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clocks...")
-    clock = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=BOT_TICK_RATE)
+    clock = Clock(logger=logging.getLogger(), function_dict={tick: "",
+                                                             story_manager.tick: ""}, tick_frequency=BOT_TICK_RATE)
     vote_clock = Clock(logger=logging.getLogger(),
                        function_dict={vote_manager.tick_vote: "",
                                       vote_manager.remove_users_from_cooldown: "",

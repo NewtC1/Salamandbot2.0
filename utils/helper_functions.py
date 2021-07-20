@@ -4,6 +4,7 @@ import toml
 import time
 import requests
 import uuid
+import random
 
 settings_file = os.path.join(os.path.dirname(__file__), "settings.toml")
 
@@ -27,6 +28,7 @@ shields_file = os.path.join(os.path.dirname(__file__), '..', settings['directori
 woodchips_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['woodchips_file'])
 votes_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['votes_file'])
 accounts_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['accounts_file'])
+story_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['story_file'])
 base_cooldown = settings['settings']['cooldown_time']
 max_vote_rate = settings['settings']['max_vote_rate']
 
@@ -308,3 +310,263 @@ def load_woodchips() -> dict:
         data = json.load(file_stream)
 
     return data
+
+
+# ============================================= Story Interaction ======================================================
+def load_story_list():
+    """Returns a the list of counters as a settings object"""
+    with open(story_file, encoding='utf-8-sig', mode='r') as f:
+        data = json.load(f)["approved"]
+
+    return data
+
+
+def update_story_list(story_list):
+    data = load_story_file()
+
+    data["approved"] = story_list
+
+    with open(story_file, encoding='utf-8-sig', mode='w') as filestream:
+        json.dump(data, filestream, indent="\t")
+
+
+def load_pending_list():
+    """Returns a the list of counters as a settings object"""
+    with open(story_file, encoding='utf-8-sig', mode='r') as f:
+        data = json.load(f)["pending"]
+
+    return data
+
+
+def update_pending_list(story_list):
+    data = load_story_file()
+
+    data["pending"] = story_list
+
+    with open(story_file, encoding='utf-8-sig', mode='w') as filestream:
+        json.dump(data, filestream, indent="\t")
+
+
+def load_story_file():
+    with open(story_file, encoding='utf-8-sig', mode='r') as f:
+        data = json.load(f)
+
+    return data
+
+
+def update_story_file(data: dict):
+    with open(story_file, encoding='utf-8-sig', mode='w') as f:
+        json.dump(data, f, indent="\t")
+
+
+# display all available stories
+def display_story_list():
+    data = load_story_list()
+    retval = ''
+    for key in data.keys():
+        # get rid of the last space
+        retval += data[key]['name'] + ', '
+
+    return retval[:-2]
+
+
+# display all available stories
+def display_pending_list():
+    data = load_pending_list()
+    retval = ''
+    for key in data.keys():
+        upper = ''
+        # uppercase every first letter
+        for word in key.split("_"):
+            output = word.replace(word[0], word[0].upper(), 1)
+            upper += output + " "
+
+        # get rid of the last space
+        upper = upper[:-1]
+        retval += upper + ', '
+
+    retval = retval.replace('_', ' ')
+    retval = retval[:-2]
+
+    return retval
+
+
+def display_pending_links():
+    data = load_pending_list()
+    retval = ''
+    for key in data.keys():
+        output = key + ": " + data[key]["info"]
+
+        # get rid of the last space
+        retval += output + ' , '
+
+    return retval
+
+
+def get_selected_stories_list():
+    data = load_story_file()
+
+    return data["selected"]
+
+
+# returns the story info
+def story_info(story):
+    data = load_story_list()
+    if story.lower() in data.keys():
+        return data[story.lower()]["info"]
+    else:
+        return "The story " + story + " is not in the story selection yet. Send me a link and I can add it."
+
+
+# select a story
+def select_story(story: str, user):
+
+    data = load_story_file()
+    selected_stories = get_selected_stories_list()
+    if story.lower() in data["approved"].keys():
+        if story.lower() not in selected_stories:
+            data["selected"].append(story.lower())
+            if data["approved"][story.lower()]["contributor"] != user.lower():
+                # add more points each time anyone other than the user selects it
+                data["approved"][story.lower()]["value"] += 50
+            update_story_file(data)
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+# select a story from chosen stories
+def roll_story():
+    choice = random.choice(get_selected_stories_list())
+    selection_name = story_name(choice)
+    retval = f"The story that was selected was: {selection_name}. You can follow along at " + story_info(
+        choice)
+
+    # reset selected stories
+    data = load_story_file()
+    data["selected"] = []
+    if data["approved"][choice]["value"] > 0:
+        user = data["approved"][choice.lower()]["contributor"]
+        value = data["approved"][choice.lower()]["value"]
+        set_log_count(user, get_log_count(user) + value)
+
+    update_story_file(data)
+
+    # remove the story we rolled from the list
+    remove_story(choice.lower())
+
+    return retval, retval
+
+
+def roll_unselected_story():
+    data = load_story_list()
+    stories = data.keys()
+
+    choice = random.choice(list(stories))
+    retval = "Rolling from the main story list. The story that was selected was: " + story_name(
+        choice) + ". You can follow along at " + story_info(
+        choice)
+
+    user = data[choice.lower()]["contributor"]
+    value = data[choice.lower()]["value"]
+    set_log_count(user.lower(), get_log_count(user.lower()) + value)
+
+    remove_story(choice.lower())
+
+    return retval, retval
+
+
+# add a story
+def add_story(story, info, contributor, author=""):
+    output = ""
+    if story.lower() in (load_pending_list() or load_story_list()):
+        return "That story already exists."
+    # else if the counter does not exist
+    else:
+        # add the counter to the counters.json
+        pending_list = load_pending_list()
+        storyname = story.lower()
+        pending_list[storyname] = {}
+        pending_list[storyname]["info"] = info
+        pending_list[storyname]["contributor"] = contributor
+        pending_list[storyname]["value"] = 0
+        pending_list[storyname]["name"] = story
+        pending_list[storyname]["author"] = author
+
+        # give logs to the user who added
+        set_log_count(contributor, get_log_count(contributor) + settings["events"]["submission_reward"])
+
+        # save the story
+        update_pending_list(pending_list)
+        output = f'Story "{story}" successfully created. It has been stored in pending.'
+
+    return output
+
+
+def approve_story(story: str):
+    """
+    Moves a story from the pending file to the story file.
+    :param story: The story to approve.
+    :return:
+    """
+
+    pending_data = load_pending_list()
+    story_to_approve = pending_data[story.lower()]
+    del pending_data[story.lower()]
+    update_pending_list(pending_data)
+
+    story_data = load_story_list()
+    story_data[story.lower()] = story_to_approve
+    update_story_list(story_data)
+
+    return f'Story "{story_name(story)}" successfully created.'
+
+
+# remove a story from the list
+def remove_story(story):
+    data = load_story_file()
+    remove_name = story_name(story)
+    # save the story for restoration if we need to
+    data["removed"][story.lower()] = data["approved"][story.lower()]
+    del data["approved"][story.lower()]
+    # update the story file with the removed story
+    with open(story_file, encoding='utf-8-sig', mode='w+') as f:
+        json.dump(data, f, indent="\t")
+
+    if story.lower() not in data["approved"].keys():
+        return f"Successfully removed {remove_name} from the approved options."
+    else:
+        return f"Something went wrong."
+
+
+def re_add(story):
+    data = load_story_file()
+    story_lower = story.lower()
+
+    if story_lower in data["removed"].keys():
+        data["approved"][story_lower] = data["removed"][story_lower]
+        del data["removed"][story_lower]
+        update_story_file(data)
+
+        return f'Story "{story_name(story_lower)}" successfully restored.'
+    return  f'Story "{story}" could not be restored.'
+
+
+def story_name(story):
+    data = load_story_list()
+    return data[story]["name"]
+
+
+def story_contributor(story):
+    data = load_story_list()
+    return data[story]["contributor"]
+
+
+def story_author(story):
+    data = load_story_list()
+    if data[story]["author"]:
+        return data[story]["author"]
+
+    return ""
