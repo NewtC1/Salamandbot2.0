@@ -674,6 +674,8 @@ def story(to_parse):
             return hf.re_add(title)
         if message_args[1].lower() == "approve":
             return hf.approve_story(title)
+        if message_args[1].lower() == "reject":
+            return hf.reject_story(title)
 
 
 def stories(to_parse):

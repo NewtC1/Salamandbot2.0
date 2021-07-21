@@ -372,35 +372,26 @@ def display_story_list():
 
 # display all available stories
 def display_pending_list():
-    data = load_pending_list()
+    data = load_story_file()
     retval = ''
-    for key in data.keys():
-        upper = ''
-        # uppercase every first letter
-        for word in key.split("_"):
-            output = word.replace(word[0], word[0].upper(), 1)
-            upper += output + " "
+    for key in data["pending"].keys():
+        retval += f"{data['pending'][key]['name']}, "
 
-        # get rid of the last space
-        upper = upper[:-1]
-        retval += upper + ', '
-
-    retval = retval.replace('_', ' ')
     retval = retval[:-2]
 
     return retval
 
 
 def display_pending_links():
-    data = load_pending_list()
+    data = load_story_file()
     retval = ''
-    for key in data.keys():
-        output = key + ": " + data[key]["info"]
+    for key in data["pending"].keys():
+        output = key + ": " + data["pending"][key]["info"]
 
         # get rid of the last space
         retval += output + ' , '
 
-    return retval
+    return retval[:-2]
 
 
 def get_selected_stories_list():
@@ -521,7 +512,24 @@ def approve_story(story: str):
     story_data[story.lower()] = story_to_approve
     update_story_list(story_data)
 
-    return f'Story "{story_name(story)}" successfully created.'
+    return f'Story "{story_name(story)}" has been approved.'
+
+
+def reject_story(story: str):
+    """
+    Removes a story from the approval list.
+    :param story: The story to reject.
+    :return:
+    """
+
+    pending_data = load_pending_list()
+
+    if story.lower() in pending_data.keys():
+        del pending_data[story.lower()]
+        update_pending_list(pending_data)
+        return f"Removed story {story} from pending."
+    else:
+        return f"Could not remove {story} from the pending stories."
 
 
 # remove a story from the list

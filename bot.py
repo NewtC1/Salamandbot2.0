@@ -136,7 +136,6 @@ async def tick():
     :return:
     """
     global bots
-    global is_active
     global is_live
 
     # check for the bot going live.
