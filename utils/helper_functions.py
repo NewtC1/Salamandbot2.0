@@ -564,17 +564,17 @@ def re_add(story):
 
 def story_name(story):
     data = load_story_list()
-    return data[story]["name"]
+    return data[story.lower()]["name"]
 
 
 def story_contributor(story):
     data = load_story_list()
-    return data[story]["contributor"]
+    return data[story.lower()]["contributor"]
 
 
 def story_author(story):
     data = load_story_list()
     if data[story]["author"]:
-        return data[story]["author"]
+        return data[story.lower()]["author"]
 
     return ""
