@@ -432,8 +432,11 @@ def select_story(story: str, user):
 def roll_story():
     choice = random.choice(get_selected_stories_list())
     selection_name = story_name(choice)
-    retval = f"The story that was selected was: {selection_name}. You can follow along at " + story_info(
-        choice)
+    retval = f"The story that was selected was: {selection_name}. You can follow along at {story_info(choice)}."
+
+    if story_author(choice):
+        retval = f"The story that was selected was: {selection_name} written by {story_author(choice)}." \
+                 f" You can follow along at {story_info(choice)}."
 
     # reset selected stories
     data = load_story_file()
@@ -578,3 +581,23 @@ def story_author(story):
         return data[story.lower()]["author"]
 
     return ""
+
+# ========================================= Redeemable Support Functions ===============================================
+def add_to_votes(option):
+    add_vote_option(option, 0, get_active_profile())
+    return
+
+
+def move_option_to_top(option):
+    data = get_vote_data()
+
+    values = list(data["Profiles"][get_active_profile()][vote]["vote value"] for vote in data["Profiles"][get_active_profile()].keys())
+    top_value = max(values)
+
+    data["Profiles"][get_active_profile()][option]["vote value"] = top_value
+    update_vote_data(data)
+
+
+def create_and_move(option):
+    add_to_votes(option)
+    move_option_to_top(option)

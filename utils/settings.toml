@@ -67,3 +67,5 @@ cooldown_time = 600
 decay_days = 7
 decay_amount = 1
 log_gain_multiplier = 0.2
+follow_bonus = 300
+active_watch_bonus = 50

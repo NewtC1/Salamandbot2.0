@@ -4,6 +4,7 @@ import time
 import re
 import operator
 import requests
+import data_classes.redeemable as redeemable
 from utils import helper_functions as hf
 from voting.vote_manager import VoteManager
 
@@ -609,6 +610,51 @@ def woodchips(to_parse=None):
     """
     output = f"{to_parse.author.name} has gathered {hf.get_woodchips(to_parse.author.name.lower())} woodchips."
     return output
+
+
+def redeem(to_parse=None):
+    """
+    Redeems a specified redeemable.
+    :param to_parse: The information on what to redeem
+    :return:
+    """
+    message = to_parse.content
+    message_args = message.split()
+    arg_count = len(message_args)
+    user = to_parse.author.name
+
+    if arg_count == 1:
+        return "Here are the redeemable options: recap, drink, pet, story, break, add, move, top."
+
+    redeemables = {
+        "recap": redeemable.Redeemable("recap", "Recap that story Newt!", -200, user),
+        "drink": redeemable.Redeemable("drink", "Take a drink!", -500, user),
+        "pet": redeemable.Redeemable("pet", "Pet that cat!", -600, user),
+        "story": redeemable.Redeemable("story", "Story time!", -1000, user),
+        "break": redeemable.Redeemable("break", "Time to hit the road.", -3000, user)
+    }
+
+    if arg_count >= 3:
+        args = " ".join(message.split(" ")[2:])
+        redeemables["add"] = redeemable.Redeemable("add", "Adding your game to the list!", -20000,
+                                                   user, hf.add_to_votes, args)
+        redeemables["move"] = redeemable.Redeemable("move", "Moving " + args + " to the top of the list!", -30000,
+                                                    user, hf.move_option_to_top, args)
+        redeemables["top"] = redeemable.Redeemable("top", "Adding and moving " + args + " to the top of the list!",
+                                                   -45000,
+                                                   user, hf.create_and_move, args)
+
+    if message_args[1] in redeemables.keys():
+        if arg_count == 2:
+            if redeemables[message_args[1].lower()].redeem():
+                return redeemables[message_args[1].lower()].description
+            else:
+                return "You don't have enough woodchips for that."
+        if arg_count >= 3:
+            if redeemables[message_args[1].lower()].redeem():
+                return redeemables[message_args[1].lower()].description
+            else:
+                return "You don't have enough woodchips for that."
 
 
 # ============================================ Story ===================================================================
