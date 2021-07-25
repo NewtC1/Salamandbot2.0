@@ -1,4 +1,3 @@
-import asyncio
 import os
 import toml
 import logging
@@ -76,7 +75,7 @@ class VoteManager:
                 except OutOfLogsException as e:
                     if self.bots:
                         for bot in self.bots:
-                            bot.send_message(f"{voter} has run out of logs.")
+                            await bot.send_message(f"{voter} has run out of logs.")
                         hf.remove_user_from_cooldown(voter)
                         continue
                 # resets the time for the next cooldown
@@ -142,7 +141,6 @@ class VoteManager:
             vote_data["Last Decay"] = time.time()
             hf.update_vote_data(vote_data)
 
-
     def stop_voting(self, user):
         """
         Sets the user's remaining amount to 0 and sets the cooldown based on the remaining amount.
@@ -153,8 +151,12 @@ class VoteManager:
 
         if user in hf.get_users_on_cooldown():
             remaining_vote = 0
-            if data["Users On Cooldown"][user]["amount"] != "all":
-                remaining_vote = data["Users On Cooldown"][user]["amount"]
+            user_cooldown_vote_value = data["Users On Cooldown"][user]["amount"]
+            if user_cooldown_vote_value != "all":
+                if user_cooldown_vote_value <= max_vote_rate:
+                    remaining_vote = data["Users On Cooldown"][user]["amount"]
+                else:
+                    remaining_vote = max_vote_rate
             else:
                 remaining_vote = max_vote_rate
             remaining_cooldown = hf.get_dynamic_cooldown_amount(remaining_vote)

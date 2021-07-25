@@ -8,11 +8,14 @@ from inspect import getmembers, isfunction
 from utils.clock import Clock
 from input_parser import InputParser as Input
 from pathlib import Path
-from twitch_bot import TwitchBot
+from bots.twitch_bot import TwitchBot
+from bots.discord_bot import DiscordBot
 import utils.commands as command_list
 import utils.helper_functions as helper_functions
 import utils.sfx as sfx
 from voting.vote_manager import VoteManager
+import events.overheat as overheat
+import events.stories as stories
 
 settings = helper_functions.load_settings()
 bots = {}
@@ -40,11 +43,12 @@ def generate_missing_values():
     :return:
     """
 
-    campfire_dir = os.path.join(os.path.dirname(__file__), settings['directories']['campfire'])
-    shield_dir = os.path.join(os.path.dirname(__file__), settings['directories']['shields_file'])
-    points_dir = os.path.join(os.path.dirname(__file__), settings['directories']['woodchips_file'])
-    votes_dir = os.path.join(os.path.dirname(__file__), settings['directories']['votes_file'])
-    logs_dir = os.path.join(os.path.dirname(__file__), settings['directories']['logs_file'])
+    campfire_dir = helper_functions.campfire_file
+    shield_dir = helper_functions.shields_file
+    woodchips_dir = helper_functions.woodchips_file
+    votes_dir = helper_functions.votes_file
+    logs_dir = helper_functions.logs_file
+    accounts_dir = helper_functions.accounts_file
 
     def generate_value(file_dir, default_value=""):
         """
@@ -54,17 +58,16 @@ def generate_missing_values():
         :return:
         """
         if not os.path.exists(file_dir):
-            with open(file_dir, encoding="utf-8-sig",mode="w+") as file:
+            with open(file_dir, encoding="utf-8-sig", mode="w+") as file:
                 file.write(default_value)
             logging.info(f"[Bot] Generating missing values file for {file_dir}")
 
     generate_value(campfire_dir, "0")
     generate_value(shield_dir, "0")
-    points_template = json.dumps({
-        "Challenges": {},
-        "Users": {}
+    woodchips_template = json.dumps({
+        "Challenges": {}
     })
-    generate_value(points_dir, points_template)
+    generate_value(woodchips_dir, woodchips_template)
     votes_template = json.dumps({
         "Last Decay": 0,
         "Users On Cooldown": {},
@@ -74,32 +77,43 @@ def generate_missing_values():
         }
     })
     generate_value(votes_dir, votes_template)
-    default_log_value = {}
-    generate_value(logs_dir, json.dumps(default_log_value))
+    accounts_template = {}
+    generate_value(accounts_dir, json.dumps(accounts_template))
+    accounts_template = {
+        }
+    generate_value(accounts_dir, json.dumps(accounts_template))
+    stories_template = json.dumps({
+        "removed": {},
+        "selected": [],
+        "approved": {},
+        "pending": {}
+    })
+    generate_value(helper_functions.story_file, stories_template)
 
 
 async def payout_logs(users=None):
     shields = helper_functions.get_shield_count()
-    data = helper_functions.load_logs()
+    log_gain_multiplier = settings["settings"]["log_gain_multiplier"]
 
     users_in_chat = users
     logging.info(f"[Logs] Users in chat: {users_in_chat}")
     if not users:
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
     for user in users_in_chat[1]:
-        helper_functions.set_log_count(user, helper_functions.get_log_count(user) + shields)
-        logging.info(f"[Logs] {user} gained {shields} logs.")
+        logs_gained = int(shields*log_gain_multiplier)
+        helper_functions.set_log_count(user, helper_functions.get_log_count(user) + logs_gained)
+        # logging.info(f"[Logs] {user} gained {logs_gained} logs.")
 
 
 async def payout_woodchips(users=None):
-    data = helper_functions.load_points()
+    data = helper_functions.load_accounts()
     users_in_chat = users
     logging.info(f"[Woodchips] Users in chat: {users_in_chat}")
     if not users:
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
     for user in users_in_chat[1]:
-        helper_functions.set_points(user, helper_functions.get_log_count(user) + WOODCHIP_PAYOUT_RATE)
-        logging.info(f"[Woodchips] {user} gained {WOODCHIP_PAYOUT_RATE} woodchips.")
+        helper_functions.set_woodchip_count(user, helper_functions.get_log_count(user) + WOODCHIP_PAYOUT_RATE)
+        # logging.info(f"[Woodchips] {user} gained {WOODCHIP_PAYOUT_RATE} woodchips.")
 
 
 async def user_is_in_chat(user):
@@ -116,24 +130,36 @@ async def user_is_in_chat(user):
     return retval
 
 
+# Tick functions
 async def tick():
     """
     This is the function handed to the global clock.
     :return:
     """
     global bots
-    global is_active
     global is_live
 
     # check for the bot going live.
     # await update_active_status()
     await update_live_status()
     if is_live:
+        # TODO: Make this channel type agnostic.
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
         await payout_logs(users_in_chat)
         await payout_woodchips(users_in_chat)
+        helper_functions.set_campfire_count(helper_functions.get_campfire_count() - 20)
 
     return
+
+
+async def overheat_tick():
+    global is_live
+
+    if is_live:
+        overheat_output = overheat.overheat()
+        if overheat_output:
+            for bot in bots.keys():
+                await bots[bot].send_message(overheat_output)
 
 
 async def update_active_status():
@@ -176,13 +202,18 @@ async def start_loop():
     logging.info("[Bot] Creating vote manager...")
     vote_manager = VoteManager(logger=logging.getLogger())
 
+    story_manager = stories.StoryManager()
+
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clocks...")
-    clock = Clock(logger=logging.getLogger(), function_dict={tick: ""}, tick_frequency=BOT_TICK_RATE)
+    clock = Clock(logger=logging.getLogger(), function_dict={tick: "",
+                                                             story_manager.tick: ""}, tick_frequency=BOT_TICK_RATE)
     vote_clock = Clock(logger=logging.getLogger(),
                        function_dict={vote_manager.tick_vote: "",
                                       vote_manager.remove_users_from_cooldown: "",
-                                      vote_manager.decay: ""},
+                                      vote_manager.decay: "",
+                                      overheat_tick: ""
+                                      },
                        tick_frequency=1)
 
     # parses inputs
@@ -215,11 +246,13 @@ async def start_loop():
 
     print(f"Commands: {parser.commands}")
 
+    # starting bots
     logging.info("[Bot] Starting bots...")
     bots["twitch"] = TwitchBot(parser)
+    discord = DiscordBot(parser)
     vote_manager.bots = [bots["twitch"]]
 
-    await asyncio.gather(clock.run(), bots["twitch"].start(), vote_clock.run())
+    await asyncio.gather(clock.run(), bots["twitch"].start(), discord.start(os.environ["DISCORD_TOKEN"]), vote_clock.run())
 
 
 args = parse_args()

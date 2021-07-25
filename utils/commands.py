@@ -3,8 +3,10 @@ import toml
 import time
 import re
 import operator
+import requests
+import data_classes.redeemable as redeemable
 from utils import helper_functions as hf
-from voting.vote_manager import VoteManager, OutOfLogsException
+from voting.vote_manager import VoteManager
 
 settings = toml.load(os.path.join(os.path.dirname(__file__), "settings.toml"))
 
@@ -121,7 +123,7 @@ def logs(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{to_parse.author.name} has gathered {hf.get_log_count(to_parse.author.name.lower())} logs."
+    output = f"{to_parse.author.name} has gathered {hf.get_log_count(to_parse.author.name)} logs."
     return output
 
 
@@ -133,9 +135,7 @@ def lurk(to_parse=None):
     """
     output = f"{to_parse.author.name} pulls up a log and sits down to enjoy the stories."
 
-    log_data = hf.load_logs()
-
-    users = log_data.keys()
+    users = hf.get_user_list()
     author_name = to_parse.author.name
 
     if author_name in users:
@@ -169,7 +169,7 @@ def moonrise(to_parse=None):
 
 def overheat(to_parse=None):
     """
-    Displays the overheat text.
+    Displays the overheat.py text.
     :param to_parse:
     :return:
     """
@@ -221,6 +221,60 @@ def prizechoice(to_parse=None):
     return output
 
 
+def shoutout(to_parse=None):
+    """
+    Shouts out the given user.
+    :param to_parse:
+    :return:
+    """
+    target_channel = to_parse.content.split()[1]
+
+    if target_channel[0] == "@":
+        target_channel = target_channel[1:]
+
+    headers = {
+        'client-id': hf.client_id,
+        'Authorization': f'Bearer {hf.irc_token}'
+    }
+
+    target_user = requests.get(f"https://api.twitch.tv/helix/users?login={target_channel}", headers=headers).json()['data'][0]['id']
+    response = requests.get(f"https://api.twitch.tv/helix/channels?broadcaster_id={target_user}", headers=headers).json()
+    user = response["data"][0]["broadcaster_name"]
+    game = response["data"][0]["game_name"]
+    user_login = response["data"][0]["broadcaster_login"]
+    output = f"{user} is a friend of the Campgrounds. Last they were seen, they were telling the story of " \
+             f"{game}. Check them out at https://www.twitch.tv/{user_login}"
+
+    return output
+
+
+def so(to_parse=None):
+    return shoutout(to_parse)
+
+
+def top5(to_parse=None):
+    output = ""
+
+    accounts = hf.load_accounts()
+    log_counts = {}
+    for account in accounts:
+        log_counts[accounts[account]["active_name"]] = accounts[account]["logs"]
+
+    sorted_log_count = reversed(sorted(log_counts.items(), key=lambda kv: kv[1]))
+    count = 1
+
+    for k, v in sorted_log_count:
+        output += f"{count}: {k}({v})"
+        count += 1
+
+        if count == 6:
+            break
+        else:
+            output += ", "
+
+    return output
+
+
 def worldanvil(to_parse=None):
     """
     REturns the link to WorldAnvil.
@@ -241,22 +295,51 @@ def zephnos(to_parse=None):
     return output
 
 
+# ============================================== Account Linking =======================================================
+def linkaccount(to_parse):
+    account_id = to_parse.content.split()[1]
+    alias_to_add = to_parse.author.name
+
+    matches = re.match("[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}", account_id)
+
+    if matches:
+        hf.register_alias(alias_to_add, account_id)
+        return "Successfully linked account!"
+    else:
+        return "Invalid account id. Please fix any typos and try again."
+
+
+def accountid(to_parse):
+    author = to_parse.author.name
+    user_id = hf.get_user_id(author)
+
+    if not user_id:
+        hf.create_new_user(author, 0, 0)
+        user_id = hf.get_user_id(author)
+
+    return f"To link, go to the platform you want to link and type !linkaccount {user_id} to finish the linking process."
+
+
 # ============================================= Campgrounds Functions ==================================================
 def addlogs(to_parse):
     """
     Adds this number of logs to the fire
     :param to_parse: The string with the command output.
     :return:
-    TODO: Remove logs from the user's log count
     """
     output = ""
 
     if len(to_parse.content.lower().split()) > 1:
+        user = to_parse.author.name
         add_value = int(to_parse.content.lower().split()[1])
-        campfire_count = hf.get_campfire_count() + add_value
-        hf.set_campfire_count(campfire_count)
-        output = f"{to_parse.author.name} added {add_value} logs to the campfire. " \
-                 f"There are now {campfire_count} logs in the fire."
+        if hf.get_log_count(user) >= add_value > 0:
+            campfire_count = hf.get_campfire_count() + add_value
+            hf.set_campfire_count(campfire_count)
+            hf.set_log_count(user, hf.get_log_count(user) - add_value)
+            output = f"{to_parse.author.name} added {add_value} logs to the campfire. " \
+                     f"There are now {campfire_count} logs in the fire."
+        else:
+            output = "You either don't have enough logs for that or the amount is invalid."
 
     return output
 
@@ -288,14 +371,12 @@ def givelogs(to_parse):
         amount = int(matches.group(2))
         output = "Something went wrong"
 
-        log_data = hf.load_logs()
-
-        users = log_data.keys()
+        users = hf.get_user_list()
         author_name = to_parse.author.name
 
         # set the values
         if author_name.lower() in users:
-            if log_data[to_parse.author.name.lower()] > amount:
+            if hf.get_log_count(author_name) > amount:
                 hf.set_log_count(target, hf.get_log_count(target) + amount)
                 hf.set_log_count(to_parse.author.name,
                                                hf.get_log_count(to_parse.author.name.lower()) - amount)
@@ -462,6 +543,8 @@ def vote(to_parse, vote_manager: VoteManager):
         amount = matches.group(4)
         target = matches.group(3) if not vote_all else matches.group(1)
 
+        vote_options = vote_data["Profiles"][hf.get_active_profile()].keys()
+
         if matches.group(0).lower() == "!vote stop":
             if user in hf.get_users_on_cooldown():
                 if hf.get_vote_data()["Users On Cooldown"][user]["amount"] != 0:
@@ -470,7 +553,12 @@ def vote(to_parse, vote_manager: VoteManager):
                            f"You may now vote freely once the cooldown expires."
             else:
                 return f"You are not currently voting on anything."
-        elif vote_all:
+
+        if target not in vote_options:
+            return "Salamandbot scratches in the dirt. Spelling? Capitalization? A missing number? " \
+                   "It didn't know what that story was."
+
+        if vote_all:
             hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
             hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
             hf.add_vote_contributor(target, user, "all")
@@ -483,16 +571,19 @@ def vote(to_parse, vote_manager: VoteManager):
         else:
             try:
                 amount = int(amount)
-                if amount > hf.get_log_count(user):
+                user_logs = hf.get_log_count(user)
+                if amount >= user_logs:
                     return "You don't have enough logs for that."
 
                 if amount > max_vote_rate:
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
                     hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
                     hf.add_vote_contributor(target, user, amount)
-                    hf.add_user_to_cooldown(user, time.time() + hf.get_dynamic_cooldown_amount(max_vote_rate), target, amount)
+                    continuous_cooldown = time.time() + hf.get_dynamic_cooldown_amount(max_vote_rate)
+                    hf.add_user_to_cooldown(user, continuous_cooldown,
+                                            target, amount - max_vote_rate)
                     hf.set_last_vote_time(target, time.time())
-                    output += convert_seconds(amount)
+                    output += convert_seconds(amount + max_vote_rate)
 
                 else:
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target) + amount)
@@ -509,6 +600,7 @@ def vote(to_parse, vote_manager: VoteManager):
     else:
         return "Salamandbot shakes its head. It scratches several words in the sand: !vote <name> <amount>."
 
+
 # ======================================== Woodchips ===================================================================
 def woodchips(to_parse=None):
     """
@@ -516,5 +608,121 @@ def woodchips(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{to_parse.author.name} has gathered {hf.get_points(to_parse.author.name.lower())} woodchips."
+    output = f"{to_parse.author.name} has gathered {hf.get_woodchips(to_parse.author.name.lower())} woodchips."
     return output
+
+
+def redeem(to_parse=None):
+    """
+    Redeems a specified redeemable.
+    :param to_parse: The information on what to redeem
+    :return:
+    """
+    message = to_parse.content
+    message_args = message.split()
+    arg_count = len(message_args)
+    user = to_parse.author.name
+
+    if arg_count == 1:
+        return "Here are the redeemable options: recap, drink, pet, story, break, add, move, top."
+
+    redeemables = {
+        "recap": redeemable.Redeemable("recap", "Recap that story Newt!", -200, user),
+        "drink": redeemable.Redeemable("drink", "Take a drink!", -500, user),
+        "pet": redeemable.Redeemable("pet", "Pet that cat!", -600, user),
+        "story": redeemable.Redeemable("story", "Story time!", -1000, user),
+        "break": redeemable.Redeemable("break", "Time to hit the road.", -3000, user)
+    }
+
+    if arg_count >= 3:
+        args = " ".join(message.split(" ")[2:])
+        redeemables["add"] = redeemable.Redeemable("add", "Adding your game to the list!", -20000,
+                                                   user, hf.add_to_votes, args)
+        redeemables["move"] = redeemable.Redeemable("move", "Moving " + args + " to the top of the list!", -30000,
+                                                    user, hf.move_option_to_top, args)
+        redeemables["top"] = redeemable.Redeemable("top", "Adding and moving " + args + " to the top of the list!",
+                                                   -45000,
+                                                   user, hf.create_and_move, args)
+
+    if message_args[1] in redeemables.keys():
+        if arg_count == 2:
+            if redeemables[message_args[1].lower()].redeem():
+                return redeemables[message_args[1].lower()].description
+            else:
+                return "You don't have enough woodchips for that."
+        if arg_count >= 3:
+            if redeemables[message_args[1].lower()].redeem():
+                return redeemables[message_args[1].lower()].description
+            else:
+                return "You don't have enough woodchips for that."
+
+
+# ============================================ Story ===================================================================
+def story(to_parse):
+
+    output = ''
+
+    message = to_parse.content
+    message_args = message.split()
+    arg_count = len(message_args)
+    user = to_parse.author.name
+
+    # parse the input to something usable by the script
+    data_input = message.split()[2:]
+    title = ' '.join(data_input)
+
+    # two word commands
+    if arg_count == 2:
+        if message_args[1].lower() == "display":
+            return hf.display_story_list()
+        if message_args[1].lower() == "selected":
+            story_list = hf.load_story_list()
+            output = ""
+            for story in hf.get_selected_stories_list():
+                output += f"{story_list[story]['name']},"
+            return output[:-1]
+        if message_args[1].lower() == "roll":
+            if hf.get_selected_stories_list():
+                output = hf.roll_story()[1]
+                return output
+            else:
+                output = hf.roll_unselected_story()[1]
+                return output
+        if message_args[1].lower() == "pending":
+            return hf.display_pending_list()
+        if message_args[1].lower() == "links":
+            return hf.display_pending_links()
+
+    # single word commands
+    if arg_count == 1:
+        return hf.display_story_list()
+
+    # variable length commands
+    if arg_count > 1:
+        if message_args[1].lower() == "info":
+            return f"Info for {title}: {hf.story_info(data_input)}"
+        if message_args[1].lower() == "select":
+            story_added = hf.select_story(title, user)
+            if story_added:
+                return f"Added {title} to the next story spin."
+            else:
+                return "That story is already in the next story spin."
+        if message_args[1].lower() == "add":
+            title = ' '.join(data_input[:-1])
+            # get the final value and save is as the link
+            info = message_args[arg_count - 1].lower()
+
+            if data_input:
+                return hf.add_story(title, info, user)
+        if message_args[1].lower() == ("remove" or "subtract"):
+            return hf.remove_story(title)
+        if message_args[1].lower() == "restore":
+            return hf.re_add(title)
+        if message_args[1].lower() == "approve":
+            return hf.approve_story(title)
+        if message_args[1].lower() == "reject":
+            return hf.reject_story(title)
+
+
+def stories(to_parse):
+    return story(to_parse)

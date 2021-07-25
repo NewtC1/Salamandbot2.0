@@ -9,6 +9,7 @@ google-api-python-client = "*"
 toml = "*"
 irc = "*"
 playsound = "*"
+"discord.py" = "*"
 
 [requires]
 python_version = "3.9"

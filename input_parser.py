@@ -33,7 +33,11 @@ class InputParser:
         elif source == "youtube":
             pass
 
-        first_word = content.split()[0]  # Gets the first word of the input to determine the command it should run
+        if content:
+            first_word = content.split()[0]  # Gets the first word of the input to determine the command it should run
+        else:
+            return ""
+
         output = ""
         if first_word == "!vote": # requires special command lines due to needing access to the vote manager
             output = f"{output_prefix}{self.commands[first_word](to_parse, vote_manager=self.vote_manager)}"
