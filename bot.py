@@ -12,7 +12,6 @@ from bots.twitch_bot import TwitchBot
 from bots.discord_bot import DiscordBot
 import utils.commands as command_list
 import utils.helper_functions as helper_functions
-import utils.sfx as sfx
 from voting.vote_manager import VoteManager
 import events.overheat as overheat
 import events.stories as stories
@@ -236,13 +235,30 @@ async def start_loop():
         # create the function with the same name as the sfx file
         sfx_file_path = os.path.join(helper_functions.sfx_file, sfx)
 
-        def play_sfx(to_parse=None):
-            x = f"def x():" \
-                f"  helper_functions.playsound(r'{sfx_file_path}')"
-            exec(x)
+        if not os.path.exists(os.path.join(os.getcwd(), "utils/sfx.py")):
+            with open("utils/sfx.py", "w+", encoding="utf-8-sig") as filestream:
+                template = "import utils.helper_functions as helper_functions"
+                filestream.write(template)
 
-        # add the function to the parser
-        parser.add_command(f"!{sfx.split('.')[0].lower()}", play_sfx)
+        with open("utils/sfx.py", "r", encoding="utf-8-sig") as filestream:
+            data = filestream.read()
+
+        sfx_name = sfx.split('.')[0]
+        function = f"\ndef {sfx_name}(to_parse=None): " \
+                   f"\n\thelper_functions.playsound(r\"{sfx_file_path}\") " \
+                   f"\n\treturn \"Playing {sfx_name}.\""
+
+        if function not in data:
+            data += function
+
+        with open("utils/sfx.py", "w", encoding="utf-8-sig") as filestream:
+            filestream.write(data)
+
+    import utils.sfx as sfx
+    # add the function to the parser
+    sfx_commands = getmembers(sfx, isfunction)
+    for command in sfx_commands:
+        parser.add_command(f"!{command[0]}", command[1])
 
     print(f"Commands: {parser.commands}")
 
