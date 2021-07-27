@@ -134,3 +134,5 @@ value/logs.json
 value/points.json
 value/shields.txt
 value/vote.json
+
+utils/sfx.py
