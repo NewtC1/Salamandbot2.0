@@ -467,11 +467,15 @@ def roll_story():
 def roll_unselected_story():
     data = load_story_list()
     stories = data.keys()
-
     choice = random.choice(list(stories))
+    selection_name = story_name(choice)
     retval = "Rolling from the main story list. The story that was selected was: " + story_name(
         choice) + ". You can follow along at " + story_info(
         choice)
+
+    if story_author(choice):
+        retval = f"The story that was selected was: {selection_name} written by {story_author(choice)}." \
+                 f" You can follow along at {story_info(choice)}."
 
     user = data[choice.lower()]["contributor"]
     value = data[choice.lower()]["value"]
