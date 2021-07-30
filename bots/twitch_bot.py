@@ -65,7 +65,8 @@ class TwitchBot(commands.bot.Bot):
             'client-id': hf.client_id,
             'Authorization': f'Bearer {hf.irc_token}'
         }
-        response = requests.get(f"https://api.twitch.tv/helix/streams?login={hf.target_channel}", headers=headers)
+        target_user = requests.get(f"https://api.twitch.tv/helix/users?login={hf.target_channel}", headers=headers).json()['data'][0]['id']
+        response = requests.get(f"https://api.twitch.tv/helix/streams?user_id={target_user}", headers=headers)
         if response.status_code == requests.codes.ok:
             if response.json()["data"]:
                 is_live = True
