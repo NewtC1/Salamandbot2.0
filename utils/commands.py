@@ -572,7 +572,7 @@ def vote(to_parse, vote_manager: VoteManager):
             try:
                 amount = int(amount)
                 user_logs = hf.get_log_count(user)
-                if amount >= user_logs:
+                if amount > user_logs:
                     return "You don't have enough logs for that."
 
                 if amount > max_vote_rate:
