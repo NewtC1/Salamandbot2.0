@@ -63,30 +63,34 @@ class VoteManager:
 
             # get the list of scheduled events
             schedule = hf.get_vote_data()["Active Profile Schedule"]
-            schedule_times = []
-            now = time.localtime()
-            for item_time in schedule.keys():
-                new_time = time.strptime(f"{now.tm_year} {now.tm_mon} {now.tm_mday} {item_time}", '%Y %m %d %H:%M')
-                schedule_times.append(new_time)
-            schedule_times.sort()
 
-            next_profile_change = None
-            if schedule_times:
-                # find first time that would be the next event
-                for times in schedule_times:
-                    if times > now:
-                        break
-                    next_profile_change = times
+            if schedule:
+                schedule_times = []
+                now = time.localtime()
+                for item_time in schedule.keys():
+                    new_time = time.strptime(f"{now.tm_year} {now.tm_mon} {now.tm_mday} {item_time}", '%Y %m %d %H:%M')
+                    schedule_times.append(new_time)
+                schedule_times.sort()
 
-            if next_profile_change:
-                # get the original key again
+                next_profile_change = None
+                if schedule_times:
+                    # find first time that would be the next event
+                    for times in schedule_times:
+                        if times > now:
+                            break
+                        next_profile_change = times
+
+                if next_profile_change:
+                    # get the original key again
+                    schedule_index = f"{next_profile_change[3]}:{next_profile_change[4]}"
+                    # if the active profile is already the pending profile, then return none.
+                    if hf.get_active_profile() == schedule[schedule_index]:
+                        return None
+
                 schedule_index = f"{next_profile_change[3]}:{next_profile_change[4]}"
-                # if the active profile is already the pending profile, then return none.
-                if hf.get_active_profile() == schedule[schedule_index]:
-                    return None
-
-            schedule_index = f"{next_profile_change[3]}:{next_profile_change[4]}"
-            return schedule_index
+                return schedule_index
+            else:
+                return None
 
         next_profile = get_pending_profile_change()
         if next_profile:
