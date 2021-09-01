@@ -70,3 +70,6 @@ decay_amount = 1
 log_gain_multiplier = 0.2
 follow_bonus = 300
 active_watch_bonus = 50
+
+[loyalty_points]
+loyalty_blacklist = ["newtc"]

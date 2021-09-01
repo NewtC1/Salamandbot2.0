@@ -33,6 +33,7 @@ accounts_file = os.path.join(os.path.dirname(__file__), '..', settings['director
 story_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['story_file'])
 base_cooldown = settings['settings']['cooldown_time']
 max_vote_rate = settings['settings']['max_vote_rate']
+loyalty_blacklist = settings["loyalty_points"]["loyalty_blacklist"]
 
 
 def get_vote_option_value(option):
