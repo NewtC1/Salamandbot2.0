@@ -82,7 +82,7 @@ class VoteManager:
 
                 if next_profile_change:
                     # get the original key again
-                    schedule_index = f"{next_profile_change[3]}:{next_profile_change[4]}"
+                    schedule_index = f"{next_profile_change[3]}:{str(next_profile_change[4]).zfill(2)}"
                     # if the active profile is already the pending profile, then return none.
                     if hf.get_active_profile() == schedule[schedule_index]:
                         return None
