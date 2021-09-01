@@ -71,6 +71,7 @@ def generate_missing_values():
         "Last Decay": 0,
         "Users On Cooldown": {},
         "Active Profile": "Default",
+        "Active Profile Schedule": {},
         "Profiles": {
             "Default": {}
         }

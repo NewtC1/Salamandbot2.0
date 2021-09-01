@@ -133,6 +133,18 @@ def get_active_profile():
     return return_value
 
 
+def set_active_profile(target):
+    data = get_vote_data()
+    data["Users On Cooldown"] = {}
+    profiles = data["Profiles"].keys()
+    if target in profiles:
+        data["Active Profile"] = target
+        update_vote_data(data)
+        return True
+    else:
+        return False
+
+
 def add_vote_option(target, value, profile):
     data = get_vote_data()
     data['Profiles'][profile][target] = {
