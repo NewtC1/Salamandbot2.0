@@ -87,7 +87,7 @@ class VoteManager:
                     if hf.get_active_profile() == schedule[schedule_index]:
                         return None
 
-                schedule_index = f"{next_profile_change[3]}:{next_profile_change[4]}"
+                schedule_index = f"{next_profile_change[3]}:{str(next_profile_change[4]).zfill(2)}"
                 return schedule_index
             else:
                 return None
