@@ -624,7 +624,7 @@ def redeem(to_parse=None):
     user = to_parse.author.name
 
     if arg_count == 1:
-        return "Here are the redeemable options: recap, drink, pet, story, break, add, move, top."
+        return "Here are the redeemable options: recap: 200, drink: 500, pet: 600, story: 1000, break: 3000, add: 20000, move: 30000, top: 45000."
 
     redeemables = {
         "recap": redeemable.Redeemable("recap", "Recap that story Newt!", -200, user),
