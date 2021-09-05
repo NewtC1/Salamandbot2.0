@@ -441,7 +441,7 @@ def checkoptions(to_parse=None):
     :param to_parse: Expected none
     :return:
     """
-    return_value = ''
+    return_value = f'Profile: {hf.get_active_profile()}. '
     votes = hf.get_vote_data()
     active = hf.get_active_profile()
     options = {}
