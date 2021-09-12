@@ -218,16 +218,39 @@ def set_log_count(user, value):
         create_new_user(user, 0, value)
 
 
-def get_shield_count():
+def load_shields():
     with open(shields_file, "r", encoding="utf-8-sig") as file:
-        shields = int(file.read())
+        shields = json.load(file)
 
     return shields
 
 
-def set_shield_count(value):
+def update_shields(shield_dict):
     with open(shields_file, "w+", encoding="utf-8-sig") as file:
-        file.write(str(value))
+        json.dump(shield_dict, file)
+
+
+def get_shield_count():
+    shields = load_shields()
+
+    return shields["shield_count"]
+
+
+def set_shield_count(value):
+    shields = load_shields()
+    shields["shield_count"] = int(value)
+    update_shields(shields)
+
+
+def get_shield_damage():
+    shields = load_shields()
+    return shields["shield_damage"]
+
+
+def set_shield_damage(value):
+    shields = load_shields()
+    shields["shield_damage"] = value
+    update_shields(shields)
 
 
 def get_users_on_cooldown() -> list:
