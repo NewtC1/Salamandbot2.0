@@ -51,10 +51,25 @@ crit_destruction = true
 ##################
 submission_reward = 50
 
+#####################
+# Moonrise settings #
+#####################
+campfireAttackSafetyThreshold = 200  # if there are still shields left, the campfire will not go below this.
+shield_health = 800
+combo_counter_cap = 2.0
+
+# soil ability cooldowns
+soil_kill_order_max = 1
+soil_cooldown_duration = 900
+
+# bjorn ability cooldowns
+bjorn_splinter_order_max = 3
+bjorn_cooldown_duration = 600
+
 [directories]
 values = "values"
 campfire = "values/campfire.txt"
-shields_file = "values/shields.txt"
+shields_file = "values/shields.json"
 woodchips_file = "values/points.json"
 votes_file = "values/vote.json"
 logs_file = "values/logs.json"

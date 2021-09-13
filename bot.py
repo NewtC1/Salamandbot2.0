@@ -62,7 +62,11 @@ def generate_missing_values():
             logging.info(f"[Bot] Generating missing values file for {file_dir}")
 
     generate_value(campfire_dir, "0")
-    generate_value(shield_dir, "0")
+    shield_template = json.dumps({
+        "shield_count": 0,
+        "shield_damage": 0
+    })
+    generate_value(shield_dir, shield_template)
     woodchips_template = json.dumps({
         "Challenges": {}
     })

@@ -726,3 +726,95 @@ def story(to_parse):
 
 def stories(to_parse):
     return story(to_parse)
+
+# ==================================================== Moonrise ========================================================
+def bjorn():
+    # splinter command
+    if data.GetParam(1).lower() == "splinter":
+        if bjorn_splinter_order_remaining > 0 and not bjorn_on_cooldown:
+            if current_attacker.GetIncResist() == 0:
+                respond('Bjorn doesn\'t even bother to move. "No armor, no point."')
+                return
+            if attacker_dead:
+                respond('"Nothing\'s there yet." Bjorn leans back against the tree he\'s climbed.')
+                return
+            current_attacker.SetIncResist(0)
+            respond('Bjorn wordlessly walks from the Campgrounds. Minutes pass. A scream sounds in the distance. '
+                    'Bjorn returns. "Job\'s done." He slumps back onto his log.')
+            bjorn_splinter_order_remaining -= 1
+            bjorn_on_cooldown = True
+            bjorn_went_on_cooldown = time()
+            Parent.SetOBSSourceRender("Bjorn Ready", False, "Capture", callback)
+            if bjorn_splinter_order_remaining == 0:
+                Parent.SetOBSSourceRender("Bjorn Splinter", False, "Capture", callback)
+        else:
+            respond('Bjorn shakes his shaggy head and goes back to sleep.')
+
+    # delay command
+    if data.GetParam(1).lower() == "delay":
+        if not bjorn_on_cooldown:
+            if attacker_dead:
+                respond('Bjorn shrugs. "Nothing out there right now."')
+                return
+            delay = delay * 5
+            respond('Bjorn once more disappears into the trees, taking his bow and several poisoned arrows. '
+                    'It\'s hard to track his movements as he disappears into the gloom. A few minutes later he '
+                    'returns. "That should slow it down for a bit."')
+            bjorn_on_cooldown = True
+            bjorn_went_on_cooldown = time()
+            Parent.SetOBSSourceRender("Bjorn Ready", False, "Capture", callback)
+        else:
+            respond('"Not yet." Bjorn hunkers under his blanket. "The big ones are still coming."')
+
+def soil():
+    if data.GetParam(1).lower() == "kill":
+        if soil_kill_orders_remaining > 0 and not soil_on_cooldown:
+            if attacker_dead:
+                respond('"Attack what? There\'s nothing out there." Soil looks at you, clearly doubting your '
+                        'sanity.')
+                return
+            delay = kill_attacker()
+            respond("Soil grins and plants a hoof on the ground. "
+                    "Vines, roots and flowers erupt from the ground and strangle, impale and dowse the attacker. "
+                    "Her work done, Soil returns to staring at the fire.")
+            soil_kill_orders_remaining -= 1
+            soil_went_on_cooldown = time()
+            soil_on_cooldown = True
+            Parent.SetOBSSourceRender("Soil Ready", False, "Capture", callback)
+            if soil_kill_orders_remaining == 0:
+                Parent.SetOBSSourceRender("Soil Kill", False, "Capture", callback)
+        else:
+            respond('"I think we can wait this one out a bit. Let me know when it actually breaks through." Soil '
+                    'grins, showing off her sharpened teeth. "What\'s life without a bit of danger?"')
+
+    # restore command. resets the shield's damage value.
+    if data.GetParam(1).lower() == "restore":
+        if not soil_on_cooldown:
+            if shield_damage == 0:
+                respond('"Nuh-uh chief. Those trees are as green as they get." Soil leans back on her log, '
+                        'twirling a glowing moonflower in her hand. "Maybe save my talents for something actually '
+                        'threatening? Just a thought."')
+                return
+
+            with open(shield_damage_dir, 'w', encoding='utf-8-sig') as file:
+                file.write("0")
+            respond("Placing a hand on the nearest damaged shield, Soil convinces life to flow into the tree. "
+                    "Sap flows back into the gaping wounds in its bark, and the bark reseals.")
+            soil_went_on_cooldown = time()
+            soil_on_cooldown = True
+            Parent.SetOBSSourceRender("Soil Ready", False, "Capture", callback)
+        else:
+            respond('"Nope. Can\'t do that too often. Making new life is one thing, but healing? '
+                    'I\'m not made for that." Soil looks down at her hooves, lost in thought. '
+                    '"What *am* I made for?"')
+
+def imp():
+    if data.GetParamCount() > 1:
+        answer = " ".join(data.Message.split(" ")[1:])
+        result = current_attacker.check_answer(answer)
+        pending_imp_results.append(result)
+        # get rid of the imp after they try and answer the question
+        respond("The imp disappears with a rude noise and a cackle. The last thing you hear is \"" + result + ".\"")
+        delay = kill_attacker()
+    else:
+        respond(current_attacker.riddle)
