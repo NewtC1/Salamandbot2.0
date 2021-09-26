@@ -1,4 +1,4 @@
-from DarkForestCreature import DarkForestCreature
+from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 
 """Ashvine(60, 1.0, 30, 1.0, 60, 50), # dpm of 30."""
 

@@ -1,4 +1,4 @@
-from DarkForestCreature import DarkForestCreature
+from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 
 """Beast(120, 1.0, 70, 1.0, 100, 300)"""  # dpm of 35, increases over time
 

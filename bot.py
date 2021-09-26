@@ -15,6 +15,7 @@ import utils.helper_functions as helper_functions
 from voting.vote_manager import VoteManager
 import events.overheat as overheat
 import events.stories as stories
+import events.moonrise as moonrise
 
 settings = helper_functions.load_settings()
 bots = {}
@@ -23,6 +24,7 @@ is_active = False
 TWITCH_CHANNEL = os.environ['CHANNEL']
 BOT_TICK_RATE = 600
 WOODCHIP_PAYOUT_RATE = 32
+
 
 def parse_args():
     """
@@ -160,12 +162,20 @@ async def tick():
 
 async def overheat_tick():
     global is_live
-
-    if is_live:
+    if is_live and settings["events"]["overheat_active"]:
         overheat_output = overheat.overheat()
         if overheat_output:
             for bot in bots.keys():
                 await bots[bot].send_message(overheat_output)
+
+
+async def moonrise_tick(manager: moonrise.MoonriseManager):
+    global is_live
+    if is_live and settings["events"]["moonrise_active"]:
+        moonrise_output = manager.tick()
+        if moonrise_output:
+            for bot in bots.keys():
+                await bots[bot].send_message(moonrise_output)
 
 
 async def update_active_status():
@@ -209,6 +219,7 @@ async def start_loop():
     vote_manager = VoteManager(logger=logging.getLogger())
 
     story_manager = stories.StoryManager()
+    moonrise_manager = moonrise.MoonriseManager(logger=logging.getLogger())
 
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clocks...")
@@ -221,10 +232,14 @@ async def start_loop():
                                       overheat_tick: ""
                                       },
                        tick_frequency=1)
+    moonrise_clock = Clock(logger=logging.getLogger(),
+                           function_dict={moonrise_tick: moonrise_manager},
+                           tick_frequency=5
+                           )
 
     # parses inputs
     logging.info("[Bot] Creating input parser...")
-    parser = Input(logger=logging.getLogger(), vote_manager=vote_manager)
+    parser = Input(logger=logging.getLogger(), vote_manager=vote_manager, moonrise_manager=moonrise_manager)
 
     # create any files that are missing
     generate_missing_values()
@@ -275,7 +290,8 @@ async def start_loop():
     discord = DiscordBot(parser)
     vote_manager.bots = [bots["twitch"]]
 
-    await asyncio.gather(clock.run(), bots["twitch"].start(), discord.start(os.environ["DISCORD_TOKEN"]), vote_clock.run())
+    await asyncio.gather(clock.run(), bots["twitch"].start(), discord.start(os.environ["DISCORD_TOKEN"]),
+                         vote_clock.run(), moonrise_clock.run())
 
 
 args = parse_args()

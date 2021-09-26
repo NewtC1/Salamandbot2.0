@@ -48,11 +48,6 @@ class VoteManager:
 
         return amount - amount_to_increase if amount != "all" else "all"
 
-    def add_vote(self, user, target, amount):
-        logging.info(f"[Voting] Adding vote: {vote.voter} voting {vote.amount} for {vote.target}")
-        cooldown = hf.get_dynamic_cooldown_amount(amount)
-        hf.add_user_to_cooldown(user, time.time() + cooldown, target, amount)
-
     async def tick_vote(self):
 
         def get_pending_profile_change():
@@ -157,8 +152,7 @@ class VoteManager:
 
         # if it's time to decay again
         if time.time() - last_decay > seconds_in_a_day:
-            with open(hf.shields_file, encoding="utf-8-sig", mode="r") as f:
-                decay_threshold = int(f.read())
+            decay_threshold = hf.get_shield_count()
 
             vote_data = hf.get_vote_data()
             possible_votes = list(vote_data["Profiles"][hf.get_active_profile()].keys())

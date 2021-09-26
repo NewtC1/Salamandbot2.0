@@ -51,7 +51,7 @@ class TwitchBot(commands.bot.Bot):
             # await self.join_channels(self.initial_channels)
             for channel in self.initial_channels:
                 receiver_channel = self.get_channel(channel)
-                await receiver_channel.send(message)
+                await receiver_channel.send(f"/me {message}")
         else:
             await asyncio.sleep(1)
 

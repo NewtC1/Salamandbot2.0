@@ -1,4 +1,4 @@
-from DarkForestCreature import DarkForestCreature
+from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 import random
 
 # Thunderjaw(1, 1.0, 5, 1.0, 600, 50)

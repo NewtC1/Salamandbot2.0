@@ -1,4 +1,4 @@
-from DarkForestCreature import DarkForestCreature
+from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 
 """Spider(60, 1.0, 15, 1.0, 100, 240), # dpm of 15"""
 

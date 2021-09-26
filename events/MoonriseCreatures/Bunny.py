@@ -1,4 +1,4 @@
-from DarkForestCreature import DarkForestCreature
+from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 """Bunny(0,0,0,0,0, 1800)] # unspeakably evil"""
 
 

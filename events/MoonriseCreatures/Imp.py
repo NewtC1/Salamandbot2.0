@@ -1,6 +1,6 @@
 import random
 
-from DarkForestCreature import DarkForestCreature
+from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 
 
 class Imp(DarkForestCreature):
@@ -41,8 +41,7 @@ class Imp(DarkForestCreature):
             "dragon" = double base reward
         :return:
         """
-        riddles_fix = self.riddles.keys()*2
-        self.riddle = random.choice(riddles_fix)
+        self.riddle = random.choice(list(self.riddles.keys()))
 
         return
 
@@ -52,7 +51,7 @@ class Imp(DarkForestCreature):
         :return:
         """
         retval = "Oblivious to the fire trying to destroy it, " \
-                 "the tiny creature chokes out a question between giggles: \"" + self.riddle + "\""
+                 f"the tiny creature chokes out a question between giggles: \"{self.riddle}\""
 
         return retval
 

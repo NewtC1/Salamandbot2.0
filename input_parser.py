@@ -5,7 +5,7 @@ class InputParser:
     input_queue = []
     commands = {}
 
-    def __init__(self, logger=None, active_clock=None, vote_manager=None):
+    def __init__(self, logger=None, active_clock=None, vote_manager=None, moonrise_manager=None):
         """
         Listens for results fired from input sources
         :param input_sources: The bots that are sending events to the input parser
@@ -13,6 +13,7 @@ class InputParser:
         self.logger = logger
         self.clock = active_clock
         self.vote_manager = vote_manager
+        self.moonrise_manager = moonrise_manager
 
     def parse_input(self, source, to_parse=None):
         """
@@ -41,6 +42,8 @@ class InputParser:
         output = ""
         if first_word == "!vote": # requires special command lines due to needing access to the vote manager
             output = f"{output_prefix}{self.commands[first_word](to_parse, vote_manager=self.vote_manager)}"
+        elif first_word == "!imp" or first_word == "!soil" or first_word == "!bjorn": # requires special command lines due to needing access to the moonrise manager
+            output = f"{output_prefix}{self.commands[first_word](to_parse, moonrise_manager=self.moonrise_manager)}"
         elif first_word in self.commands.keys():
             output = f"{output_prefix}{self.commands[first_word](to_parse)}"
 
