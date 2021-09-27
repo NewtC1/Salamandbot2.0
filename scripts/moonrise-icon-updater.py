@@ -49,6 +49,7 @@ def script_update(settings):
     global status_directory
 
     interval = obs.obs_data_get_int(settings, "interval")
+    status_directory = obs.obs_data_get_string(settings, "Data directory")
     obs.timer_remove(update_icons)
 
     if status_directory and interval:
