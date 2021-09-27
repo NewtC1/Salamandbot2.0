@@ -28,6 +28,7 @@ class MoonriseManager:
 
         self.pending_imp_results = []
         self.imp_no_answer = 0
+        self.imp_cooldown = False
         # Set the baseline attacker
         self.current_attacker = Imp.Imp()
         # set start values
@@ -36,7 +37,7 @@ class MoonriseManager:
         self.attacker_dead = False
 
         # combo counter
-        self.combo_counter = 0
+        self.combo_counter = 1.0
         self.combo_counter_cap = 2.0
 
         # shields
@@ -54,20 +55,25 @@ class MoonriseManager:
         return_value = ""
 
         if self.soil_on_cooldown:
-            if self.soil_went_on_cooldown + self.soil_cooldown_duration < time():
+            soil_off_cooldown = (self.soil_went_on_cooldown + self.soil_cooldown_duration) - time()
+            logging.info(f"[Moonrise] Time until Soil comes off Cooldown: {soil_off_cooldown}")
+
+            if soil_off_cooldown < 0:
                 self.soil_on_cooldown = False
                 logging.info("[Moonrise] Soil coming off cooldown")
                 # Parent.SetOBSSourceRender("Soil Ready", True, "Capture", callback)
                 set_soil_ready(True)
 
         if self.bjorn_on_cooldown:
-            if self.bjorn_went_on_cooldown + self.bjorn_cooldown_duration < time():
+            bjorn_off_cooldown = (self.bjorn_went_on_cooldown + self.bjorn_cooldown_duration) - time()
+            logging.info(f"[Moonrise] Time until Bjorn comes off Cooldown: {bjorn_off_cooldown}")
+            if bjorn_off_cooldown < 0:
                 self.bjorn_on_cooldown = False
                 logging.info("[Moonrise] Bjorn coming off cooldown")
                 # Parent.SetOBSSourceRender("Bjorn Ready", True, "Capture", callback)
                 set_bjorn_ready(True)
 
-        # logging.info(f"[Moonrise] Time until the next attack: {self.delay - (time()-self.previous_time)}")
+        logging.info(f"[Moonrise] Time until the next attack: {self.delay - (time()-self.previous_time)}")
         if int(time() - self.previous_time) > self.delay:
             # spawn a new attacker if dead
             if self.attacker_dead:
@@ -195,8 +201,8 @@ class MoonriseManager:
                     delay = scope.kill_attacker()
                     campfire_attack_retval += " The attacker has been slain. You gain " + str(delay) + \
                                               " more seconds until the next attack."
-                    campfire_attack_retval += ' Combo counter is at ' + str(self.combo_counter)
-                    logging.info('[Moonrise] Combo counter is at ' + str(self.combo_counter))
+                    campfire_attack_retval += f' Combo counter is at {self.combo_counter}'
+                    logging.info(f'[Moonrise] Combo counter is at {self.combo_counter}')
                 else:
                     scope.current_attacker.SetIncResist(inc_resist - 1)
                     if not str(scope.current_attacker.__class__.__name__).lower() == "imp":
@@ -229,12 +235,18 @@ class MoonriseManager:
     def kill_attacker(self):
         if self.combo_counter < self.combo_counter_cap:
             self.combo_counter += 0.1
+            # sometimes the syetem doesn't calculate accurately, so we need to round to 1 digit.
+            self.combo_counter = round(self.combo_counter, 1)
 
-        reward = self.current_attacker.getReward()
+        if self.current_attacker.__class__.__name__.lower() == "imp":
+            self.imp_cooldown = True
+        else:
+            self.imp_cooldown = False
+        reward = self.current_attacker.getReward() * self.combo_counter
         self.attacker_dead = True
 
         logging.info(
-            f"[Moonrise] Killing attacker {self.current_attacker.name}, gaining {reward*self.combo_counter}"
+            f"[Moonrise] Killing attacker {self.current_attacker.name}, gaining {reward* self.combo_counter}"
             f" seconds before next attack.")
 
         return reward
@@ -268,18 +280,16 @@ class MoonriseManager:
 
         if self.get_combo_counter() < 1.2:
             if roll < 20:
-                return Imp.Imp()
+                return self.spawn_imp()
             elif roll < 50:
                 return Spider.Spider()
             elif roll < 80:
                 return Beast.Beast()
-            elif roll < 90:
-                return Colossus.Colossus()
             else:
-                return Bunny.Bunny()
+                return Colossus.Colossus()
         elif self.get_combo_counter() < 1.4:
             if roll < 10:
-                return Imp.Imp()
+                return self.spawn_imp()
             elif roll < 30:
                 return Spider.Spider()
             elif roll < 40:
@@ -288,13 +298,11 @@ class MoonriseManager:
                 return Colossus.Colossus()
             elif roll < 85:
                 return Dragon.Dragon()
-            elif roll < 90:
-                return Thunderjaw.Thunderjaw()
             else:
-                return Bunny.Bunny()
+                return Thunderjaw.Thunderjaw()
         elif self.get_combo_counter() < 1.8:
             if roll < 5:
-                return Imp.Imp()
+                return self.spawn_imp()
             elif roll < 40:
                 return Beast.Beast()
             elif roll < 50:
@@ -447,6 +455,12 @@ class MoonriseManager:
         else:
             return 'Bjorn shakes his shaggy head and goes back to sleep.'
 
+    def spawn_imp(self):
+        if not self.imp_cooldown:
+            return Imp.Imp()
+        else:
+            self.imp_cooldown = False
+            return Bunny.Bunny()
 
 def set_bjorn_ready(visibility: bool):
     with open(moonrise_status_dir, encoding="utf-8-sig", mode="r") as f:
