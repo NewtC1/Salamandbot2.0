@@ -2,7 +2,7 @@ import obspython as obs
 import json
 
 interval = 5
-status_directory = "C:\\Users\\james\\PycharmProjects\\Salamandbot2.0\\values\\moonrise_status.json"
+status_directory = ""
 
 
 # ------------------------------------------------------------
@@ -49,7 +49,7 @@ def script_update(settings):
     global status_directory
 
     interval = obs.obs_data_get_int(settings, "interval")
-    status_directory = obs.obs_data_get_string(settings, "Data directory")
+    status_directory = obs.obs_data_get_string(settings, "status_directory")
     obs.timer_remove(update_icons)
 
     if status_directory and interval:
@@ -58,7 +58,7 @@ def script_update(settings):
 
 def script_defaults(settings):
     obs.obs_data_set_default_int(settings, "interval", 30)
-    obs.obs_data_set_string(settings, "Data directory", "..\\values\\moonrise_status.json")
+    obs.obs_data_set_string(settings, "status_directory", "..\\values\\moonrise_status.json")
 
 
 def script_properties():
