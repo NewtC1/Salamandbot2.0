@@ -120,7 +120,7 @@ async def payout_woodchips(users=None):
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
     for user in users_in_chat[1]:
         if user not in helper_functions.loyalty_blacklist:
-            helper_functions.set_woodchip_count(user, helper_functions.get_woodchips(user) + WOODCHIP_PAYOUT_RATE)
+            helper_functions.set_woodchip_count(user, helper_functions.get_woodchip_count(user) + WOODCHIP_PAYOUT_RATE)
             # logging.info(f"[Woodchips] {user} gained {WOODCHIP_PAYOUT_RATE} woodchips.")
 
 

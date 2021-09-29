@@ -609,7 +609,7 @@ def woodchips(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{to_parse.author.name} has gathered {hf.get_woodchips(to_parse.author.name.lower())} woodchips."
+    output = f"{to_parse.author.name} has gathered {hf.get_woodchip_count(to_parse.author.name.lower())} woodchips."
     return output
 
 
@@ -745,14 +745,35 @@ def bjorn(to_parse, moonrise_manager):
 
 
 def soil(to_parse, moonrise_manager):
-    return_value = ""
     message = to_parse.content
+    if len(message.split()) < 2:
+        return "\"Sup?\""
+
     if message.split()[1] == "kill":
         return moonrise_manager.soil_kill()
 
     # restore command. resets the shield's damage value.
     if message.split()[1] == "restore":
         return moonrise_manager.soil_restore()
+
+
+def cicero(to_parse, moonrise_manager):
+    message = to_parse.content
+
+    if len(message.split()) < 2:
+        return "Cicero looks up expectantly, his wide eyes locked on you. \"A sale?\""
+
+    if message.split()[1] == "buy":
+        return moonrise_manager.cicero_buy(to_parse.author.name)
+
+    if message.split()[1] == "check":
+        return moonrise_manager.cicero_check()
+
+    if message.split()[1] == "use":
+        return moonrise_manager.cicero_use()
+
+    if message.split()[1] == "sale":
+        return moonrise_manager.cicero_sale()
 
 
 def imp(to_parse, moonrise_manager):

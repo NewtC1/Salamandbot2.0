@@ -5,6 +5,8 @@ from time import time
 
 from utils import helper_functions as hf
 from events.MoonriseCreatures import Dragon, Beast, Colossus, Spider, Ashvine, Bunny, Thunderjaw, Imp, SpiderQueen
+from events.MoonriseArtifacts.Artifact import Artifact
+from events.MoonriseArtifacts.Tusk import Tusk
 
 moonrise_status_dir = hf.settings["directories"]["moonrise_status"]
 
@@ -25,6 +27,13 @@ class MoonriseManager:
         self.bjorn_on_cooldown = False
         self.bjorn_cooldown_duration = hf.settings["events"]["bjorn_cooldown_duration"]
         self.bjorn_went_on_cooldown = time() - self.bjorn_cooldown_duration
+        # cicero ability
+        self.cicero_buy_order_remaining = hf.settings["events"]["cicero_buy_order_max"]
+        self.cicero_time_heart_remaining = hf.settings["events"]["cicero_time_heart_max"]
+        self.current_artifact = Artifact("A broken teacup",
+                                         "Chipped and shattered, you found this while trapsing through the Forest.",
+                                         0)
+        self.current_artifact_for_sale = Tusk()  # spawn with a tusk for sale.
 
         self.pending_imp_results = []
         self.imp_no_answer = 0
@@ -73,7 +82,7 @@ class MoonriseManager:
                 # Parent.SetOBSSourceRender("Bjorn Ready", True, "Capture", callback)
                 set_bjorn_ready(True)
 
-        logging.info(f"[Moonrise] Time until the next attack: {self.delay - (time()-self.previous_time)}")
+        logging.info(f"[Moonrise] Time until the next attack: {self.delay - (time() - self.previous_time)}")
         if int(time() - self.previous_time) > self.delay:
             # spawn a new attacker if dead
             if self.attacker_dead:
@@ -198,16 +207,16 @@ class MoonriseManager:
                     campfire_attack_retval += ' Flame roars from the Campfire, incinerating the attacker instantly.'
                     hf.set_campfire_count(hf.get_campfire_count() - scope.current_attacker.getHealth())
                     # open and save the new damage
-                    delay = scope.kill_attacker()
-                    campfire_attack_retval += " The attacker has been slain. You gain " + str(delay) + \
+                    scope.delay = scope.kill_attacker()
+                    campfire_attack_retval += " The attacker has been slain. You gain " + str(scope.delay) + \
                                               " more seconds until the next attack."
-                    campfire_attack_retval += f' Combo counter is at {self.combo_counter}'
-                    logging.info(f'[Moonrise] Combo counter is at {self.combo_counter}')
+                    campfire_attack_retval += f' Combo counter is at {scope.combo_counter}'
+                    logging.info(f'[Moonrise] Combo counter is at {scope.combo_counter}')
                 else:
                     scope.current_attacker.SetIncResist(inc_resist - 1)
                     if not str(scope.current_attacker.__class__.__name__).lower() == "imp":
-                        campfire_attack_retval += ' Vicious flames curl around the attacker, but fail to disuade it.' \
-                                  ' Burns race across the creature\'s body.'
+                        campfire_attack_retval += ' Vicious flames curl around the attacker, but fail to dissuade it.' \
+                                                  ' Burns race across the creature\'s body.'
                         campfire_attack_retval += scope.current_attacker.UseSpecialAbility()
                     else:
                         campfire_attack_retval += imp_response(scope)
@@ -246,7 +255,7 @@ class MoonriseManager:
         self.attacker_dead = True
 
         logging.info(
-            f"[Moonrise] Killing attacker {self.current_attacker.name}, gaining {reward* self.combo_counter}"
+            f"[Moonrise] Killing attacker {self.current_attacker.name}, gaining {reward * self.combo_counter}"
             f" seconds before next attack.")
 
         return reward
@@ -320,7 +329,7 @@ class MoonriseManager:
                 return Thunderjaw.Thunderjaw()
             else:
                 return Ashvine.Ashvine()
-        else: # boss encounters
+        else:  # boss encounters
             if roll < 50:
                 return Ashvine.Ashvine()
             else:
@@ -355,7 +364,7 @@ class MoonriseManager:
             retval = "Before your eyes, the damage on the shield tree melts away."
 
         if phrase.lower() == "soraviel":
-            delay = self.kill_attacker()
+            self.delay = self.kill_attacker()
             retval = "As the creature approaches, a mysterious force hits it. It goes sprawling back into the Forest," \
                      " meeting its end on a protruding tree root."
 
@@ -383,6 +392,15 @@ class MoonriseManager:
 
         return retval
 
+    def spawn_imp(self):
+        if not self.imp_cooldown:
+            return Imp.Imp()
+        else:
+            self.imp_cooldown = False
+            return Bunny.Bunny()
+
+    # ========================================= Character Abilities ====================================================
+
     def soil_restore(self):
         if not self.soil_on_cooldown:
             if hf.get_shield_damage() == 0:
@@ -400,7 +418,6 @@ class MoonriseManager:
             return ('"Nope. Can\'t do that too often. Making new life is one thing, but healing? '
                     'I\'m not made for that." Soil looks down at her hooves, lost in thought. '
                     '"What *am* I made for?"')
-
 
     def soil_kill(self):
         if self.soil_kill_order_remaining > 0 and not self.soil_on_cooldown:
@@ -450,17 +467,47 @@ class MoonriseManager:
             if self.bjorn_splinter_order_remaining == 0:
                 set_bjorn_splinter(False)
             return 'Bjorn wordlessly walks from the Campgrounds. Minutes pass. ' \
-                            'A scream sounds in the distance. ' \
-                            'Bjorn returns. "Job\'s done." He slumps back onto his log.'
+                   'A scream sounds in the distance. ' \
+                   'Bjorn returns. "Job\'s done." He slumps back onto his log.'
         else:
             return 'Bjorn shakes his shaggy head and goes back to sleep.'
 
-    def spawn_imp(self):
-        if not self.imp_cooldown:
-            return Imp.Imp()
-        else:
-            self.imp_cooldown = False
-            return Bunny.Bunny()
+    def cicero_buy(self, user_name):
+        if self.cicero_buy_order_remaining > 0:
+
+            if self.current_artifact_for_sale.get_cost_type() == "l":
+                if hf.get_log_count(user_name) >= self.current_artifact_for_sale.get_cost_value():
+                    hf.set_log_count(user_name, hf.get_log_count(user_name) -
+                                     self.current_artifact_for_sale.get_cost_value())
+                else:
+                    return "You don't have enough logs to purchase that."
+
+            if self.current_artifact_for_sale.get_cost_type() == "w":
+                if hf.get_woodchip_count(user_name) >= self.current_artifact_for_sale.get_cost_value():
+                    hf.set_woodchip_count(user_name, hf.get_woodchip_count(user_name) -
+                                          self.current_artifact_for_sale.get_cost_value())
+                else:
+                    return "You don't have enough woodchips to purchase that."
+
+            # users will only get to this line if they are capable of buying the artifact.
+            self.current_artifact = self.current_artifact_for_sale
+            return f"You have purchased {self.current_artifact.get_name()}. This will replace your current artifact. " \
+                   f"It has {self.current_artifact.get_uses()} uses left."
+
+    def cicero_sale(self):
+        item = f"{self.current_artifact_for_sale.name}: {self.current_artifact_for_sale.description}. " \
+               f"It has {self.current_artifact_for_sale.get_uses()} uses left."
+        return item
+
+    def cicero_check(self):
+        item = f"{self.current_artifact.name}: {self.current_artifact.description}. " \
+               f"It has {self.current_artifact.get_uses()} uses remaining."
+        return item
+
+    def cicero_use(self):
+        return self.current_artifact.use(self.current_attacker)
+
+# ================================================== UI functions ======================================================
 
 def set_bjorn_ready(visibility: bool):
     with open(moonrise_status_dir, encoding="utf-8-sig", mode="r") as f:
@@ -492,7 +539,7 @@ def set_soil_ready(visibility: bool):
         json.dump(data, f)
 
 
-def set_soil_kill(visibility:bool):
+def set_soil_kill(visibility: bool):
     with open(moonrise_status_dir, encoding="utf-8-sig", mode="r") as f:
         data = json.load(f)
 

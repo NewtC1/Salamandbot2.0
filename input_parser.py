@@ -42,7 +42,7 @@ class InputParser:
         output = ""
         if first_word == "!vote": # requires special command lines due to needing access to the vote manager
             output = f"{output_prefix}{self.commands[first_word](to_parse, vote_manager=self.vote_manager)}"
-        elif first_word == "!imp" or first_word == "!soil" or first_word == "!bjorn": # requires special command lines due to needing access to the moonrise manager
+        elif first_word == "!imp" or first_word == "!soil" or first_word == "!bjorn" or first_word == "!cicero": # requires special command lines due to needing access to the moonrise manager
             output = f"{output_prefix}{self.commands[first_word](to_parse, moonrise_manager=self.moonrise_manager)}"
         elif first_word in self.commands.keys():
             output = f"{output_prefix}{self.commands[first_word](to_parse)}"

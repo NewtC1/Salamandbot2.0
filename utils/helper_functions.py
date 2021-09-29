@@ -80,7 +80,7 @@ def update_challenges(points_data):
     return points
 
 
-def get_woodchips(user):
+def get_woodchip_count(user):
     accounts = load_accounts()
     user_id = get_user_id(user)
 

@@ -68,6 +68,10 @@ soil_cooldown_duration = 900
 bjorn_splinter_order_max = 3
 bjorn_cooldown_duration = 600
 
+# cicero ability cooldowns
+cicero_buy_order_max = 1
+cicero_time_heart_max = 1
+
 [directories]
 values = "values"
 campfire = "values/campfire.txt"
