@@ -424,16 +424,41 @@ class MoonriseManager:
             if self.attacker_dead:
                 return ('"Attack what? There\'s nothing out there." Soil looks at you, clearly doubting your '
                         'sanity.')
-            self.delay = self.kill_attacker()
-            self.soil_kill_order_remaining -= 1
-            self.soil_went_on_cooldown = time()
-            self.soil_on_cooldown = True
-            set_soil_ready(False)
-            if self.soil_kill_order_remaining == 0:
-                set_soil_kill(False)
-            return ("Soil grins and plants a hoof on the ground. "
-                    "Vines, roots and flowers erupt from the ground and strangle, impale and dowse the attacker. "
-                    "Her work done, Soil returns to staring at the fire.")
+
+            if self.current_attacker.GetIncResist() > 0:
+                roll = random.randint(0,1)
+                if roll == 1:
+                    self.delay = self.kill_attacker()
+                    self.soil_kill_order_remaining -= 1
+                    self.soil_went_on_cooldown = time()
+                    self.soil_on_cooldown = True
+                    set_soil_ready(False)
+                    if self.soil_kill_order_remaining == 0:
+                        set_soil_kill(False)
+                    return "Soil grins and plants a hoof on the ground. Vines, roots and flowers erupt from the " \
+                           "ground and strangle, impale and dowse the attacker. Her work done, Soil returns to " \
+                           "staring at the fire."
+                else:
+                    self.soil_kill_order_remaining -= 1
+                    self.soil_went_on_cooldown = time()
+                    self.soil_on_cooldown = True
+                    set_soil_ready(False)
+                    if self.soil_kill_order_remaining == 0:
+                        set_soil_kill(False)
+                    return "Soil plants her hoof, and bamboo spears shoot from the ground, only to he halted by " \
+                           "the creature's armor. She glances over at you nervously. " \
+                           "\"Well that didn't happen last year.\""
+            else:
+                self.delay = self.kill_attacker()
+                self.soil_kill_order_remaining -= 1
+                self.soil_went_on_cooldown = time()
+                self.soil_on_cooldown = True
+                set_soil_ready(False)
+                if self.soil_kill_order_remaining == 0:
+                    set_soil_kill(False)
+                return ("Soil grins and plants a hoof on the ground. "
+                        "Vines, roots and flowers erupt from the ground and strangle, impale and dowse the attacker. "
+                        "Her work done, Soil returns to staring at the fire.")
         else:
             return ('"I think we can wait this one out a bit. Let me know when it actually breaks through." Soil '
                     'grins, showing off her sharpened teeth. "What\'s life without a bit of danger?"')

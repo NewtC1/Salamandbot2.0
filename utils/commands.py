@@ -164,7 +164,7 @@ def moonrise(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{settings['events']['moonrise']}"
+    output = f"Rules for moonrise can be found here: {settings['links']['moonrise']}"
     return output
 
 
