@@ -7,6 +7,11 @@ from utils import helper_functions as hf
 from events.MoonriseCreatures import Dragon, Beast, Colossus, Spider, Ashvine, Bunny, Thunderjaw, Imp, SpiderQueen
 from events.MoonriseArtifacts.Artifact import Artifact
 from events.MoonriseArtifacts.Tusk import Tusk
+from events.MoonriseArtifacts.Diamond import Diamond
+from events.MoonriseArtifacts.Blowhole import Blowhole
+from events.MoonriseArtifacts.Eye import Eye
+from events.MoonriseArtifacts.Finger import Finger
+from events.MoonriseArtifacts.Heart import Heart
 
 moonrise_status_dir = hf.settings["directories"]["moonrise_status"]
 
@@ -30,16 +35,15 @@ class MoonriseManager:
         # cicero ability
         self.cicero_buy_order_remaining = hf.settings["events"]["cicero_buy_order_max"]
         self.cicero_time_heart_remaining = hf.settings["events"]["cicero_time_heart_max"]
-        self.current_artifact = Artifact("A broken teacup",
-                                         "Chipped and shattered, you found this while trapsing through the Forest.",
-                                         0)
+        self.current_artifact = Diamond()
         self.current_artifact_for_sale = Tusk()  # spawn with a tusk for sale.
 
         self.pending_imp_results = []
         self.imp_no_answer = 0
         self.imp_cooldown = False
         # Set the baseline attacker
-        self.current_attacker = Imp.Imp()
+        # self.current_attacker = Imp.Imp()
+        self.current_attacker = Spider.Spider()
         # set start values
         self.previous_time = time()
         # attackers
@@ -156,6 +160,8 @@ class MoonriseManager:
             self.bjorn_splinter_order_remaining = 3
             self.soil_on_cooldown = False
             self.bjorn_on_cooldown = False
+            self.cicero_buy_order_remaining = 1
+            self.current_artifact_for_sale = self.spawn_artifact()
             set_soil_ready(True)
             set_soil_kill(True)
             set_bjorn_ready(True)
@@ -394,16 +400,36 @@ class MoonriseManager:
 
     def spawn_imp(self):
         if not self.imp_cooldown:
-            return Imp.Imp()
+            pass
+            # return Imp.Imp()
         else:
             self.imp_cooldown = False
             return Bunny.Bunny()
+
+    def spawn_artifact(self):
+
+        roll = random.randint(1,100)
+
+        if roll < 10:
+            return Tusk()
+        elif roll < 15:
+            return Blowhole()
+        elif roll < 25:
+            return Diamond()
+        elif roll < 30:
+            return Eye()
+        elif roll < 40:
+            return Finger()
+        elif roll < 70:
+            return Tusk()
+        elif roll < 100:
+            return Heart()
 
     # ========================================= Character Abilities ====================================================
 
     def soil_restore(self):
         if not self.soil_on_cooldown:
-            if hf.get_shield_damage() == 0:
+            if hf.get_shield_damage() <= 0:
                 return ('"Nuh-uh chief. Those trees are as green as they get." Soil leans back on her log, '
                         'twirling a glowing moonflower in her hand. "Maybe save my talents for something actually '
                         'threatening? Just a thought."')
@@ -498,7 +524,7 @@ class MoonriseManager:
             return 'Bjorn shakes his shaggy head and goes back to sleep.'
 
     def cicero_buy(self, user_name):
-        if self.cicero_buy_order_remaining > 0:
+        if self.cicero_buy_order_remaining > 0 and self.current_artifact_for_sale:
 
             if self.current_artifact_for_sale.get_cost_type() == "l":
                 if hf.get_log_count(user_name) >= self.current_artifact_for_sale.get_cost_value():
@@ -516,13 +542,17 @@ class MoonriseManager:
 
             # users will only get to this line if they are capable of buying the artifact.
             self.current_artifact = self.current_artifact_for_sale
+            self.current_artifact_for_sale = None
             return f"You have purchased {self.current_artifact.get_name()}. This will replace your current artifact. " \
                    f"It has {self.current_artifact.get_uses()} uses left."
 
     def cicero_sale(self):
-        item = f"{self.current_artifact_for_sale.name}: {self.current_artifact_for_sale.description}. " \
-               f"It has {self.current_artifact_for_sale.get_uses()} uses left."
-        return item
+        if self.current_artifact_for_sale:
+            item = f"{self.current_artifact_for_sale.name}: {self.current_artifact_for_sale.description}. " \
+                   f"It has {self.current_artifact_for_sale.get_uses()} uses left."
+            return item
+        else:
+            return '"Please come back later! I\'ll have something for you then!"'
 
     def cicero_check(self):
         item = f"{self.current_artifact.name}: {self.current_artifact.description}. " \
