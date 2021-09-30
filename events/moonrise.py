@@ -4,7 +4,8 @@ import json
 from time import time
 
 from utils import helper_functions as hf
-from events.MoonriseCreatures import Dragon, Beast, Colossus, Spider, Ashvine, Bunny, Thunderjaw, Imp, SpiderQueen
+from events.MoonriseCreatures import Dragon, Beast, Colossus, Spider, Ashvine, Bunny, Thunderjaw, Imp, \
+    SpiderQueen, Goose
 from events.MoonriseArtifacts.Artifact import Artifact
 from events.MoonriseArtifacts.Tusk import Tusk
 from events.MoonriseArtifacts.Diamond import Diamond
@@ -294,6 +295,8 @@ class MoonriseManager:
         roll = random.randint(1, 100)
 
         if self.get_combo_counter() < 1.2:
+            if roll < 10:
+                return Goose.Goose()
             if roll < 20:
                 return self.spawn_imp()
             elif roll < 50:
@@ -399,12 +402,12 @@ class MoonriseManager:
         return retval
 
     def spawn_imp(self):
-        if not self.imp_cooldown:
-            pass
+        # if not self.imp_cooldown:
+        #     pass
             # return Imp.Imp()
-        else:
-            self.imp_cooldown = False
-            return Bunny.Bunny()
+        # else:
+        self.imp_cooldown = False
+        return Bunny.Bunny()
 
     def spawn_artifact(self):
 
