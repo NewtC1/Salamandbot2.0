@@ -10,6 +10,8 @@ toml = "*"
 irc = "*"
 playsound = "*"
 "discord.py" = "*"
+pytest = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.9"

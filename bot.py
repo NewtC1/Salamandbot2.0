@@ -213,7 +213,7 @@ async def update_live_status():
         is_live = False
 
 
-async def start_loop():
+async def start_loop(end_loop=None):
     # manages votes as users input them
     logging.info("[Bot] Creating vote manager...")
     vote_manager = VoteManager(logger=logging.getLogger())
@@ -293,11 +293,16 @@ async def start_loop():
     await asyncio.gather(clock.run(), bots["twitch"].start(), discord.start(os.environ["DISCORD_TOKEN"]),
                          vote_clock.run(), moonrise_clock.run())
 
+    if end_loop:
+        loop = asyncio.get_running_loop()
+        loop.stop()
+        loop.close()
+
 
 args = parse_args()
 
-file_log = logging.FileHandler(args.logfile, encoding='utf-8')
-logging.basicConfig(handlers=[file_log], level=logging.INFO,
+# file_log = logging.FileHandler(args.logfile, encoding='utf-8')
+logging.basicConfig(filename=args.logfile, filemode="w", level=logging.INFO,
                     format="{asctime}:{levelname}:{name}:{message}", style="{")
 
 if __name__ == "__main__":
