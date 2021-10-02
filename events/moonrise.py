@@ -128,8 +128,8 @@ class MoonriseManager:
         shield_amount = hf.get_shield_count()
         # deal damage to shields are there are still any remaining
         damage = int(self.current_attacker.getBaseAttackStrength() * self.current_attacker.getAttackStrengthMulti())
-        if shield_amount > 0:
-            retval += self.do_damage(damage, retval, shield_amount)
+        if hf.get_shield_count() > 0:
+            retval += self.do_damage(damage, retval)
         else:
             # read the value
             campfire_value = hf.get_campfire_count()
@@ -148,23 +148,19 @@ class MoonriseManager:
 
         return retval
 
-    def do_damage(self, damage, retval, shield_amount):
-        # open the current shield damage file
-        shield_damage = hf.get_shield_damage()
+    def do_damage(self, damage, retval):
         # increase the shield damage
-        shield_damage += damage
+        hf.set_shield_damage(hf.get_shield_damage() + damage)
         retval += self.current_attacker.getAttack()
 
-        if shield_damage >= self.shield_health:
+        if hf.get_shield_damage() >= self.shield_health:
             # reduce the number of shields if damage hit a health threshold
-            shield_amount = shield_amount - 1
+            hf.set_shield_count(hf.get_shield_count() - 1)
             # reset the shield damage value to 0
-            shield_damage = 0
+            hf.set_shield_damage(0)
 
-            # respond('Just before the write')
-            hf.set_shield_damage(shield_damage)
-            retval += ' The shield shudders and falls, splintering across the ground. There are now ' + str(
-                shield_amount) + ' shields left.'
+            retval += f' The shield shudders and falls, splintering across the ground. ' \
+                      f'There are now {hf.get_shield_count()} shields left.'
             self.combo_counter = 1.0
             # resets the supporting abilities.
             self.soil_kill_order_remaining = 1
@@ -177,11 +173,6 @@ class MoonriseManager:
             set_soil_kill(True)
             set_bjorn_ready(True)
             set_bjorn_splinter(True)
-
-        # open and save the new damage
-        hf.set_shield_damage(shield_damage)
-
-        # respond('Successful write completed. Moving to counterattack.')
 
         return self.counter_attack(retval)
 
@@ -555,14 +546,16 @@ class MoonriseManager:
 
             # users will only get to this line if they are capable of buying the artifact.
             hf.set_user_artifact(user_name, self.current_artifact_for_sale)
+            return_value = f"You have purchased {self.current_artifact_for_sale.get_name()}. This will replace your " \
+                           f"current artifact. It has {self.current_artifact_for_sale.get_uses()} uses left."
             self.current_artifact_for_sale = None
-            return f"You have purchased {self.current_artifact.get_name()}. This will replace your current artifact. " \
-                   f"It has {self.current_artifact.get_uses()} uses left."
+            return
 
     def cicero_sale(self):
         if self.current_artifact_for_sale:
             item = f"{self.current_artifact_for_sale.name}: {self.current_artifact_for_sale.description}. " \
-                   f"It has {self.current_artifact_for_sale.get_uses()} uses left."
+                   f"It has {self.current_artifact_for_sale.get_uses()} uses left. It costs " \
+                   f"{self.current_artifact_for_sale.get_cost_value()}{self.current_artifact_for_sale.get_cost_type()}."
             return item
         else:
             return '"Please come back later! I\'ll have something for you then!"'
