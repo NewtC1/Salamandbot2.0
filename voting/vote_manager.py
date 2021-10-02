@@ -152,34 +152,44 @@ class VoteManager:
 
         # if it's time to decay again
         if time.time() - last_decay > seconds_in_a_day:
-            decay_threshold = hf.get_shield_count()
-
             vote_data = hf.get_vote_data()
-            possible_votes = list(vote_data["Profiles"][hf.get_active_profile()].keys())
-            for vote in possible_votes:
-                elapsed_time = time.time() - vote_data["Profiles"][hf.get_active_profile()][vote]["last added"]
 
-                if elapsed_time > (seconds_in_a_day * decay_threshold):
+            no_decay = []
+            if "No Decay" in vote_data.keys():
+                no_decay = vote_data["No Decay"]
 
-                    days_past_threshold = int((elapsed_time - (seconds_in_a_day * decay_threshold)) / seconds_in_a_day)
-                    decay_total = int(decay_amount) * days_past_threshold
+            for profile in vote_data["Profiles"].keys():
 
-                    new_value = vote_data["Profiles"][hf.get_active_profile()][vote]["vote value"] - decay_total
+                # skip this profile if it's in the no_decay list
+                if profile in no_decay:
+                    continue
 
-                    vote_data["Profiles"][hf.get_active_profile()][vote]["vote value"] = new_value
+                decay_threshold = hf.get_shield_count()
+                possible_votes = list(vote_data["Profiles"][profile].keys())
+                for vote in possible_votes:
+                    elapsed_time = time.time() - vote_data["Profiles"][profile][vote]["last added"]
 
-                    logging.info("[Voting] Decaying {} by {}".format(vote, decay_total))
+                    if elapsed_time > (seconds_in_a_day * decay_threshold):
 
-                    # checks if the value is less than 0 and corrects it.
-                    if vote_data["Profiles"][hf.get_active_profile()][vote]["vote value"] < 0:
-                        vote_data["Profiles"][hf.get_active_profile()][vote]["vote value"] = 0
+                        days_past_threshold = int((elapsed_time - (seconds_in_a_day * decay_threshold)) / seconds_in_a_day)
+                        decay_total = int(decay_amount) * days_past_threshold
 
-                        if hf.get_active_profile() != "decayed":
-                            # move it to the stone of stories after it runs out of
-                            if "decayed" not in vote_data["Profiles"].keys():
-                                vote_data["Profiles"]["decayed"] = {}
-                            vote_data["Profiles"]["decayed"][vote] = vote_data["Profiles"][hf.get_active_profile()][vote]
-                            del vote_data["Profiles"][hf.get_active_profile()][vote]
+                        new_value = vote_data["Profiles"][profile][vote]["vote value"] - decay_total
+
+                        vote_data["Profiles"][profile][vote]["vote value"] = new_value
+
+                        logging.info(f"[Voting] Decaying {profile}: {vote} by {decay_total}")
+
+                        # checks if the value is less than 0 and corrects it.
+                        if vote_data["Profiles"][profile][vote]["vote value"] < 0:
+                            vote_data["Profiles"][profile][vote]["vote value"] = 0
+
+                            if hf.get_active_profile() != "decayed":
+                                # move it to the stone of stories after it runs out of
+                                if "decayed" not in vote_data["Profiles"].keys():
+                                    vote_data["Profiles"]["decayed"] = {}
+                                vote_data["Profiles"]["decayed"][vote] = vote_data["Profiles"][profile][vote]
+                                del vote_data["Profiles"][profile][vote]
 
             vote_data["Last Decay"] = time.time()
             hf.update_vote_data(vote_data)

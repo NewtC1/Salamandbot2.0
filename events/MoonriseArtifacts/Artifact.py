@@ -16,7 +16,6 @@ class Artifact(object):
         :param uses: Number of uses remaining.
         :param cost: Cost in logs or woodchips. This is a string. 45l for logs or 23w for woodchips.
         :param function: The ability associated with the artifact.
-        :param function_params: Parameters needed for the artifact.
         """
         self.name = name
         self.description = description
