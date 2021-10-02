@@ -2,7 +2,7 @@ import re
 import logging
 
 
-class Artifact:
+class Artifact(object):
     """
     Artifacts class for use with Cicero's ability.
     """

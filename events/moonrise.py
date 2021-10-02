@@ -17,6 +17,16 @@ from events.MoonriseArtifacts.Heart import Heart
 moonrise_status_dir = hf.settings["directories"]["moonrise_status"]
 
 
+class MoonriseException(Exception):
+    pass
+
+
+class NoUserArtifactError(MoonriseException):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
+
+
 class MoonriseManager:
     def __init__(self, logger: logging.Logger):
         self.logger = logger
@@ -544,7 +554,7 @@ class MoonriseManager:
                     return "You don't have enough woodchips to purchase that."
 
             # users will only get to this line if they are capable of buying the artifact.
-            self.current_artifact = self.current_artifact_for_sale
+            hf.set_user_artifact(user_name, self.current_artifact_for_sale)
             self.current_artifact_for_sale = None
             return f"You have purchased {self.current_artifact.get_name()}. This will replace your current artifact. " \
                    f"It has {self.current_artifact.get_uses()} uses left."
@@ -557,13 +567,19 @@ class MoonriseManager:
         else:
             return '"Please come back later! I\'ll have something for you then!"'
 
-    def cicero_check(self):
-        item = f"{self.current_artifact.name}: {self.current_artifact.description}. " \
-               f"It has {self.current_artifact.get_uses()} uses remaining."
-        return item
+    def cicero_check(self, user_name):
+        artifact = hf.get_user_artifact(user_name)
+        if artifact:
+            item = f"{artifact.name}: {artifact.description}. " \
+                   f"It has {artifact.get_uses()} uses remaining."
+            return item
+        else:
+            return "You haven't yet bought an artifact from Cicero yet. Use !cicero sale and !cicero buy to buy one."
 
-    def cicero_use(self):
-        return self.current_artifact.use(self.current_attacker)
+    def cicero_use(self, user_name):
+        artifact = hf.get_user_artifact(user_name)
+        hf.set_user_artifact_uses(user_name, hf.get_user_artifact_uses(user_name) - 1)
+        return artifact.use(self.current_attacker)
 
 # ================================================== UI functions ======================================================
 

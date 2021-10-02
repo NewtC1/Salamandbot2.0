@@ -767,10 +767,10 @@ def cicero(to_parse, moonrise_manager):
         return moonrise_manager.cicero_buy(to_parse.author.name)
 
     if message.split()[1] == "check":
-        return moonrise_manager.cicero_check()
+        return moonrise_manager.cicero_check(to_parse.author.name)
 
     if message.split()[1] == "use":
-        return moonrise_manager.cicero_use()
+        return moonrise_manager.cicero_use(to_parse.author.name)
 
     if message.split()[1] == "sale":
         return moonrise_manager.cicero_sale()

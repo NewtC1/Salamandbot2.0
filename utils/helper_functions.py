@@ -6,6 +6,7 @@ from playsound import playsound
 import requests
 import uuid
 import random
+import events.MoonriseArtifacts.Artifact as Artifact
 
 settings_file = os.path.join(os.path.dirname(__file__), "settings.toml")
 
@@ -356,6 +357,66 @@ def load_woodchips() -> dict:
         data = json.load(file_stream)
 
     return data
+
+
+# =============================================== Artifact Storage =====================================================
+# This is very experimental
+def get_user_artifact(username: str) -> Artifact.Artifact or None:
+    """
+    Returns an artifact constructed from the information stored in a user's account, or none if the user doesn't have
+    one.
+    :param username:
+    :return:
+    """
+
+    user_id = get_user_id(username)
+    data = load_accounts()
+    # lists all subclasses names
+    artifact_subclass_names = [cls.__name__ for cls in Artifact.Artifact.__subclasses__()]
+    artifact_subclasses = [Artifact.Artifact.__subclasses__()]
+
+    subclass_dict = {}
+    for i in range(len(artifact_subclass_names)):
+        subclass_dict[artifact_subclass_names[i]] = artifact_subclasses[0][i]
+
+    # subclass_dict = {artifact_subclass_names[i]: artifact_subclasses[i] for i in range(len(artifact_subclass_names)-1)}
+    return_value = None
+    if user_id:
+        if "artifact_type" in data[user_id].keys():
+            return_object = subclass_dict[data[user_id]["artifact_type"]](uses=data[user_id]["artifact_uses"])
+            return_value = return_object
+
+    return return_value
+
+
+def set_user_artifact(username, artifact: Artifact.Artifact):
+    user_id = get_user_id(username)
+    data = load_accounts()
+    data[user_id]["artifact_type"] = artifact.__class__.__name__
+    data[user_id]["artifact_uses"] = artifact.get_uses()
+
+    update_accounts(data)
+
+
+def get_user_artifact_uses(username: str):
+    user_id = get_user_id(username)
+    accounts = load_accounts()
+    if "artifact_type" in accounts[user_id].keys():
+        return accounts[user_id]["artifact_uses"]
+    else:
+        pass
+        # raise NoUserArtifactError("", "No user artifact has been defined.")
+
+
+def set_user_artifact_uses(username: str, value: int):
+    user_id = get_user_id(username)
+    accounts = load_accounts()
+    if "artifact_type" in accounts[user_id].keys():
+        accounts[user_id]["artifact_uses"] = value
+        update_accounts(accounts)
+    else:
+        pass
+        # raise NoUserArtifactError("", "No user artifact has been defined.")
 
 
 # ============================================= Story Interaction ======================================================
