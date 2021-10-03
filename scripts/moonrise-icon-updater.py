@@ -37,6 +37,21 @@ def update_icons():
         obs.script_log(obs.LOG_WARNING, err)
 
 
+def update_shield_text():
+    script_dir = "\\".join(os.path.realpath(__file__).split("\\")[0:-1])
+    shield_dir = os.path.join(script_dir, "..\\values\\shields.json")
+    with open(shield_dir, encoding="utf-8-sig") as f:
+        data = json.load(f)
+    shield_count = data["shield_count"]
+    shield_damage = data["shield_damage"]
+    shield_text = f"{shield_count}\n{shield_damage}"
+
+    source = obs.obs_get_source_by_name("Shield Tree Text")
+    settings = obs.obs_data_create()
+    obs.obs_data_set_string(settings, "text", shield_text)
+    obs.obs_source_update(source, settings)
+
+
 def refresh_pressed(props, prop):
     update_icons()
 
@@ -48,8 +63,10 @@ def start_pressed(props, prop):
 
     if started:
         obs.timer_add(update_icons, interval * 1000)
+        obs.timer_add(update_shield_text, interval * 1000)
     else:
         obs.timer_remove(update_icons)
+        obs.timer_remove(update_shield_text)
 
 
 # ------------------------------------------------------------
