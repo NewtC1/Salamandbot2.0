@@ -13,7 +13,7 @@ class Beast(DarkForestCreature):
         return retval
 
     def getCampfireAttack(self):
-        self.setAttackStrengthMulti(self.getAttackStrengthMulti() + 0.5)
+        self.set_attack_strength_multi(self.getAttackStrengthMulti() + 0.5)
         retval = 'With a howl of triumph, the beast slashes at the Salamander, knocking ' + str(int(self.baseAttackStrength * self.attackStrengthMulti)) + ' logs away from fire.'
         return retval
 

@@ -8,7 +8,7 @@ def macrosecond_timestop(target: DarkForestCreature):
     :param target:
     :return:
     """
-    target.setAttackDelayMulti(target.getAttackDelayMulti()*2)
+    target.setAttackDelayMulti(target.get_attack_delay_multi() * 2)
     return "At Cicero's instruction. you jam a a stick into the grinding gears of the mechanical heart. Time slows," \
            " grinds to a halt, and then snaps forward. Everything except the interloper "
 

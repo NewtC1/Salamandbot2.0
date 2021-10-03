@@ -16,7 +16,7 @@ class Ashvine(DarkForestCreature):
     def getCampfireAttack(self):
         self.setHealth(self.getHealth()*2)
         self.setReward(self.getReward() + 60)
-        self.setAttackStrengthMulti(self.getAttackStrengthMulti()+0.5)
+        self.set_attack_strength_multi(self.getAttackStrengthMulti() + 0.5)
         retval = 'Growing through the dirt, the vines sprout underneath the central fire, throwing out ' + \
                  str(int(self.baseAttackStrength * self.attackStrengthMulti)) + \
                  ' logs into the surrounding Forest. But this time, the vines don\'t go away.'
@@ -30,5 +30,5 @@ class Ashvine(DarkForestCreature):
     def UseSpecialAbility(self):
         self.setHealth(int(self.getHealth()*2))
         self.setReward(self.getReward() + 60)
-        self.setAttackStrengthMulti(self.getAttackStrengthMulti()+0.5)
+        self.set_attack_strength_multi(self.getAttackStrengthMulti() + 0.5)
         return "The Ashvine covers more of the Forest around the fire."

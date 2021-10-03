@@ -18,13 +18,13 @@ class DarkForestCreature:
         self.reward = reward
         self.incineration_resist = incineration_resist
 
-    def getBaseAttackDelay(self):
+    def get_base_attack_delay(self):
         return self.baseAttackDelay
 
-    def getAttackDelayMulti(self):
+    def get_attack_delay_multi(self):
         return self.attackDelayMulti
 
-    def getBaseAttackStrength(self):
+    def get_base_attack_atrength(self):
         return self.baseAttackStrength
 
     def getAttackStrengthMulti(self):
@@ -48,7 +48,7 @@ class DarkForestCreature:
     def setBaseAttackStrength(self,attack):
         self.baseAttackStrength = attack
 
-    def setAttackStrengthMulti(self, multi):
+    def set_attack_strength_multi(self, multi):
         self.attackStrengthMulti = multi
 
     def setHealth(self, health):
@@ -77,3 +77,6 @@ class DarkForestCreature:
 
     def UseSpecialAbility(self):
         return ""
+
+    def get_total_attack_strength(self):
+        return self.baseAttackStrength * self.attackStrengthMulti

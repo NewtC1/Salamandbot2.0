@@ -5,7 +5,7 @@ from time import time
 
 from utils import helper_functions as hf
 from events.MoonriseCreatures import Dragon, Beast, Colossus, Spider, Ashvine, Bunny, Thunderjaw, Imp, \
-    SpiderQueen, Goose
+    SpiderQueen, Goose, Bonewheel
 from events.MoonriseArtifacts.Artifact import Artifact
 from events.MoonriseArtifacts.Tusk import Tusk
 from events.MoonriseArtifacts.Diamond import Diamond
@@ -103,7 +103,7 @@ class MoonriseManager:
             if self.attacker_dead:
                 retval = self.set_new_attacker(self.spawn_attacker()) + " "
                 self.previous_time = time()
-                self.delay = self.current_attacker.getBaseAttackDelay() * self.current_attacker.getAttackDelayMulti()
+                self.delay = self.current_attacker.get_base_attack_delay() * self.current_attacker.get_attack_delay_multi()
                 # if the attacker is not an imp, go through the list of imp rewards and clear it.
                 if str(self.current_attacker.__class__.__name__).lower() != "imp":
                     for phrase in self.pending_imp_results:
@@ -116,7 +116,7 @@ class MoonriseManager:
                 self.previous_time = time()
 
             if not self.attacker_dead:
-                self.delay = self.current_attacker.getBaseAttackDelay() * self.current_attacker.getAttackDelayMulti()
+                self.delay = self.current_attacker.get_base_attack_delay() * self.current_attacker.get_attack_delay_multi()
 
         return return_value
 
@@ -128,7 +128,7 @@ class MoonriseManager:
         retval = ''
         shield_amount = hf.get_shield_count()
         # deal damage to shields are there are still any remaining
-        damage = int(self.current_attacker.getBaseAttackStrength() * self.current_attacker.getAttackStrengthMulti())
+        damage = int(self.current_attacker.get_base_attack_atrength() * self.current_attacker.getAttackStrengthMulti())
         if hf.get_shield_count() > 0:
             retval += self.do_damage(damage, retval)
         else:
@@ -299,8 +299,10 @@ class MoonriseManager:
         if self.get_combo_counter() < 1.2:
             if roll < 10:
                 return Goose.Goose()
-            if roll < 20:
+            elif roll < 20:
                 return self.spawn_imp()
+            elif roll < 30:
+                return Bonewheel.Bonewheel()
             elif roll < 50:
                 return Spider.Spider()
             elif roll < 80:
@@ -309,7 +311,7 @@ class MoonriseManager:
                 return Colossus.Colossus()
         elif self.get_combo_counter() < 1.4:
             if roll < 10:
-                return self.spawn_imp()
+                return Goose.Goose()
             elif roll < 30:
                 return Spider.Spider()
             elif roll < 40:
@@ -322,7 +324,7 @@ class MoonriseManager:
                 return Thunderjaw.Thunderjaw()
         elif self.get_combo_counter() < 1.8:
             if roll < 5:
-                return self.spawn_imp()
+                return Bonewheel.Bonewheel()
             elif roll < 40:
                 return Beast.Beast()
             elif roll < 50:
@@ -386,8 +388,8 @@ class MoonriseManager:
 
         if phrase.lower() == "growth":
             self.current_attacker.setHealth(self.current_attacker.getHealth() * 2)
-            self.current_attacker.setAttackStrengthMulti(self.current_attacker.getAttackStrengthMulti() * 2)
-            self.current_attacker.setAttackDelayMulti(self.current_attacker.getAttackDelayMulti() / 2)
+            self.current_attacker.set_attack_strength_multi(self.current_attacker.getAttackStrengthMulti() * 2)
+            self.current_attacker.setAttackDelayMulti(self.current_attacker.get_attack_delay_multi() / 2)
             retval = "The creature approaches the campfire, but there's something different about this one. " \
                      "It's bigger, meaner, and angrier."
 

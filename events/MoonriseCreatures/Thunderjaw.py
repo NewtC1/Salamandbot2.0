@@ -46,7 +46,7 @@ class Thunderjaw(DarkForestCreature):
 
             if self.numberOfDelayedAttacks > 0:
                 self.numberOfDelayedAttacks -= 1
-                self.setBaseAttackStrength(self.getBaseAttackStrength() + (self.DelayAttackDamage*self.numberOfDelayedAttacks))
+                self.setBaseAttackStrength(self.get_base_attack_atrength() + (self.DelayAttackDamage * self.numberOfDelayedAttacks))
                 retval += ' The disks fire rockets down at the shields. ' \
                           'One of them is engulfed in flames and falls to the ground, smoking.'
 
@@ -99,13 +99,13 @@ class Thunderjaw(DarkForestCreature):
     # Quick, light. Closest to a basic attack.
     def setStomp(self):
         self.setBaseAttackStrength(50)
-        self.setAttackStrengthMulti(self.getAttackStrengthMulti() + 0.1)
+        self.set_attack_strength_multi(self.getAttackStrengthMulti() + 0.1)
         self.setBaseAttackDelay(50)
         self.WeaponSystem = 'stomp'
 
     # Deals heavy damage, no cool down, resets attack multiplier
     def setTailSweep(self):
         self.setBaseAttackStrength(500)
-        self.setAttackStrengthMulti(1.0)
+        self.set_attack_strength_multi(1.0)
         self.setBaseAttackDelay(50)
         self.WeaponSystem = 'tail'

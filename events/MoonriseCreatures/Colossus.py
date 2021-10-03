@@ -12,14 +12,14 @@ class Colossus(DarkForestCreature):
 
 
     def getAttack(self):
-        if self.speed_cap < self.getAttackDelayMulti():
-            self.setAttackDelayMulti(self.getAttackDelayMulti()-0.5)
+        if self.speed_cap < self.get_attack_delay_multi():
+            self.setAttackDelayMulti(self.get_attack_delay_multi() - 0.5)
         retval = 'The colossus\' long arms raise high, then smash hard onto the oaken dome.'
         return retval
 
     def getCampfireAttack(self):
-        if self.speed_cap < self.getAttackDelayMulti():
-            self.setAttackDelayMulti(self.getAttackDelayMulti()-0.5)
+        if self.speed_cap < self.get_attack_delay_multi():
+            self.setAttackDelayMulti(self.get_attack_delay_multi() - 0.5)
         retval = 'A huge slam hits the Campground, scattering embers and sparks everywhere. ' \
                  'The Colossus quickly raises it\'s arms for another attack.'
         return retval
