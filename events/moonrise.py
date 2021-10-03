@@ -271,17 +271,16 @@ class MoonriseManager:
 
     # what happens if the fire goes out?
     def enact_failure(self):
-        return """
-                With a last gasp, the central bonfire consumes all of the remaining logs in the entire Campgrounds and fizzles out.
-                In darkness, a pregnant silence falls. 
-                One second. Two seconds. 
-                Then Soil screams. 
-                Moonflowers erupt from the ashes, then the dirt around the ashes. 
-                In seconds, the darkness is obliterated by death's light. 
-                The space around Soil ripples. 
-                A silver orb shines between her horns, and a kopesh of moonlight is embraced in her hands. 
-                Soraviel, Moon Goddess of Death and Rebirth, makes her presence known. 
-                """
+        return "The Salamander's light begins to die, and Soil rushes forward. Plants obliterate the attacker, but it" \
+               " is too late. " \
+               "Soil erupts into purple flames, then the fire darkens, sucking in light from around her. " \
+               "As the the Campgrounds dims, a new light rises from the previously bright bonfire. Moonflowers" \
+               " erupt from the firepit and the fire around Soil's unmoving form continues to change, now " \
+               "reflecting the new light. " \
+               "The light of a goddess. " \
+               " With a strangled cry, Soil finally moves, but when she does she leaves some intangible existence " \
+               "behind. Her horns lengthen, becoming a full crescent moon, and catch the lunar glow. " \
+               "Soraviel, goddess of death, rebirth and change has taken the stage."
 
     def spawn_attacker(self):
         """
