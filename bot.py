@@ -19,11 +19,11 @@ import events.moonrise as moonrise
 
 settings = helper_functions.load_settings()
 bots = {}
-is_active = False
 
 TWITCH_CHANNEL = os.environ['CHANNEL']
 BOT_TICK_RATE = 600
 WOODCHIP_PAYOUT_RATE = 32
+is_live = False
 
 
 def parse_args():
@@ -178,24 +178,6 @@ async def moonrise_tick(manager: moonrise.MoonriseManager):
                 await bots[bot].send_message(moonrise_output)
 
 
-async def update_active_status():
-    """
-    Updates active status when called.
-    :return:
-    """
-    global is_active
-
-    if not is_active:
-        for key in bots.keys():
-            is_active = await bots[key].chat_is_active()
-    else:
-        no_live_stream = True
-        for key in bots.keys():
-            if await bots[key].chat_is_active():
-                no_live_stream = False
-        is_active = not no_live_stream
-
-
 async def update_live_status():
     """
     Updates live status when called.
@@ -208,8 +190,12 @@ async def update_live_status():
         channel_status.append(await bots[key].is_live())
 
     if any(channel_status):
+        if not is_live:
+            logging.info("[Bot] Live status changed to True.")
         is_live = True
     else:
+        if is_live:
+            logging.info("[Bot] Live status changed to False.")
         is_live = False
 
 

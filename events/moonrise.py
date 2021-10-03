@@ -103,6 +103,7 @@ class MoonriseManager:
             if self.attacker_dead:
                 retval = self.set_new_attacker(self.spawn_attacker()) + " "
                 self.previous_time = time()
+                self.delay = self.current_attacker.getBaseAttackDelay() * self.current_attacker.getAttackDelayMulti()
                 # if the attacker is not an imp, go through the list of imp rewards and clear it.
                 if str(self.current_attacker.__class__.__name__).lower() != "imp":
                     for phrase in self.pending_imp_results:
@@ -252,18 +253,18 @@ class MoonriseManager:
     def kill_attacker(self):
         if self.combo_counter < self.combo_counter_cap:
             self.combo_counter += 0.1
-            # sometimes the syetem doesn't calculate accurately, so we need to round to 1 digit.
+            # sometimes the system doesn't calculate accurately, so we need to round to 1 digit.
             self.combo_counter = round(self.combo_counter, 1)
 
         if self.current_attacker.__class__.__name__.lower() == "imp":
             self.imp_cooldown = True
         else:
             self.imp_cooldown = False
-        reward = self.current_attacker.getReward() * self.combo_counter
+        reward = round(self.current_attacker.getReward() * self.combo_counter, 1)
         self.attacker_dead = True
 
         logging.info(
-            f"[Moonrise] Killing attacker {self.current_attacker.name}, gaining {reward * self.combo_counter}"
+            f"[Moonrise] Killing attacker {self.current_attacker.name}, gaining {reward}"
             f" seconds before next attack.")
 
         return reward
@@ -549,7 +550,10 @@ class MoonriseManager:
             return_value = f"You have purchased {self.current_artifact_for_sale.get_name()}. This will replace your " \
                            f"current artifact. It has {self.current_artifact_for_sale.get_uses()} uses left."
             self.current_artifact_for_sale = None
-            return
+            return return_value
+        else:
+            return 'The owlkin shakes his masked head. "Regrettably, I cannot sell at this time."'
+
 
     def cicero_sale(self):
         if self.current_artifact_for_sale:
@@ -571,7 +575,8 @@ class MoonriseManager:
 
     def cicero_use(self, user_name):
         artifact = hf.get_user_artifact(user_name)
-        hf.set_user_artifact_uses(user_name, hf.get_user_artifact_uses(user_name) - 1)
+        if hf.get_user_artifact_uses(user_name) > 0:
+            hf.set_user_artifact_uses(user_name, hf.get_user_artifact_uses(user_name) - 1)
         return artifact.use(self.current_attacker)
 
 # ================================================== UI functions ======================================================
