@@ -538,7 +538,7 @@ def vote(to_parse, vote_manager: VoteManager):
     if matches:
         if user in hf.get_users_on_cooldown() and matches.group(0).lower() != "!vote stop":
             cooldown_end = vote_data["Users On Cooldown"][user]["cooldown end"]
-            return f"You won't be able to vote for another {int(cooldown_end - time.time())} seconds."
+            return f"You won't be able to vote for another {int(cooldown_end - time())} seconds."
 
         vote_all = matches.group(2) != None
         amount = matches.group(4)
@@ -563,9 +563,9 @@ def vote(to_parse, vote_manager: VoteManager):
             hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
             hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
             hf.add_vote_contributor(target, user, "all")
-            hf.set_last_vote_time(target, time.time())
+            hf.set_last_vote_time(target, time())
             cooldown = hf.get_dynamic_cooldown_amount(max_vote_rate)
-            hf.add_user_to_cooldown(user, time.time() + cooldown, target, "all")
+            hf.add_user_to_cooldown(user, time() + cooldown, target, "all")
             output += f"You've been added to continuous adding. You will add to {target} until you run out of logs. " \
                       f"Type \"!vote stop\" to stop adding at any time."
             return output
@@ -580,10 +580,10 @@ def vote(to_parse, vote_manager: VoteManager):
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
                     hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
                     hf.add_vote_contributor(target, user, amount)
-                    continuous_cooldown = time.time() + hf.get_dynamic_cooldown_amount(max_vote_rate)
+                    continuous_cooldown = time() + hf.get_dynamic_cooldown_amount(max_vote_rate)
                     hf.add_user_to_cooldown(user, continuous_cooldown,
                                             target, amount - max_vote_rate)
-                    hf.set_last_vote_time(target, time.time())
+                    hf.set_last_vote_time(target, time())
                     output += convert_seconds(amount + max_vote_rate)
 
                 else:
@@ -591,7 +591,7 @@ def vote(to_parse, vote_manager: VoteManager):
                     hf.set_log_count(user, hf.get_log_count(user) - amount)
                     hf.add_vote_contributor(target, user, amount)
                     cooldown = hf.get_dynamic_cooldown_amount(amount)
-                    hf.add_user_to_cooldown(user, time.time() + cooldown, target, 0)
+                    hf.add_user_to_cooldown(user, time() + cooldown, target, 0)
                     output += f"{user} added {amount} logs to {target}'s campfire. It now sits at " \
                               f"{hf.get_vote_option_value(target)}"
                 return output
