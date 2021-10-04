@@ -11,6 +11,7 @@ class Thunderjaw(DarkForestCreature):
     DelayAttackDamage = 50
     UsedCharge = False
     PlasmaCannonCounter = 6
+    PlasmaCannonCap = 12
     WeaponSystem = 'stomp'
 
     def __init__(self, delay=50, delayMulti=2.0, attack=50, attackMulti=1.0, health=800, reward=2700,
@@ -36,8 +37,10 @@ class Thunderjaw(DarkForestCreature):
                          'raining down explosives onto the shielded shelter.'
                 attacks = [self.setPlasmaCannon, self.setStomp, self.setTailSweep, self.setCharge]
             if self.WeaponSystem == 'plasma cannon':
-                retval += '*plink*'
-                self.PlasmaCannonCounter -= 1
+                retval += f'*{"plink"*self.PlasmaCannonCounter}* The plasma cannons overheat and stop firing.'
+                retval += ''
+                self.PlasmaCannonCounter = 0
+                attacks = [self.setCharge, self.setTailSweep, self.setDiskLauncher, self.setStomp]
             if self.WeaponSystem == 'charge':
                 retval += 'The beast takes a step back, then charges toward the Campgrounds, ' \
                          'slamming its armored hide into the shields.'
@@ -50,14 +53,10 @@ class Thunderjaw(DarkForestCreature):
                 retval += ' The disks fire rockets down at the shields. ' \
                           'One of them is engulfed in flames and falls to the ground, smoking.'
 
-            if self.WeaponSystem == 'plasma cannon' and self.PlasmaCannonCounter > 0:
-                self.setPlasmaCannon()
-            else:
-                random.choice(attacks)()
+            random.choice(attacks)()
 
-            if self.PlasmaCannonCounter == 0:
-                retval += ' The plasma cannons overheat and stop firing.'
-                self.PlasmaCannonCounter = 6
+            if self.PlasmaCannonCounter < self.PlasmaCannonCap:
+                self.PlasmaCannonCounter += 1
         else:
             retval += 'The Thunderjaw stops to recover from its charge.'
             self.UsedCharge = False
@@ -86,8 +85,8 @@ class Thunderjaw(DarkForestCreature):
 
     def setPlasmaCannon(self):
         """Sets a very low cooldown repeated attack that does low damage."""
-        self.setBaseAttackDelay(5)
-        self.setBaseAttackStrength(20)
+        self.setBaseAttackDelay(5*self.PlasmaCannonCounter)
+        self.setBaseAttackStrength(20*self.PlasmaCannonCounter)
         self.WeaponSystem = 'plasma cannon'
 
     def setCharge(self):
