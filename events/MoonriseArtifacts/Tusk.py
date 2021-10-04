@@ -7,16 +7,24 @@ def break_armor(target: DarkForestCreature):
     :param target: The DarkForestCreature to remove armor from.
     :return:
     """
-    target.SetIncResist(0)
-    return "The tusk surges with power, and its corrupting entropy breaks against the creature's armor, shearing it away."
+    damage = 2
+
+    if target.GetIncResist() >= damage:
+        target.SetIncResist(target.GetIncResist() - damage)
+    else:
+        target.SetIncResist(0)
+    return "The tusk surges with power, and its corrupting entropy breaks against the creature's armor, " \
+           "shearing it away."
 
 
 class Tusk(Artifact):
     def __init__(self,
                  name="Tusk of the Starlight Boar",
-                 description="A long curved tooth, with a strange, sparkling dust fuming from it. Reality corrodes around it.",
+                 description='A long curved tooth, with a strange, sparkling dust fuming from it. '
+                             'Reality corrodes around it. "A curious one. A god of entropy who\'s followers preached'
+                             ' the love of life. Ironically, it died when it fulfilled its fated role."',
                  uses=3,
-                 cost="20l",
+                 cost="50l",
                  function=break_armor):
         Artifact.__init__(self, name, description, uses, cost, function)
 

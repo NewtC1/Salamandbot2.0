@@ -46,7 +46,6 @@ class MoonriseManager:
         # cicero ability
         self.cicero_buy_order_remaining = hf.settings["events"]["cicero_buy_order_max"]
         self.cicero_time_heart_remaining = hf.settings["events"]["cicero_time_heart_max"]
-        self.current_artifact = Diamond()
         self.current_artifact_for_sale = Tusk()  # spawn with a tusk for sale.
 
         self.pending_imp_results = []
