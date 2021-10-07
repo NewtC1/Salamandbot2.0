@@ -10,7 +10,7 @@ def macrosecond_timestop(target: DarkForestCreature):
     """
     target.setAttackDelayMulti(target.get_attack_delay_multi() * 2)
     return "At Cicero's instruction. you jam a stick into the grinding gears of the mechanical heart. Time slows," \
-           " grinds to a halt, and then snaps forward. Everything except the interloper "
+           " grinds to a halt, and then snaps forward. Everything except the interloper, who remains slowed in place."
 
 
 class Heart(Artifact):
@@ -20,7 +20,7 @@ class Heart(Artifact):
                              " died. The corpse was just left in its temple, not even looted. It's been my most "
                              "faithful tool for a long time, but I've always meant to find another owner for it.\"",
                  uses=5,
-                 cost="16000w",
+                 cost="12000w",
                  function=macrosecond_timestop):
         Artifact.__init__(self, name, description, uses, cost, function)
 
