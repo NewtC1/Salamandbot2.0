@@ -26,7 +26,7 @@ class VoteManager:
         self.logger = logger
         self.bots = bots
 
-    async def apply_vote(self, target, voter, amount):
+    async def apply_vote(self, target, voter, amount, profile):
         amount_to_increase = max_vote_rate
 
         if amount != "all":
@@ -40,8 +40,8 @@ class VoteManager:
         if hf.get_log_count(voter) < amount_to_increase:
             raise OutOfLogsException
 
-        hf.set_vote_option_value(target, hf.get_vote_option_value(target) + amount_to_increase)
-        hf.add_vote_contributor(target, voter, amount_to_increase)
+        hf.set_vote_option_value(target, hf.get_vote_option_value(target, profile) + amount_to_increase, profile)
+        hf.add_vote_contributor(target, voter, amount_to_increase, profile)
         hf.set_log_count(voter, hf.get_log_count(voter) - amount_to_increase)
 
         hf.set_last_vote_time(target, time.time())
@@ -74,7 +74,6 @@ class VoteManager:
                         if times > now:
                             break
                         next_profile_change = times
-
 
                 if next_profile_change:
                     # get the original key again
@@ -114,8 +113,9 @@ class VoteManager:
             for voter in voters_to_resolve:
                 amount = data["Users On Cooldown"][voter]["amount"]
                 target = data["Users On Cooldown"][voter]["target"]
+                profile = data["Users On Cooldown"][voter]["profile"]
                 try:
-                    amount = await self.apply_vote(target, voter, amount)
+                    amount = await self.apply_vote(target, voter, amount, profile)
                 except OutOfLogsException as e:
                     if self.bots:
                         for bot in self.bots:

@@ -321,6 +321,47 @@ def accountid(to_parse):
     return f"To link, go to the platform you want to link and type !linkaccount {user_id} to finish the linking process."
 
 
+def prefer(to_parse, vote_manager):
+    """
+    Command for users to change account preferences
+    :param to_parse:
+    :return:
+    """
+    message = to_parse.content
+    author = to_parse.author.name
+    account_id = hf.get_user_id(author)
+    message_args = message.split()
+    accounts = hf.load_accounts()
+    vote_data = hf.get_vote_data()
+    return_value = f''
+
+    if len(message_args) == 1:
+        return f'The following subcommands exist: profile'
+
+    if len(message_args) == 2:
+        if message_args[1] == "profile":
+            if "preferred_profile" in accounts[account_id].keys():
+                return_value += f"Here is your current preferred profile: {hf.get_preferred_profile(author)} "
+
+            return_value += f'Here is a list of all current vote profiles: '
+            for profile in vote_data["Profiles"].keys():
+                return_value += profile + ' '
+            return return_value
+    if len(message_args) > 2:
+        if message_args[1] == "profile":
+            target_profile = " ".join(message_args[2:])
+            if target_profile == "clear" and "preferred_profile" in accounts[account_id].keys():
+                del accounts[account_id]['preferred_profile']
+                return "Preferences for profiles have been cleared."
+            if target_profile in vote_data["Profiles"].keys():
+                vote_manager.stop_voting()
+                accounts[account_id]["preferred_profile"] = target_profile
+                hf.update_accounts(accounts)
+                return "Successfully set a default vote profile."
+            else:
+                return 'That profile does not exist.'
+
+
 # ============================================= Campgrounds Functions ==================================================
 def addlogs(to_parse):
     """
@@ -399,15 +440,18 @@ def addvoteoption(to_parse):
     :return:
     """
     message = to_parse.content
-    matches = re.match('!addvoteoption "(.+)"\s?(\d+)?', message, flags=re.I)
+    matches = re.match('!addvoteoption "(.+)"\s?(\d+)?\s(\w+)?', message, flags=re.I)
 
     if matches:
         game_name = matches.group(1)
         starting_amount = 0
+        target_profile = hf.get_active_profile()
         if matches.group(2):
             starting_amount = int(matches.group(2))
+        if matches.group(3):
+            target_profile = matches.group(3)
 
-        hf.add_vote_option(game_name, starting_amount, hf.get_active_profile())
+        hf.add_vote_option(game_name, starting_amount, target_profile)
         return f"Successfully added {game_name}"
     else:
         return "No valid options found. Please put quotes around your option."
@@ -442,14 +486,19 @@ def checkoptions(to_parse=None):
     :param to_parse: Expected none
     :return:
     """
-    return_value = f'Profile: {hf.get_active_profile()}. '
+    author = to_parse.author.name
     votes = hf.get_vote_data()
     active = hf.get_active_profile()
     options = {}
 
+    if hf.get_preferred_profile(author):
+        active = hf.get_preferred_profile(author)
+
+    return_value = f'Profile: {active}. '
+
     # build a dictionary of values out of the options
     for option in votes["Profiles"][active]:
-        options[option] = hf.get_vote_option_value(option)
+        options[option] = hf.get_vote_option_value(option, active)
 
     if not len(options.keys()):
         return "There's nothing in this profile. Add options with !addvoteoption."
@@ -528,6 +577,11 @@ def vote(to_parse, vote_manager: VoteManager):
 
     message = to_parse.content
     user = to_parse.author.name
+    active_profile = hf.get_active_profile()
+
+    # if the user has a preferred profile, use that instead
+    if hf.get_preferred_profile(user):
+        active_profile = hf.get_preferred_profile(user)
 
     vote_data = hf.get_vote_data()
 
@@ -544,7 +598,7 @@ def vote(to_parse, vote_manager: VoteManager):
         amount = matches.group(4)
         target = matches.group(3) if not vote_all else matches.group(1)
 
-        vote_options = vote_data["Profiles"][hf.get_active_profile()].keys()
+        vote_options = vote_data["Profiles"][active_profile].keys()
 
         if matches.group(0).lower() == "!vote stop":
             if user in hf.get_users_on_cooldown():
@@ -577,9 +631,10 @@ def vote(to_parse, vote_manager: VoteManager):
                     return "You don't have enough logs for that."
 
                 if amount > max_vote_rate:
-                    hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
+                    hf.set_vote_option_value(target, hf.get_vote_option_value(target, active_profile) + max_vote_rate,
+                                             active_profile)
                     hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
-                    hf.add_vote_contributor(target, user, amount)
+                    hf.add_vote_contributor(target, user, amount, active_profile)
                     continuous_cooldown = time() + hf.get_dynamic_cooldown_amount(max_vote_rate)
                     hf.add_user_to_cooldown(user, continuous_cooldown,
                                             target, amount - max_vote_rate)
@@ -587,13 +642,14 @@ def vote(to_parse, vote_manager: VoteManager):
                     output += convert_seconds(amount + max_vote_rate)
 
                 else:
-                    hf.set_vote_option_value(target, hf.get_vote_option_value(target) + amount)
                     hf.set_log_count(user, hf.get_log_count(user) - amount)
-                    hf.add_vote_contributor(target, user, amount)
+                    hf.set_vote_option_value(target, hf.get_vote_option_value(target, active_profile) + amount,
+                                             active_profile)
+                    hf.add_vote_contributor(target, user, amount, active_profile)
                     cooldown = hf.get_dynamic_cooldown_amount(amount)
                     hf.add_user_to_cooldown(user, time() + cooldown, target, 0)
                     output += f"{user} added {amount} logs to {target}'s campfire. It now sits at " \
-                              f"{hf.get_vote_option_value(target)}"
+                              f"{hf.get_vote_option_value(target, active_profile)}"
                 return output
             except ValueError as e:
                 return f"The value {amount} is not an integer. Please enter an integer."

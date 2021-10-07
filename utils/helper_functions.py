@@ -37,12 +37,14 @@ max_vote_rate = settings['settings']['max_vote_rate']
 loyalty_blacklist = settings["loyalty_points"]["loyalty_blacklist"]
 
 
-def get_vote_option_value(option):
+def get_vote_option_value(option, profile_override=None):
+    active_profile = get_active_profile()
+    if profile_override:
+        active_profile = profile_override
     option_value = 0
     data = get_vote_data()
-    active = data["Active Profile"]
-    if option in data["Profiles"][active].keys():
-        option_value = data["Profiles"][active][option]["vote value"]
+    if option in data["Profiles"][active_profile].keys():
+        option_value = data["Profiles"][active_profile][option]["vote value"]
 
     return option_value
 
@@ -114,18 +116,28 @@ def update_vote_data(data):
         json.dump(data, file, indent='\t')
 
 
-def vote_exists(target):
+def vote_exists(target, profile_override=None):
+    active_profile = get_active_profile()
+
+    if profile_override:
+        active_profile = profile_override
+
     data = get_vote_data()
-    if target in data["Profiles"][get_active_profile()].keys():
+    if target in data["Profiles"][active_profile].keys():
         return True
     else:
         return False
 
 
-def set_vote_option_value(target, new_value):
+def set_vote_option_value(target, new_value, profile_override=None):
+    active_profile = get_active_profile()
+
+    if profile_override:
+        active_profile = profile_override
+
     data = get_vote_data()
-    if vote_exists(target):
-        data["Profiles"][get_active_profile()][target]['vote value'] = new_value
+    if vote_exists(target, active_profile):
+        data["Profiles"][active_profile][target]['vote value'] = new_value
     update_vote_data(data)
 
 
@@ -169,20 +181,25 @@ def delete_vote_option(target, profile):
         return False
 
 
-def set_last_vote_time(target, new_value):
+def set_last_vote_time(target, new_value, profile_override=None):
     data = get_vote_data()
     if vote_exists(target):
         data["Profiles"][get_active_profile()][target]['last added'] = new_value
     update_vote_data(data)
 
 
-def add_vote_contributor(target, user, amount):
+def add_vote_contributor(target, user, amount, profile_override=None):
+    active_profile = get_active_profile()
+
+    if profile_override:
+        active_profile = profile_override
+
     data = get_vote_data()
     amount_to_add = amount if not type(amount) == str else max_vote_rate
-    if user in data['Profiles'][get_active_profile()][target]['votes list'].keys():
-        data['Profiles'][get_active_profile()][target]['votes list'][user] += amount_to_add
+    if user in data['Profiles'][active_profile][target]['votes list'].keys():
+        data['Profiles'][active_profile][target]['votes list'][user] += amount_to_add
     else:
-        data['Profiles'][get_active_profile()][target]['votes list'][user] = amount_to_add
+        data['Profiles'][active_profile][target]['votes list'][user] = amount_to_add
     update_vote_data(data)
 
 
@@ -263,7 +280,8 @@ def add_user_to_cooldown(user, cooldown_end, target, amount):
     data["Users On Cooldown"][user] = {
                                        "cooldown end": cooldown_end,
                                        "target": target,
-                                       "amount": amount
+                                       "amount": amount,
+                                       "profile": get_preferred_profile(user)
                                        }
     update_vote_data(data)
 
@@ -345,18 +363,16 @@ def get_user_list() -> list:
     return usernames
 
 
-def load_logs() -> dict:
-    with open(logs_file, "r", encoding="utf-8-sig") as file_stream:
-        data = json.load(file_stream)
+def get_preferred_profile(username) -> str:
+    accounts = load_accounts()
+    user_id = get_user_id(username)
+    return_value = ''
 
-    return data
+    # preferred_profile is guaranteed to be correct if it exists, so no new testing needed here.
+    if "preferred_profile" in accounts[user_id].keys():
+        return_value = accounts[user_id]['preferred_profile']
 
-
-def load_woodchips() -> dict:
-    with open(woodchips_file, "r", encoding="utf-8-sig") as file_stream:
-        data = json.load(file_stream)
-
-    return data
+    return return_value
 
 
 # =============================================== Artifact Storage =====================================================
