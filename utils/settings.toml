@@ -95,4 +95,6 @@ follow_bonus = 300
 active_watch_bonus = 50
 
 [loyalty_points]
-loyalty_blacklist = ["newtc"]
+loyalty_blacklist = ["newtc",
+"restreambot",
+"salamandbot"]
