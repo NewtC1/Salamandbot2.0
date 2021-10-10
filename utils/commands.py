@@ -345,7 +345,7 @@ def prefer(to_parse, vote_manager):
 
             return_value += f'Here is a list of all current vote profiles: '
             for profile in vote_data["Profiles"].keys():
-                return_value += profile + ' '
+                return_value += profile + ', '
             return return_value
     if len(message_args) > 2:
         if message_args[1] == "profile":
@@ -796,8 +796,11 @@ def bjorn(to_parse, moonrise_manager):
         return moonrise_manager.bjorn_splinter()
 
     # delay command
-    if message.split()[1].lower() == "delay":
+    elif message.split()[1].lower() == "delay":
         return moonrise_manager.bjorn_delay()
+
+    else:
+        return 'Bjorn loops up at you in confusion, but doesn\'t speak. He clearly didn\'t understand you.'
 
 
 def soil(to_parse, moonrise_manager):
@@ -809,8 +812,11 @@ def soil(to_parse, moonrise_manager):
         return moonrise_manager.soil_kill()
 
     # restore command. resets the shield's damage value.
-    if message.split()[1] == "restore":
+    elif message.split()[1] == "restore":
         return moonrise_manager.soil_restore()
+    else:
+        return '"You wanna try saying that again? I don\'t know what moonspeak that was, but it wasn\'t something ' \
+               'I\'m fluent in."'
 
 
 def cicero(to_parse, moonrise_manager):
@@ -821,15 +827,16 @@ def cicero(to_parse, moonrise_manager):
 
     if message.split()[1] == "buy":
         return moonrise_manager.cicero_buy(to_parse.author.name)
-
-    if message.split()[1] == "check":
+    elif message.split()[1] == "check":
         return moonrise_manager.cicero_check(to_parse.author.name)
-
-    if message.split()[1] == "use":
+    elif message.split()[1] == "use":
         return moonrise_manager.cicero_use(to_parse.author.name)
-
-    if message.split()[1] == "sale":
+    elif message.split()[1] == "sale":
         return moonrise_manager.cicero_sale()
+    else:
+        return 'Cicero holds out an inch-long talon to stop you. "I do not know what language you speak. ' \
+               'Please, try once more."'
+
 
 
 def imp(to_parse, moonrise_manager):
