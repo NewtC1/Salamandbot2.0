@@ -354,7 +354,7 @@ def prefer(to_parse, vote_manager):
                 del accounts[account_id]['preferred_profile']
                 return "Preferences for profiles have been cleared."
             if target_profile in vote_data["Profiles"].keys():
-                vote_manager.stop_voting()
+                vote_manager.stop_voting(author)
                 accounts[account_id]["preferred_profile"] = target_profile
                 hf.update_accounts(accounts)
                 return "Successfully set a default vote profile."
