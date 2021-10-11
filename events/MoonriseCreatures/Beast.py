@@ -9,12 +9,12 @@ class Beast(DarkForestCreature):
         DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward)
 
     def getAttack(self):
-        retval = 'The slavering beast claws at the shield, dealing ' + str(int(self.baseAttackStrength * self.attackStrengthMulti)) + ' damage.'
+        retval = 'The slavering beast claws at the shield, tearing chunks out of it.'
         return retval
 
     def getCampfireAttack(self):
         self.set_attack_strength_multi(self.getAttackStrengthMulti() + 0.5)
-        retval = 'With a howl of triumph, the beast slashes at the Salamander, knocking ' + str(int(self.baseAttackStrength * self.attackStrengthMulti)) + ' logs away from fire.'
+        retval = 'With a howl of triumph, the beast slashes at the Salamander, knocking logs away from fire.'
         return retval
 
     def getSpawnMessage(self):
