@@ -440,7 +440,7 @@ def addvoteoption(to_parse):
     :return:
     """
     message = to_parse.content
-    matches = re.match('!addvoteoption "(.+)"\s?(\d+)?\s(\w+)?', message, flags=re.I)
+    matches = re.match('!addvoteoption "(.+)"\s?(\d+)?\s?(\w+)?', message, flags=re.I)
 
     if matches:
         game_name = matches.group(1)
