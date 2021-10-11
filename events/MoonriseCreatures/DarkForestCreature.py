@@ -24,6 +24,9 @@ class DarkForestCreature:
     def get_attack_delay_multi(self):
         return self.attackDelayMulti
 
+    def get_total_attack_delay(self):
+        return self.baseAttackDelay*self.attackDelayMulti
+
     def get_base_attack_atrength(self):
         return self.baseAttackStrength
 

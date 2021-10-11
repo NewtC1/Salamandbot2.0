@@ -505,7 +505,7 @@ class MoonriseManager:
         if not self.bjorn_on_cooldown:
             if self.attacker_dead:
                 return 'Bjorn shrugs. "Nothing out there right now."'
-            self.delay = self.delay * 5
+            self.delay = self.current_attacker.get_total_attack_delay() * 5
             return_value = 'Bjorn once more disappears into the trees, taking his bow and several poisoned arrows. ' \
                            'It\'s hard to track his movements as he disappears into the gloom. A few minutes later ' \
                            'he returns. "That should slow it down for a bit."'
