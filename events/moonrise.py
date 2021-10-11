@@ -417,25 +417,19 @@ class MoonriseManager:
     def spawn_artifact(self):
 
         roll = random.randint(1,100)
+        common = [Tusk, Diamond, Eye, Tooth, Tailbone]
+        uncommon = [Finger]
+        rare = [Blowhole]
+        legendary = [Heart]
 
-        if roll < 10:
-            return Tusk()
-        elif roll < 15:
-            return Blowhole()
-        elif roll < 25:
-            return Diamond()
-        elif roll < 30:
-            return Eye()
-        elif roll < 40:
-            return Finger()
-        elif roll < 60:
-            return Tailbone()
-        elif roll < 80:
-            return Tooth()
+        if roll < 40:
+            return random.choice(common)()
+        elif roll < 70:
+            return random.choice(uncommon)()
         elif roll < 90:
-            return Tusk()
+            return random.choice(rare)()
         elif roll < 100:
-            return Heart()
+            return random.choice(legendary)()
 
     # ========================================= Character Abilities ====================================================
 
