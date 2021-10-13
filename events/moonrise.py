@@ -54,7 +54,7 @@ class MoonriseManager:
         self.cicero_time_heart_remaining = hf.settings["events"]["cicero_time_heart_max"]
         self.current_artifact_for_sale = self.spawn_artifact() # spawn a random artifact
         # self.current_artifact_for_sale = Scale()
-        self.current_artifact_for_sale = Shard()
+        # self.current_artifact_for_sale = Shard()
 
         self.pending_imp_results = []
         self.imp_no_answer = 0
