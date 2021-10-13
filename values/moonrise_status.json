@@ -1,8 +1,1 @@
-﻿{
-	"soil_ready": true,
-	"bjorn_ready": true,
-	"bjorn_delay": true,
-	"soil_kill": true,
-	"bjorn_splinter": true,
-	"slaying": false
-}
+﻿{"soil_ready": true, "bjorn_ready": true, "bjorn_delay": true, "soil_kill": true, "bjorn_splinter": true, "slaying": false, "folded_world": false}

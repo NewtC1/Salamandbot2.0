@@ -1,7 +1,6 @@
 from events.MoonriseArtifacts.Artifact import Artifact, load_status, update_status
 from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 import utils.helper_functions as hf
-import json
 
 moonrise_status_dir = hf.settings["directories"]["moonrise_status"]
 

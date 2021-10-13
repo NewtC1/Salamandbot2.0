@@ -4,6 +4,7 @@ import json
 from time import time
 
 from utils import helper_functions as hf
+
 from events.MoonriseCreatures import Dragon, Beast, Colossus, Spider, Ashvine, Bunny, Thunderjaw, Imp, \
     SpiderQueen, Goose, Bonewheel
 from events.MoonriseArtifacts.Artifact import load_status, update_status
@@ -16,6 +17,7 @@ from events.MoonriseArtifacts.Heart import Heart
 from events.MoonriseArtifacts.Tailbone import Tailbone
 from events.MoonriseArtifacts.Tooth import Tooth
 from events.MoonriseArtifacts.Scale import Scale
+from events.MoonriseArtifacts.Shard import Shard
 
 
 moonrise_status_dir = hf.settings["directories"]["moonrise_status"]
@@ -52,6 +54,7 @@ class MoonriseManager:
         self.cicero_time_heart_remaining = hf.settings["events"]["cicero_time_heart_max"]
         self.current_artifact_for_sale = self.spawn_artifact() # spawn a random artifact
         # self.current_artifact_for_sale = Scale()
+        self.current_artifact_for_sale = Shard()
 
         self.pending_imp_results = []
         self.imp_no_answer = 0
@@ -160,6 +163,13 @@ class MoonriseManager:
                       " kicking in the air."
             status["slaying"] = False
             update_status(status)
+        elif status["folded_world"]:
+            retval += "As the beast charges, the creases that were left in the air fold around it. It stumbles, " \
+                      "then collapses onto the forest floor. Its movements slow as it descends into a dream of victory."
+            self.delay = self.kill_attacker()
+            status["folded_world"] = False
+            update_status(status)
+            return retval
         else:
             hf.set_shield_damage(hf.get_shield_damage() + damage)
             retval += self.current_attacker.getAttack()
@@ -427,7 +437,7 @@ class MoonriseManager:
         roll = random.randint(1,100)
         common = [Tusk, Diamond, Eye, Tooth, Tailbone]
         uncommon = [Finger, Scale]
-        rare = [Blowhole]
+        rare = [Blowhole, Shard]
         legendary = [Heart]
 
         if roll < 40:
