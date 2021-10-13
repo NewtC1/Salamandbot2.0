@@ -6,8 +6,9 @@ from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 class Colossus(DarkForestCreature):
 
     def __init__(self, delay=60, delayMulti=5.0, attack=500, attackMulti=1.0, health=600, reward=1800,
-                 incineration_resist=3):
-        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist)
+                 incineration_resist=3, name='Colossus'):
+        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist,
+                                    name=name)
         self.speed_cap = 1.0
 
 

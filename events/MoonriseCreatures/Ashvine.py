@@ -6,8 +6,9 @@ from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 class Ashvine(DarkForestCreature):
 
     def __init__(self, delay=60, delayMulti=1.0, attack=30, attackMulti=1.0, health=60, reward=50,
-                 incineration_resist=8):
-        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist)
+                 incineration_resist=8, name='Ashvine'):
+        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist,
+                                    name)
 
     def getAttack(self):
         retval = 'Attaching itself to the trees, the Ashvine contracts, pulling at the shields from all sides.'

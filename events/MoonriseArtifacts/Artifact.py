@@ -1,5 +1,29 @@
 import re
 import logging
+import json
+import os
+import toml
+
+settings_file = os.path.join(os.path.dirname(__file__), "..\\..\\utils\\settings.toml")
+
+
+def load_settings(file=settings_file):
+    return toml.load(file)
+
+
+moonrise_status_dir = load_settings()["directories"]["moonrise_status"]
+
+
+def load_status() -> dict:
+    with open(moonrise_status_dir, encoding="utf-8-sig", mode="r") as f:
+        data = json.load(f)
+
+    return data
+
+
+def update_status(data):
+    with open(moonrise_status_dir, encoding='utf-8-sig', mode='w') as f:
+        json.dump(data, f, indent="\t")
 
 
 class Artifact(object):

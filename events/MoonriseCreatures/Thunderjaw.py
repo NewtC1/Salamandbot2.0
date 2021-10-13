@@ -15,8 +15,9 @@ class Thunderjaw(DarkForestCreature):
     WeaponSystem = 'stomp'
 
     def __init__(self, delay=50, delayMulti=2.0, attack=50, attackMulti=1.0, health=800, reward=2700,
-                 incineration_resist=3):
-        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist)
+                 incineration_resist=3, name='Thunderjaw'):
+        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist,
+                                    name=name)
         self.setStomp()
 
     def getAttack(self):

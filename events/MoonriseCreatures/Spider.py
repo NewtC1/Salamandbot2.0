@@ -5,8 +5,9 @@ from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 class Spider(DarkForestCreature):
 
     def __init__(self, delay=60, delayMulti=1.0, attack=15, attackMulti=1.0, health=100, reward=240,
-                 incineration_resist=2):
-        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist)
+                 incineration_resist=2, name='Spider'):
+        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist,
+                                    name=name)
 
     def getAttack(self):
         retval = 'Attaching powerful strands of silk to the shields, the spider pulls at the stubby trees, tearing chunks of wood out of them.'

@@ -7,8 +7,9 @@ class SpiderQueen(DarkForestCreature):
     """
 
     def __init__(self, delay=40, delayMulti=1.0, attack=25, attackMulti=4.0, health=500, reward=2700,
-                 incineration_resist=4):
-        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist)
+                 incineration_resist=4, name='Shelob'):
+        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist,
+                                    name=name)
         self.spiders_count = 4
 
     def getAttack(self):

@@ -6,7 +6,7 @@ from time import time
 from utils import helper_functions as hf
 from events.MoonriseCreatures import Dragon, Beast, Colossus, Spider, Ashvine, Bunny, Thunderjaw, Imp, \
     SpiderQueen, Goose, Bonewheel
-from events.MoonriseArtifacts.Artifact import Artifact
+from events.MoonriseArtifacts.Artifact import load_status, update_status
 from events.MoonriseArtifacts.Tusk import Tusk
 from events.MoonriseArtifacts.Diamond import Diamond
 from events.MoonriseArtifacts.Blowhole import Blowhole
@@ -15,6 +15,7 @@ from events.MoonriseArtifacts.Finger import Finger
 from events.MoonriseArtifacts.Heart import Heart
 from events.MoonriseArtifacts.Tailbone import Tailbone
 from events.MoonriseArtifacts.Tooth import Tooth
+from events.MoonriseArtifacts.Scale import Scale
 
 
 moonrise_status_dir = hf.settings["directories"]["moonrise_status"]
@@ -49,7 +50,8 @@ class MoonriseManager:
         # cicero ability
         self.cicero_buy_order_remaining = hf.settings["events"]["cicero_buy_order_max"]
         self.cicero_time_heart_remaining = hf.settings["events"]["cicero_time_heart_max"]
-        self.current_artifact_for_sale = self.spawn_artifact()  # spawn with a tusk for sale.
+        self.current_artifact_for_sale = self.spawn_artifact() # spawn a random artifact
+        # self.current_artifact_for_sale = Scale()
 
         self.pending_imp_results = []
         self.imp_no_answer = 0
@@ -128,7 +130,6 @@ class MoonriseManager:
     def attack(self):
 
         retval = ''
-        shield_amount = hf.get_shield_count()
         # deal damage to shields are there are still any remaining
         damage = int(self.current_attacker.get_base_attack_atrength() * self.current_attacker.getAttackStrengthMulti())
         if hf.get_shield_count() > 0:
@@ -153,8 +154,15 @@ class MoonriseManager:
 
     def do_damage(self, damage, retval):
         # increase the shield damage
-        hf.set_shield_damage(hf.get_shield_damage() + damage)
-        retval += self.current_attacker.getAttack()
+        status = load_status()
+        if status["slaying"]:
+            retval += "The creature attempts to attack but suddenly finds itself flopped over on its side, appendages" \
+                      " kicking in the air."
+            status["slaying"] = False
+            update_status(status)
+        else:
+            hf.set_shield_damage(hf.get_shield_damage() + damage)
+            retval += self.current_attacker.getAttack()
 
         if hf.get_shield_damage() >= self.shield_health:
             # reduce the number of shields if damage hit a health threshold
@@ -418,7 +426,7 @@ class MoonriseManager:
 
         roll = random.randint(1,100)
         common = [Tusk, Diamond, Eye, Tooth, Tailbone]
-        uncommon = [Finger]
+        uncommon = [Finger, Scale]
         rare = [Blowhole]
         legendary = [Heart]
 
@@ -558,7 +566,7 @@ class MoonriseManager:
 
     def cicero_sale(self):
         if self.current_artifact_for_sale:
-            item = f"{self.current_artifact_for_sale.name}: {self.current_artifact_for_sale.description}. " \
+            item = f"{self.current_artifact_for_sale.name}: {self.current_artifact_for_sale.description} " \
                    f"It has {self.current_artifact_for_sale.get_uses()} uses left. It costs " \
                    f"{self.current_artifact_for_sale.get_cost_value()}{self.current_artifact_for_sale.get_cost_type()}."
             return item

@@ -3,8 +3,8 @@ from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 
 class Vine(DarkForestCreature):
 
-    def __init__(self, delay, delayMulti, attack, attackMulti, health, reward):
-        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward)
+    def __init__(self, delay, delayMulti, attack, attackMulti, health, reward, name='Vine'):
+        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, name=name)
 
 
     def getAttack(self):

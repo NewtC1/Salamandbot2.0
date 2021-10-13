@@ -5,8 +5,9 @@ from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 class Dragon(DarkForestCreature):
 
     def __init__(self, delay=300, delayMulti=1.0, attack=800, attackMulti=1.0, health=900, reward=3600,
-                 incineration_resist=2):
-        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist)
+                 incineration_resist=2, name='Ssalandrile'):
+        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, incineration_resist,
+                                    name=name)
 
     def getAttack(self):
         self.setReward(self.getReward() + 300)

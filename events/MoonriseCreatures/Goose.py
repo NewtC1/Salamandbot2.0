@@ -3,8 +3,8 @@ from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 
 class Goose(DarkForestCreature):
 
-    def __init__(self, delay=3, delayMulti=1.0, attack=5, attackMulti=1.0, health=100, reward=300):
-        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward)
+    def __init__(self, delay=3, delayMulti=1.0, attack=5, attackMulti=1.0, health=100, reward=300, name='The Goose'):
+        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, name=name)
 
     def getAttack(self):
         retval = 'The Goose swings its knife haphazardly at the wooden wall, honking as it does so. Woodchips fly off ' \

@@ -480,6 +480,20 @@ def deletevoteoption(to_parse):
         return f"I don't understand what you're saying. Correct syntax is !deletevoteoption <game name>"
 
 
+def selectnextgame(to_parse) -> str:
+    """
+    Selects the next game on the active list.
+    :param to_parse:
+    :return:
+    """
+
+
+
+    hf.get_active_profile()
+
+
+
+
 def checkoptions(to_parse=None):
     """
     Displays all of the vote options, with how many logs each option has.

@@ -5,8 +5,8 @@ from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 
 class Beast(DarkForestCreature):
 
-    def __init__(self, delay=120, delayMulti=1.0, attack=70, attackMulti=1.0, health=100, reward=300):
-        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward)
+    def __init__(self, delay=120, delayMulti=1.0, attack=70, attackMulti=1.0, health=100, reward=300, name='Beast'):
+        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, name=name)
 
     def getAttack(self):
         retval = 'The slavering beast claws at the shield, tearing chunks out of it.'

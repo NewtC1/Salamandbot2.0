@@ -4,8 +4,8 @@ from events.MoonriseCreatures.DarkForestCreature import DarkForestCreature
 
 class Bonewheel(DarkForestCreature):
 
-    def __init__(self, delay=400, delayMulti=1.0, attack=200, attackMulti=1.0, health=50, reward=300):
-        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward)
+    def __init__(self, delay=400, delayMulti=1.0, attack=200, attackMulti=1.0, health=50, reward=300, name='Skeleton'):
+        DarkForestCreature.__init__(self, delay, delayMulti, attack, attackMulti, health, reward, name=name)
 
     def getAttack(self):
         retval = 'Again, the laughter heralds the arrival of the bonewheel as it grinds a furrow into a trunk. '
