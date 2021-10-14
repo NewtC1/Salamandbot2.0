@@ -25,7 +25,7 @@ class Ashvine(DarkForestCreature):
 
     def getSpawnMessage(self):
         retval = 'A column of smoke can be seen deep in the woods, even against the inky night sky. A purple glow' \
-                 'answers the Campgrounds. A Cinder lurks in the darkness.'
+                 ' answers the Campgrounds. A Cinder lurks in the darkness.'
         return retval
 
     def UseSpecialAbility(self):

@@ -9,7 +9,7 @@ def bite(target: DarkForestCreature):
     """
     damage = 30
     target.setHealth(target.getHealth() - damage)
-    return 'The teeth shiver in your hand, then form into the grisly, bloodstained smile of a wolf. On of the teeth ' \
+    return 'The teeth shiver in your hand, then form into the grisly, bloodstained smile of a wolf. One of the teeth ' \
            'leaps out of your palm and into the oncoming creature, chewing through flesh and bone alike.'
 
 

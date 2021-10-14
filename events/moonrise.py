@@ -6,7 +6,7 @@ from time import time
 from utils import helper_functions as hf
 
 from events.MoonriseCreatures import Dragon, Beast, Colossus, Spider, Ashvine, Bunny, Thunderjaw, Imp, \
-    SpiderQueen, Goose, Bonewheel
+    SpiderQueen, Goose, Bonewheel, Ghostflame
 from events.MoonriseArtifacts.Artifact import load_status, update_status
 from events.MoonriseArtifacts.Tusk import Tusk
 from events.MoonriseArtifacts.Diamond import Diamond
@@ -18,6 +18,7 @@ from events.MoonriseArtifacts.Tailbone import Tailbone
 from events.MoonriseArtifacts.Tooth import Tooth
 from events.MoonriseArtifacts.Scale import Scale
 from events.MoonriseArtifacts.Shard import Shard
+from events.MoonriseArtifacts.Chaos import Chaos
 
 
 moonrise_status_dir = hf.settings["directories"]["moonrise_status"]
@@ -55,6 +56,7 @@ class MoonriseManager:
         self.current_artifact_for_sale = self.spawn_artifact() # spawn a random artifact
         # self.current_artifact_for_sale = Scale()
         # self.current_artifact_for_sale = Shard()
+        # self.current_artifact_for_sale = Chaos()
 
         self.pending_imp_results = []
         self.imp_no_answer = 0
@@ -84,6 +86,10 @@ class MoonriseManager:
 
     def tick(self):
         return_value = ""
+
+        status = load_status()
+        if 'creation' in status['artifact_effects']:
+            return_value += self.create_monster()
 
         if self.soil_on_cooldown:
             soil_off_cooldown = (self.soil_went_on_cooldown + self.soil_cooldown_duration) - time()
@@ -158,16 +164,16 @@ class MoonriseManager:
     def do_damage(self, damage, retval):
         # increase the shield damage
         status = load_status()
-        if status["slaying"]:
+        if 'slaying' in status["artifact_effects"]:
             retval += "The creature attempts to attack but suddenly finds itself flopped over on its side, appendages" \
                       " kicking in the air."
-            status["slaying"] = False
+            status["artifact_effects"].remove('slaying')
             update_status(status)
-        elif status["folded_world"]:
+        elif 'folded_world' in status["artifact_effects"]:
             retval += "As the beast charges, the creases that were left in the air fold around it. It stumbles, " \
                       "then collapses onto the forest floor. Its movements slow as it descends into a dream of victory."
             self.delay = self.kill_attacker()
-            status["folded_world"] = False
+            status["artifact_effects"].remove('folded_world')
             update_status(status)
             return retval
         else:
@@ -265,6 +271,11 @@ class MoonriseManager:
 
     # sets the values of the new attacker
     def set_new_attacker(self, attacker):
+        """
+        Sets the attacker and changes variables as needed
+        :param attacker: The monster to use for the new attacker.
+        :return: The spawn message for the new attacker.
+        """
         logging.info(f"[Moonrise] Setting a new attacker: {attacker.__class__.__name__}")
         self.current_attacker = attacker
         self.attacker_dead = False
@@ -437,7 +448,7 @@ class MoonriseManager:
         roll = random.randint(1,100)
         common = [Tusk, Diamond, Eye, Tooth, Tailbone]
         uncommon = [Finger, Scale]
-        rare = [Blowhole, Shard]
+        rare = [Blowhole, Shard, Chaos]
         legendary = [Heart]
 
         if roll < 40:
@@ -448,6 +459,23 @@ class MoonriseManager:
             return random.choice(rare)()
         elif roll < 100:
             return random.choice(legendary)()
+
+    def create_monster(self):
+        """
+        Used only with the Chaos artifact. Spawns any monster, with the option to spawn a Ghostflame.
+        :return:
+        """
+        creatures = [Ashvine.Ashvine, Beast.Beast, Bonewheel.Bonewheel, Bunny.Bunny, Colossus.Colossus, Dragon.Dragon,
+                     Ghostflame.Ghostflame, Ghostflame.Ghostflame, Ghostflame.Ghostflame, Goose.Goose, Spider.Spider,
+                     SpiderQueen.SpiderQueen, Thunderjaw.Thunderjaw]
+
+        creature = random.choice(creatures)()
+
+        status = load_status()
+        status["artifact_effects"].remove('creation')
+        update_status(status)
+
+        return self.set_new_attacker(creature)
 
     # ========================================= Character Abilities ====================================================
 
@@ -572,7 +600,6 @@ class MoonriseManager:
             return return_value
         else:
             return 'The owlkin shakes his masked head. "Regrettably, I cannot sell at this time."'
-
 
     def cicero_sale(self):
         if self.current_artifact_for_sale:

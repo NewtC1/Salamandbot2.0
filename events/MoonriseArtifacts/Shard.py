@@ -12,7 +12,7 @@ def folded_world(target: DarkForestCreature):
     if target.name[0].lower() == 's':
         data = load_status()
 
-        data['folded_world'] = True
+        data['artifact_effects'].append('folded_world')
 
         update_status(data)
         target.setHealth(int(target.getHealth()*0.8))

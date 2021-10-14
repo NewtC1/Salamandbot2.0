@@ -15,7 +15,7 @@ def slaying(target: DarkForestCreature):
     if target.name[0].lower() == 's':
         data = load_status()
 
-        data['slaying'] = True
+        data['artifact_effects'].append('slaying')
 
         update_status(data)
         target.setHealth(int(target.getHealth()*0.8))
