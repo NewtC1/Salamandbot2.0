@@ -56,7 +56,7 @@ class MoonriseManager:
         self.current_artifact_for_sale = self.spawn_artifact() # spawn a random artifact
         # self.current_artifact_for_sale = Scale()
         # self.current_artifact_for_sale = Shard()
-        # self.current_artifact_for_sale = Chaos()
+        self.current_artifact_for_sale = Chaos()
 
         self.pending_imp_results = []
         self.imp_no_answer = 0
@@ -131,6 +131,7 @@ class MoonriseManager:
             if not self.attacker_dead:
                 self.delay = self.current_attacker.get_base_attack_delay() * self.current_attacker.get_attack_delay_multi()
 
+        logging.info(f"[Moonrise] {return_value}")
         return return_value
 
     # ----------------------------------------
@@ -623,6 +624,8 @@ class MoonriseManager:
         artifact = hf.get_user_artifact(user_name)
         if hf.get_user_artifact_uses(user_name) > 0:
             hf.set_user_artifact_uses(user_name, hf.get_user_artifact_uses(user_name) - 1)
+
+        logging.info(f"[Moonrise] User {user_name} using artifact {hf.get_user_artifact(user_name).name}")
         return artifact.use(self.current_attacker)
 
 # ================================================== UI functions ======================================================
