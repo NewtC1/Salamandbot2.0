@@ -626,7 +626,8 @@ class MoonriseManager:
             hf.set_user_artifact_uses(user_name, hf.get_user_artifact_uses(user_name) - 1)
 
         logging.info(f"[Moonrise] User {user_name} using artifact {hf.get_user_artifact(user_name).name}")
-        return artifact.use(self.current_attacker)
+        output = artifact.use(self.current_attacker)
+        return output
 
 # ================================================== UI functions ======================================================
 

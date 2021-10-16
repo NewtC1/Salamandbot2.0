@@ -158,6 +158,9 @@ class VoteManager:
             if "No Decay" in vote_data.keys():
                 no_decay = vote_data["No Decay"]
 
+            if "decayed" not in vote_data["Profiles"].keys():
+                vote_data["Profiles"]["decayed"] = {}
+
             for profile in vote_data["Profiles"].keys():
 
                 # skip this profile if it's in the no_decay list
