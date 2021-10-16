@@ -56,7 +56,7 @@ class MoonriseManager:
         self.current_artifact_for_sale = self.spawn_artifact() # spawn a random artifact
         # self.current_artifact_for_sale = Scale()
         # self.current_artifact_for_sale = Shard()
-        self.current_artifact_for_sale = Chaos()
+        # self.current_artifact_for_sale = Chaos()
 
         self.pending_imp_results = []
         self.imp_no_answer = 0
