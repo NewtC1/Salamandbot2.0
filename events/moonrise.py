@@ -191,11 +191,11 @@ class MoonriseManager:
                       f'There are now {hf.get_shield_count()} shields left.'
             self.combo_counter = 1.0
             # resets the supporting abilities.
-            self.soil_kill_order_remaining = 1
-            self.bjorn_splinter_order_remaining = 3
+            self.soil_kill_order_remaining = hf.settings["events"]["soil_kill_order_max"]
+            self.bjorn_splinter_order_remaining = hf.settings["events"]["bjorn_splinter_order_max"]
             self.soil_on_cooldown = False
             self.bjorn_on_cooldown = False
-            self.cicero_buy_order_remaining = 1
+            self.cicero_buy_order_remaining = hf.settings["events"]["cicero_buy_order_max"]
             self.current_artifact_for_sale = self.spawn_artifact()
             set_soil_ready(True)
             set_soil_kill(True)
