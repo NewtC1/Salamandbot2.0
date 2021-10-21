@@ -230,12 +230,6 @@ async def start_loop(end_loop=None):
     # create any files that are missing
     generate_missing_values()
 
-    # add commands
-    logging.info("[Bot] Adding commands...")
-    commands = getmembers(command_list, isfunction)
-    for command in commands:
-        parser.add_command(f"!{command[0]}", command[1])
-
     # add sfx commands
     logging.info("[Bot] Adding sfx commands...")
     sfx_files = os.listdir(helper_functions.sfx_file)
@@ -266,6 +260,12 @@ async def start_loop(end_loop=None):
     # add the function to the parser
     sfx_commands = getmembers(sfx, isfunction)
     for command in sfx_commands:
+        parser.add_command(f"!{command[0]}", command[1])
+
+    # add commands
+    logging.info("[Bot] Adding commands...")
+    commands = getmembers(command_list, isfunction)
+    for command in commands:
         parser.add_command(f"!{command[0]}", command[1])
 
     print(f"Commands: {parser.commands}")

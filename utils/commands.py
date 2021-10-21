@@ -5,6 +5,8 @@ import re
 import operator
 import requests
 import data_classes.redeemable as redeemable
+import utils.sfx as sfx_module
+from inspect import getmembers, isfunction
 from utils import helper_functions as hf
 from time import time
 from voting.vote_manager import VoteManager
@@ -251,6 +253,18 @@ def shoutout(to_parse=None):
 
 def so(to_parse=None):
     return shoutout(to_parse)
+
+
+def sfx(to_parse=None):
+    sfx_commands = getmembers(sfx_module, isfunction)
+
+    output = ""
+    for command in sfx_commands:
+        output += f"!{command[0]}, "
+
+    output = output[:-2]
+
+    return output
 
 
 def top5(to_parse=None):
