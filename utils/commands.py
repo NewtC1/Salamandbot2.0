@@ -829,7 +829,7 @@ def bjorn(to_parse, moonrise_manager):
         return moonrise_manager.bjorn_delay()
 
     else:
-        return 'Bjorn loops up at you in confusion, but doesn\'t speak. He clearly didn\'t understand you.'
+        return 'Bjorn looks up at you in confusion, but doesn\'t speak. He clearly didn\'t understand you.'
 
 
 def soil(to_parse, moonrise_manager):
