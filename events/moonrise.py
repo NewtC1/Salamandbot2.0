@@ -246,13 +246,12 @@ class MoonriseManager:
                     scope.delay = scope.kill_attacker()
                     campfire_attack_retval += " The attacker has been slain. You gain " + str(scope.delay) + \
                                               " more seconds until the next attack."
-                    campfire_attack_retval += f' Combo counter is at {scope.combo_counter}'
+                    # campfire_attack_retval += f' Combo counter is at {scope.combo_counter}'
                     logging.info(f'[Moonrise] Combo counter is at {scope.combo_counter}')
                 else:
                     scope.current_attacker.SetIncResist(inc_resist - 1)
                     if not str(scope.current_attacker.__class__.__name__).lower() == "imp":
-                        campfire_attack_retval += ' Vicious flames curl around the attacker, but fail to dissuade it.' \
-                                                  ' Burns race across the creature\'s body.'
+                        campfire_attack_retval += ' Vicious flames curl around the attacker, but fail to dissuade it.'
                         campfire_attack_retval += scope.current_attacker.UseSpecialAbility()
                     else:
                         campfire_attack_retval += imp_response(scope)
