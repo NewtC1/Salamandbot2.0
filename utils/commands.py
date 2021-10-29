@@ -366,6 +366,7 @@ def prefer(to_parse, vote_manager):
             target_profile = " ".join(message_args[2:])
             if target_profile == "clear" and "preferred_profile" in accounts[account_id].keys():
                 del accounts[account_id]['preferred_profile']
+                hf.update_accounts(accounts)
                 return "Preferences for profiles have been cleared."
             if target_profile in vote_data["Profiles"].keys():
                 vote_manager.stop_voting(author)
