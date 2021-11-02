@@ -182,9 +182,14 @@ def delete_vote_option(target, profile):
 
 
 def set_last_vote_time(target, new_value, profile_override=None):
+    active_profile = get_active_profile()
+
+    if profile_override:
+        active_profile = profile_override
+
     data = get_vote_data()
-    if vote_exists(target):
-        data["Profiles"][get_active_profile()][target]['last added'] = new_value
+    if vote_exists(target, active_profile):
+        data["Profiles"][active_profile][target]['last added'] = new_value
     update_vote_data(data)
 
 

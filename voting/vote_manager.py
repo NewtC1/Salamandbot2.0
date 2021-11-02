@@ -28,6 +28,11 @@ class VoteManager:
 
     async def apply_vote(self, target, voter, amount, profile):
         amount_to_increase = max_vote_rate
+        active_profile = hf.get_active_profile()
+
+        # if the user has a preferred profile, use that instead
+        if hf.get_preferred_profile(voter):
+            active_profile = hf.get_preferred_profile(voter)
 
         if amount != "all":
             amount_to_increase = max_vote_rate if amount > max_vote_rate else amount
@@ -44,7 +49,7 @@ class VoteManager:
         hf.add_vote_contributor(target, voter, amount_to_increase, profile)
         hf.set_log_count(voter, hf.get_log_count(voter) - amount_to_increase)
 
-        hf.set_last_vote_time(target, time.time())
+        hf.set_last_vote_time(target, time.time(), active_profile)
 
         return amount - amount_to_increase if amount != "all" else "all"
 

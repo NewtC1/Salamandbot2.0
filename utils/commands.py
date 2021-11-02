@@ -646,7 +646,7 @@ def vote(to_parse, vote_manager: VoteManager):
             hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
             hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
             hf.add_vote_contributor(target, user, "all")
-            hf.set_last_vote_time(target, time())
+            hf.set_last_vote_time(target, time(), hf.get_preferred_profile(user))
             cooldown = hf.get_dynamic_cooldown_amount(max_vote_rate)
             hf.add_user_to_cooldown(user, time() + cooldown, target, "all")
             output += f"You've been added to continuous adding. You will add to {target} until you run out of logs. " \
@@ -667,7 +667,7 @@ def vote(to_parse, vote_manager: VoteManager):
                     continuous_cooldown = time() + hf.get_dynamic_cooldown_amount(max_vote_rate)
                     hf.add_user_to_cooldown(user, continuous_cooldown,
                                             target, amount - max_vote_rate)
-                    hf.set_last_vote_time(target, time())
+                    hf.set_last_vote_time(target, time(), active_profile)
                     output += convert_seconds(amount + max_vote_rate)
 
                 else:
@@ -675,6 +675,7 @@ def vote(to_parse, vote_manager: VoteManager):
                     hf.set_vote_option_value(target, hf.get_vote_option_value(target, active_profile) + amount,
                                              active_profile)
                     hf.add_vote_contributor(target, user, amount, active_profile)
+                    hf.set_last_vote_time(target, time(), active_profile)
                     cooldown = hf.get_dynamic_cooldown_amount(amount)
                     hf.add_user_to_cooldown(user, time() + cooldown, target, 0)
                     output += f"{user} added {amount} logs to {target}'s campfire. It now sits at " \
