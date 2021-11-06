@@ -95,6 +95,15 @@ def generate_missing_values():
         "pending": {}
     })
     generate_value(helper_functions.story_file, stories_template)
+    moonrise_status_template = json.dumps({
+        "soil_ready": True,
+        "bjorn_ready": True,
+        "bjorn_delay": True,
+        "soil_kill": True,
+        "bjorn_splinter": True,
+        "artifact_effects": []
+    })
+    generate_value(helper_functions.moonrise_status_file, moonrise_status_template)
 
 
 async def payout_logs(users=None):
@@ -200,10 +209,15 @@ async def update_live_status():
 
 
 async def start_loop(end_loop=None):
+    # create any files that are missing
+    logging.info("[Bot] Generating any missing values...")
+    generate_missing_values()
+
     # manages votes as users input them
     logging.info("[Bot] Creating vote manager...")
     vote_manager = VoteManager(logger=logging.getLogger())
 
+    logging.info("[Bot] Creating Story manager...")
     story_manager = stories.StoryManager()
     moonrise_manager = moonrise.MoonriseManager(logger=logging.getLogger())
 
@@ -226,9 +240,6 @@ async def start_loop(end_loop=None):
     # parses inputs
     logging.info("[Bot] Creating input parser...")
     parser = Input(logger=logging.getLogger(), vote_manager=vote_manager, moonrise_manager=moonrise_manager)
-
-    # create any files that are missing
-    generate_missing_values()
 
     # add sfx commands
     logging.info("[Bot] Adding sfx commands...")
