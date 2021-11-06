@@ -32,6 +32,7 @@ votes_file = os.path.join(os.path.dirname(__file__), '..', settings['directories
 sfx_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['sfx_file'])
 accounts_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['accounts_file'])
 story_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['story_file'])
+moonrise_status_file = os.path.join(os.path.dirname(__file__), '..', settings['directories']['moonrise_status'])
 base_cooldown = settings['settings']['cooldown_time']
 max_vote_rate = settings['settings']['max_vote_rate']
 loyalty_blacklist = settings["loyalty_points"]["loyalty_blacklist"]
