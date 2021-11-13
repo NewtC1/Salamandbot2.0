@@ -695,7 +695,7 @@ def woodchips(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{to_parse.author.name} has gathered {hf.get_woodchip_count(to_parse.author.name.lower())} woodchips."
+    output = f"{to_parse.author.name} has gathered {hf.get_woodchip_count(to_parse.author.name)} woodchips."
     return output
 
 
