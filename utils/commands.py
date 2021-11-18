@@ -120,6 +120,15 @@ def info(to_parse=None):
     return output
 
 
+def kingmaker(to_parse=None):
+    """
+    Outputs a link to the recap episodes.
+    :param to_parse:
+    :return:
+    """
+    return "The story so far: https://www.youtube.com/playlist?list=PLSQSsMCgp5bCn9dGMsCvSYRazL-VHW_j7"
+
+
 def logs(to_parse=None):
     """
     Displays the user's log count
