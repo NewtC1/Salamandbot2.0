@@ -38,10 +38,8 @@ max_vote_rate = settings['settings']['max_vote_rate']
 loyalty_blacklist = settings["loyalty_points"]["loyalty_blacklist"]
 
 
-def get_vote_option_value(option, profile_override=None):
-    active_profile = get_active_profile()
-    if profile_override:
-        active_profile = profile_override
+def get_vote_option_value(option, user=None):
+    active_profile = get_active_profile(user)
     option_value = 0
     data = get_vote_data()
     if option in data["Profiles"][active_profile].keys():
@@ -117,11 +115,8 @@ def update_vote_data(data):
         json.dump(data, file, indent='\t')
 
 
-def vote_exists(target, profile_override=None):
-    active_profile = get_active_profile()
-
-    if profile_override:
-        active_profile = profile_override
+def vote_exists(target, user=None):
+    active_profile = get_active_profile(user)
 
     data = get_vote_data()
     if target in data["Profiles"][active_profile].keys():
@@ -130,21 +125,25 @@ def vote_exists(target, profile_override=None):
         return False
 
 
-def set_vote_option_value(target, new_value, profile_override=None):
-    active_profile = get_active_profile()
-
-    if profile_override:
-        active_profile = profile_override
-
+def set_vote_option_value(target, new_value, user=None):
+    active_profile = get_active_profile(user)
     data = get_vote_data()
-    if vote_exists(target, active_profile):
+    if vote_exists(target, user):
         data["Profiles"][active_profile][target]['vote value'] = new_value
     update_vote_data(data)
 
 
-def get_active_profile():
-    data = get_vote_data()
-    return_value = data["Active Profile"]
+def get_active_profile(user=None) -> str:
+
+    return_value = None
+
+    if user:
+        return_value = get_preferred_profile(user)
+
+    if not return_value:
+        data = get_vote_data()
+        return_value = data["Active Profile"]
+
     return return_value
 
 
@@ -182,23 +181,17 @@ def delete_vote_option(target, profile):
         return False
 
 
-def set_last_vote_time(target, new_value, profile_override=None):
-    active_profile = get_active_profile()
-
-    if profile_override:
-        active_profile = profile_override
+def set_last_vote_time(target, new_value, user=None):
+    active_profile = get_active_profile(user)
 
     data = get_vote_data()
-    if vote_exists(target, active_profile):
+    if vote_exists(target, user):
         data["Profiles"][active_profile][target]['last added'] = new_value
     update_vote_data(data)
 
 
-def add_vote_contributor(target, user, amount, profile_override=None):
-    active_profile = get_active_profile()
-
-    if profile_override:
-        active_profile = profile_override
+def add_vote_contributor(target, user, amount):
+    active_profile = get_active_profile(user)
 
     data = get_vote_data()
     amount_to_add = amount if not type(amount) == str else max_vote_rate

@@ -511,11 +511,8 @@ def selectnextgame(to_parse) -> str:
     :return:
     """
 
-
-
     hf.get_active_profile()
-
-
+    return " "
 
 
 def checkoptions(to_parse=None):
@@ -526,17 +523,14 @@ def checkoptions(to_parse=None):
     """
     author = to_parse.author.name
     votes = hf.get_vote_data()
-    active = hf.get_active_profile()
+    active = hf.get_active_profile(author)
     options = {}
-
-    if hf.get_preferred_profile(author):
-        active = hf.get_preferred_profile(author)
 
     return_value = f'Profile: {active}. '
 
     # build a dictionary of values out of the options
     for option in votes["Profiles"][active]:
-        options[option] = hf.get_vote_option_value(option, active)
+        options[option] = hf.get_vote_option_value(option, author)
 
     if not len(options.keys()):
         return "There's nothing in this profile. Add options with !addvoteoption."
@@ -615,11 +609,7 @@ def vote(to_parse, vote_manager: VoteManager):
 
     message = to_parse.content
     user = to_parse.author.name
-    active_profile = hf.get_active_profile()
-
-    # if the user has a preferred profile, use that instead
-    if hf.get_preferred_profile(user):
-        active_profile = hf.get_preferred_profile(user)
+    active_profile = hf.get_active_profile(user)
 
     vote_data = hf.get_vote_data()
 
@@ -655,7 +645,7 @@ def vote(to_parse, vote_manager: VoteManager):
             hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
             hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
             hf.add_vote_contributor(target, user, "all")
-            hf.set_last_vote_time(target, time(), hf.get_preferred_profile(user))
+            hf.set_last_vote_time(target, time(), user)
             cooldown = hf.get_dynamic_cooldown_amount(max_vote_rate)
             hf.add_user_to_cooldown(user, time() + cooldown, target, "all")
             output += f"You've been added to continuous adding. You will add to {target} until you run out of logs. " \
@@ -669,26 +659,26 @@ def vote(to_parse, vote_manager: VoteManager):
                     return "You don't have enough logs for that."
 
                 if amount > max_vote_rate:
-                    hf.set_vote_option_value(target, hf.get_vote_option_value(target, active_profile) + max_vote_rate,
-                                             active_profile)
+                    hf.set_vote_option_value(target, hf.get_vote_option_value(target, user) + max_vote_rate,
+                                             user)
                     hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
-                    hf.add_vote_contributor(target, user, amount, active_profile)
+                    hf.add_vote_contributor(target, user, amount)
                     continuous_cooldown = time() + hf.get_dynamic_cooldown_amount(max_vote_rate)
                     hf.add_user_to_cooldown(user, continuous_cooldown,
                                             target, amount - max_vote_rate)
-                    hf.set_last_vote_time(target, time(), active_profile)
+                    hf.set_last_vote_time(target, time(), user)
                     output += convert_seconds(amount + max_vote_rate)
 
                 else:
                     hf.set_log_count(user, hf.get_log_count(user) - amount)
-                    hf.set_vote_option_value(target, hf.get_vote_option_value(target, active_profile) + amount,
-                                             active_profile)
-                    hf.add_vote_contributor(target, user, amount, active_profile)
-                    hf.set_last_vote_time(target, time(), active_profile)
+                    hf.set_vote_option_value(target, hf.get_vote_option_value(target, user) + amount,
+                                             user)
+                    hf.add_vote_contributor(target, user, amount)
+                    hf.set_last_vote_time(target, time(), user)
                     cooldown = hf.get_dynamic_cooldown_amount(amount)
                     hf.add_user_to_cooldown(user, time() + cooldown, target, 0)
                     output += f"{user} added {amount} logs to {target}'s campfire. It now sits at " \
-                              f"{hf.get_vote_option_value(target, active_profile)}"
+                              f"{hf.get_vote_option_value(target, user)}"
                 return output
             except ValueError as e:
                 return f"The value {amount} is not an integer. Please enter an integer."
