@@ -194,6 +194,7 @@ def add_vote_contributor(target, user, amount):
     active_profile = get_active_profile(user)
 
     data = get_vote_data()
+    # add the amount requested if the user isn't adding all, otherwise add whatever the max is.
     amount_to_add = amount if not type(amount) == str else max_vote_rate
     if user in data['Profiles'][active_profile][target]['votes list'].keys():
         data['Profiles'][active_profile][target]['votes list'][user] += amount_to_add
