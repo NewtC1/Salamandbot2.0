@@ -73,6 +73,13 @@ bjorn_cooldown_duration = 600
 cicero_buy_order_max = 1
 cicero_time_heart_max = 1
 
+######################
+# Rimeheart settings #
+######################
+rimeheart_active = false
+rimeheart_delay = 600
+raffle_cost = 10
+
 [directories]
 values = "values"
 campfire = "values/campfire.txt"
@@ -84,6 +91,7 @@ sfx_file = "C:\\Users\\james\\Dropbox\\Stream Assets\\Sounds"
 accounts_file = "values/accounts.json"
 story_file = "values/stories.json"
 moonrise_status = "values/moonrise_status.json"
+rimeheart_giveaway = "values/rimeheart_giveaway.json"
 
 [settings]
 max_vote_rate = 100

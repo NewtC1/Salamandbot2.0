@@ -7,7 +7,7 @@ class Clock:
     minute.
     """
 
-    def __init__(self, logger, tick_frequency=60, function_dict=None):
+    def __init__(self, logger=None, tick_frequency=60, function_dict=None):
         self.logger = logger
         self.tick_frequency = tick_frequency
         self.function_dict = function_dict

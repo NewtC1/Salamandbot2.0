@@ -880,3 +880,26 @@ def imp(to_parse, moonrise_manager):
         return f"The imp disappears with a rude noise and a cackle. The last thing you hear is \"{result}.\""
     else:
         return moonrise_manager.current_attacker.riddle
+
+
+# ===================================================== Rimeheart ======================================================
+def raffle(to_parse, rimeheart_manager):
+    return_value = ""
+    message = to_parse.content
+    author = to_parse.author.name
+
+    if len(message.split()) > 1:
+        try:
+            amount = int(message.split()[1])
+            return_value = rimeheart_manager.buy_multiple_raffles(author, amount)
+        except ValueError:
+            return "That's not a valid value. Please give uncle Cicero a correct number."
+    else:
+        return_value = rimeheart_manager.buy_raffle(author)
+
+    return return_value
+
+
+def rafflechoice(to_parse, rimeheart_manager):
+    return_value = f"The current raffle option is {rimeheart_manager.current_game}."
+    return return_value

@@ -16,6 +16,7 @@ from voting.vote_manager import VoteManager
 import events.overheat as overheat
 import events.stories as stories
 import events.moonrise as moonrise
+import events.rimeheart as rimeheart
 
 settings = helper_functions.load_settings()
 bots = {}
@@ -48,7 +49,6 @@ def generate_missing_values():
     shield_dir = helper_functions.shields_file
     woodchips_dir = helper_functions.woodchips_file
     votes_dir = helper_functions.votes_file
-    logs_dir = helper_functions.logs_file
     accounts_dir = helper_functions.accounts_file
 
     def generate_value(file_dir, default_value=""):
@@ -104,6 +104,12 @@ def generate_missing_values():
         "artifact_effects": []
     })
     generate_value(helper_functions.moonrise_status_file, moonrise_status_template)
+    rimeheart_giveaway_template = json.dumps({
+        "valid_codes": {},
+        "invalid_codes": {},
+        "skipped_codes": {}
+    })
+    generate_value(rimeheart.rimeheart_dir, rimeheart_giveaway_template)
 
 
 async def payout_logs(users=None):
@@ -187,6 +193,15 @@ async def moonrise_tick(manager: moonrise.MoonriseManager):
                 await bots[bot].send_message(moonrise_output)
 
 
+async def rimeheart_tick(manager: rimeheart.RimeheartManager):
+    global is_live
+    if is_live and settings["events"]["rimeheart_active"]:
+        rimeheart_output = manager.tick()
+        if rimeheart_output:
+            for bot in bots.keys():
+                await bots[bot].send_message(rimeheart_output)
+
+
 async def update_live_status():
     """
     Updates live status when called.
@@ -220,26 +235,28 @@ async def start_loop(end_loop=None):
     logging.info("[Bot] Creating Story manager...")
     story_manager = stories.StoryManager()
     moonrise_manager = moonrise.MoonriseManager(logger=logging.getLogger())
+    rimeheart_manager = rimeheart.RimeheartManager()
 
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clocks...")
     clock = Clock(logger=logging.getLogger(), function_dict={tick: "",
                                                              story_manager.tick: ""}, tick_frequency=BOT_TICK_RATE)
-    vote_clock = Clock(logger=logging.getLogger(),
-                       function_dict={vote_manager.tick_vote: "",
+    vote_clock = Clock(function_dict={vote_manager.tick_vote: "",
                                       vote_manager.remove_users_from_cooldown: "",
                                       vote_manager.decay: "",
                                       overheat_tick: ""
                                       },
                        tick_frequency=1)
-    moonrise_clock = Clock(logger=logging.getLogger(),
-                           function_dict={moonrise_tick: moonrise_manager},
+    moonrise_clock = Clock(function_dict={moonrise_tick: moonrise_manager},
                            tick_frequency=5
                            )
+    rimeheart_clock = Clock(function_dict={rimeheart_tick: rimeheart_manager},
+                            tick_frequency=10)
 
     # parses inputs
     logging.info("[Bot] Creating input parser...")
-    parser = Input(logger=logging.getLogger(), vote_manager=vote_manager, moonrise_manager=moonrise_manager)
+    parser = Input(vote_manager=vote_manager, moonrise_manager=moonrise_manager,
+                   rimeheart_manager=rimeheart_manager)
 
     # add sfx commands
     logging.info("[Bot] Adding sfx commands...")
@@ -288,7 +305,7 @@ async def start_loop(end_loop=None):
     vote_manager.bots = [bots["twitch"]]
 
     await asyncio.gather(clock.run(), bots["twitch"].start(), discord.start(os.environ["DISCORD_TOKEN"]),
-                         vote_clock.run(), moonrise_clock.run())
+                         vote_clock.run(), moonrise_clock.run(), rimeheart_clock.run())
 
     if end_loop:
         loop = asyncio.get_running_loop()
