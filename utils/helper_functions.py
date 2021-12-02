@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import toml
 import time
@@ -309,6 +310,7 @@ def play_audio(target: str):
     playsound(target)
     return True
 
+# =========================================== User Account Functions ===================================================
 
 def load_accounts() -> dict:
     with open(accounts_file, "r", encoding="utf-8-sig") as file_stream:
@@ -347,9 +349,42 @@ def register_alias(alias, user_id):
         update_accounts(accounts)
 
 
+def add_user_role(user_id, role: str):
+    accounts = load_accounts()
+
+    valid_roles = ["moderator", "broadcaster", "vip", "viewer"]
+
+    if role not in valid_roles:
+        return f"Invalid role: {role}"
+    else:
+        # create the basic role value if it doesn't exist.
+        if "roles" not in accounts[user_id].keys():
+            logging.info(f"[Accounts] Creating default roles value for user id {user_id}")
+            accounts[user_id]["roles"] = ["viewer"]
+            update_accounts(accounts)
+
+        if role in accounts[user_id]["roles"]:
+            return f"User id {user_id} ({accounts[user_id]['active_name']}) already has role \"{role}\"."
+
+        accounts[user_id]["roles"].extend(role)
+
+        update_accounts(accounts)
+        return f"Successfully added role {role} to user {user_id}."
+
+
+def get_user_roles(username):
+    accounts = load_accounts()
+    user_id = get_user_id(username)
+    if user_id and "roles" in accounts[user_id].keys:
+        return accounts[user_id]["roles"]
+    else:
+        return ""
+
+
 def create_new_user(alias, woodchips=0, logs=0):
     accounts = load_accounts()
-    accounts[str(uuid.uuid1())] = {"aliases": [alias], "woodchips": woodchips, "logs": logs, "active_name": alias}
+    accounts[str(uuid.uuid1())] = {"aliases": [alias], "woodchips": woodchips, "logs": logs, "active_name": alias,
+                                   "roles": ["viewer"]}
     update_accounts(accounts)
 
 
