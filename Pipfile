@@ -12,6 +12,8 @@ playsound = "*"
 "discord.py" = "*"
 pytest = "*"
 pytest-asyncio = "*"
+google-auth-oauthlib = "*"
+google-auth-httplib2 = "*"
 
 [requires]
 python_version = "3.9"
