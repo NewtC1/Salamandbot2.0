@@ -203,6 +203,10 @@ def add_vote_contributor(target, user, amount):
         data['Profiles'][active_profile][target]['votes list'][user] = amount_to_add
     update_vote_data(data)
 
+    # rimeheart log expenditure tracking.
+    if settings["events"]["rimeheart_active"]:
+        add_logs_spent(user, amount_to_add)
+
 
 def get_campfire_count():
     with open(campfire_file, encoding='utf-8-sig', mode='r') as file:
@@ -235,6 +239,18 @@ def set_log_count(user, value):
         update_accounts(data)
     else:
         create_new_user(user, 0, value)
+
+
+def add_logs_spent(user, amount_to_add):
+    if settings["events"]["rimeheart_active"]:
+        accounts = load_accounts()
+        user_id = get_user_id(user)
+
+        if "logs_spent" in accounts[user_id].keys():
+            accounts[user_id]["logs_spent"] += amount_to_add
+        else:
+            accounts[user_id]["logs_spent"] = amount_to_add
+        update_accounts(accounts)
 
 
 def load_shields():

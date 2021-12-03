@@ -404,6 +404,10 @@ def addlogs(to_parse):
             hf.set_log_count(user, hf.get_log_count(user) - add_value)
             output = f"{to_parse.author.name} added {add_value} logs to the campfire. " \
                      f"There are now {campfire_count} logs in the fire."
+
+            # rimeheart log expenditure tracking.
+            if settings["events"]["rimeheart_active"]:
+                hf.add_logs_spent(user, add_value)
         else:
             output = "You either don't have enough logs for that or the amount is invalid."
 
@@ -903,3 +907,23 @@ def raffle(to_parse, rimeheart_manager):
 def rafflechoice(to_parse, rimeheart_manager):
     return_value = f"The current raffle option is {rimeheart_manager.current_game}."
     return return_value
+
+
+def topspenders(to_parse):
+    accounts = hf.load_accounts()
+    spenders = {}
+    for account in accounts:
+        if "logs_spent" in accounts[account].keys():
+            spenders[accounts[account]["active_name"]] = accounts[account]["logs_spent"]
+
+    sorted_spenders = {k: v for k,v in sorted(spenders.items(), key=lambda item: item[1], reverse=True)}
+
+    output = ""
+    count = 1
+    for spender in sorted_spenders.keys():
+        output += f"{count}: {spender}({sorted_spenders[spender]} logs), "
+        count += 1
+
+    output = output[:-2]
+
+    return output
