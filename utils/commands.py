@@ -871,7 +871,6 @@ def cicero(to_parse, moonrise_manager):
                'Please, try once more."'
 
 
-
 def imp(to_parse, moonrise_manager):
     return_value = ""
     message = to_parse.content
