@@ -114,7 +114,6 @@ def generate_missing_values():
 
 async def update_user_roles(users=None):
     users_in_chat = users
-
     if not users:
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
     roles = {"broadcaster": users_in_chat.broadcaster,
@@ -185,6 +184,7 @@ async def tick():
     if is_live:
         # TODO: Make this channel type agnostic.
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
+
         await payout_logs(users_in_chat)
         await payout_woodchips(users_in_chat)
         await update_user_roles(users_in_chat)

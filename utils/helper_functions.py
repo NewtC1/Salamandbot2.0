@@ -382,7 +382,7 @@ def add_user_role(user_id, role: str):
         if role in accounts[user_id]["roles"]:
             return f"User id {user_id} ({accounts[user_id]['active_name']}) already has role \"{role}\"."
 
-        accounts[user_id]["roles"].extend(role)
+        accounts[user_id]["roles"].append(role)
 
         update_accounts(accounts)
         return f"Successfully added role {role} to user {user_id}."
