@@ -25,6 +25,7 @@ TWITCH_CHANNEL = os.environ['CHANNEL']
 BOT_TICK_RATE = 600
 WOODCHIP_PAYOUT_RATE = 32
 is_live = False
+reminders_position = 0
 
 
 def parse_args():
@@ -64,15 +65,18 @@ def generate_missing_values():
             logging.info(f"[Bot] Generating missing values file for {file_dir}")
 
     generate_value(campfire_dir, "0")
+
     shield_template = json.dumps({
         "shield_count": 0,
         "shield_damage": 0
     })
     generate_value(shield_dir, shield_template)
+
     woodchips_template = json.dumps({
         "Challenges": {}
     })
     generate_value(woodchips_dir, woodchips_template)
+
     votes_template = json.dumps({
         "Last Decay": 0,
         "Users On Cooldown": {},
@@ -83,11 +87,11 @@ def generate_missing_values():
         }
     })
     generate_value(votes_dir, votes_template)
-    accounts_template = {}
-    generate_value(accounts_dir, json.dumps(accounts_template))
+
     accounts_template = {
         }
     generate_value(accounts_dir, json.dumps(accounts_template))
+
     stories_template = json.dumps({
         "removed": {},
         "selected": [],
@@ -95,6 +99,7 @@ def generate_missing_values():
         "pending": {}
     })
     generate_value(helper_functions.story_file, stories_template)
+
     moonrise_status_template = json.dumps({
         "soil_ready": True,
         "bjorn_ready": True,
@@ -104,6 +109,7 @@ def generate_missing_values():
         "artifact_effects": []
     })
     generate_value(helper_functions.moonrise_status_file, moonrise_status_template)
+
     rimeheart_giveaway_template = json.dumps({
         "valid_codes": {},
         "invalid_codes": {},
@@ -193,6 +199,24 @@ async def tick():
     return
 
 
+async def reminders(reminders: list = helper_functions.settings["strings"]["reminders"]):
+    """ These are reminders the bot regularly throws up while live."""
+    global is_live
+    global reminders_position
+    # if is_live:
+    if len(reminders) < 1:
+        return
+
+    output = reminders[reminders_position]
+    reminders_position += 1
+    if reminders_position >= len(reminders):
+        reminders_position = 0
+
+    for bot in bots:
+        if bot != "!discord":
+            await bots[bot].send_message(output)
+
+
 async def overheat_tick():
     global is_live
     if is_live and settings["events"]["overheat_active"]:
@@ -265,11 +289,9 @@ async def start_loop(end_loop=None):
                                       overheat_tick: ""
                                       },
                        tick_frequency=1)
-    moonrise_clock = Clock(function_dict={moonrise_tick: moonrise_manager},
-                           tick_frequency=5
-                           )
-    rimeheart_clock = Clock(function_dict={rimeheart_tick: rimeheart_manager},
-                            tick_frequency=10)
+    moonrise_clock = Clock(function_dict={moonrise_tick: moonrise_manager}, tick_frequency=5)
+    rimeheart_clock = Clock(function_dict={rimeheart_tick: rimeheart_manager}, tick_frequency=10)
+    reminder_clock = Clock(function_dict={reminders: ""}, tick_frequency=1800)
 
     # parses inputs
     logging.info("[Bot] Creating input parser...")
@@ -323,7 +345,7 @@ async def start_loop(end_loop=None):
     vote_manager.bots = [bots["twitch"]]
 
     await asyncio.gather(clock.run(), bots["twitch"].start(), discord.start(os.environ["DISCORD_TOKEN"]),
-                         vote_clock.run(), moonrise_clock.run(), rimeheart_clock.run())
+                         vote_clock.run(), moonrise_clock.run(), rimeheart_clock.run(), reminder_clock.run())
 
     if end_loop:
         loop = asyncio.get_running_loop()
