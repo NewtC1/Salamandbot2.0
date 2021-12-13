@@ -791,7 +791,7 @@ def story(to_parse):
     # variable length commands
     if arg_count > 1:
         if message_args[1].lower() == "info":
-            return f"Info for {title}: {hf.story_info(data_input)}"
+            return f"Info for {title}: {hf.story_info(title)}"
         if message_args[1].lower() == "select":
             story_added = hf.select_story(title, user)
             if story_added:
