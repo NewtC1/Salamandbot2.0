@@ -6,6 +6,7 @@ import operator
 import requests
 import data_classes.redeemable as redeemable
 import utils.sfx as sfx_module
+import utils.obfuscate_module
 from inspect import getmembers, isfunction
 from utils import helper_functions as hf
 from time import time
@@ -177,6 +178,18 @@ def moonrise(to_parse=None):
     """
     output = f"Rules for moonrise can be found here: {settings['links']['moonrise']}"
     return output
+
+
+def obfuscate(to_parse):
+    """
+    Obfuscates the phrase the user inputs.
+    :param to_parse:
+    :return:
+    """
+    message = to_parse.content
+    phrase = " ".join(message.split()[1:])
+
+    return utils.obfuscate_module.obfuscate(phrase)
 
 
 def overheat(to_parse=None):
