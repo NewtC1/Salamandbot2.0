@@ -203,18 +203,18 @@ async def reminders(reminders: list = helper_functions.settings["strings"]["remi
     """ These are reminders the bot regularly throws up while live."""
     global is_live
     global reminders_position
-    # if is_live:
-    if len(reminders) < 1:
-        return
+    if is_live:
+        if len(reminders) < 1:
+            return
 
-    output = reminders[reminders_position]
-    reminders_position += 1
-    if reminders_position >= len(reminders):
-        reminders_position = 0
+        output = reminders[reminders_position]
+        reminders_position += 1
+        if reminders_position >= len(reminders):
+            reminders_position = 0
 
-    for bot in bots:
-        if bot != "!discord":
-            await bots[bot].send_message(output)
+        for bot in bots:
+            if bot != "!discord":
+                await bots[bot].send_message(output)
 
 
 async def overheat_tick():
