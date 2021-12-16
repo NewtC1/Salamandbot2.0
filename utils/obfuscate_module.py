@@ -1,7 +1,9 @@
+import os
+
 import requests
 from random import choice
 
-key = "6da60020-3dd2-4eda-8bd2-15fbe20c0678"
+key = os.environ["THESAURUS_API"]
 
 
 def get_synonyms(word: str):
