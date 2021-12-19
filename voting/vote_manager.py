@@ -26,9 +26,10 @@ class VoteManager:
         self.logger = logger
         self.bots = bots
 
-    async def apply_vote(self, target, voter, amount, profile):
+    async def apply_vote(self, target, voter, amount):
         amount_to_increase = max_vote_rate
-        active_profile = hf.get_active_profile(voter)
+
+        vote_multiplier = self.calculate_multiplier(target)
 
         if amount != "all":
             amount_to_increase = max_vote_rate if amount > max_vote_rate else amount
@@ -41,7 +42,7 @@ class VoteManager:
         if hf.get_log_count(voter) < amount_to_increase:
             raise OutOfLogsException
 
-        hf.set_vote_option_value(target, hf.get_vote_option_value(target, voter) + amount_to_increase, voter)
+        hf.set_vote_option_value(target, hf.get_vote_option_value(target, voter) + int(amount_to_increase * vote_multiplier), voter)
         hf.add_vote_contributor(target, voter, amount_to_increase)
         hf.set_log_count(voter, hf.get_log_count(voter) - amount_to_increase)
 
@@ -116,7 +117,7 @@ class VoteManager:
                 target = data["Users On Cooldown"][voter]["target"]
                 profile = data["Users On Cooldown"][voter]["profile"]
                 try:
-                    amount = await self.apply_vote(target, voter, amount, profile)
+                    amount = await self.apply_vote(target, voter, amount)
                 except OutOfLogsException as e:
                     if self.bots:
                         for bot in self.bots:
@@ -223,3 +224,18 @@ class VoteManager:
             data["Users On Cooldown"][user]["amount"] = 0
 
         hf.update_vote_data(data)
+
+    def calculate_multiplier(self, target):
+        """
+        Assumes the target is valid. Returns the correct vote multiplier.
+        :param target:
+        :return:
+        """
+        thresholds = dict(zip([x for x in range(10,60,10)], hf.settings["settings"]["vote_multiplier_threshold"]))
+        length_of_game = hf.get_length_of_game(target)
+        if length_of_game == 0:
+            return 1.0
+
+        for threshold in thresholds.keys():
+            if length_of_game < threshold:
+                return thresholds[threshold]

@@ -492,8 +492,9 @@ def addvoteoption(to_parse):
         if matches.group(3):
             target_profile = matches.group(3)
 
-        hf.add_vote_option(game_name, starting_amount, target_profile)
-        return f"Successfully added {game_name}"
+        output = f"Successfully added game {game_name}."
+        add_output = hf.add_vote_option(game_name, starting_amount, target_profile)
+        return output + add_output
     else:
         return "No valid options found. Please put quotes around your option."
 
@@ -591,6 +592,13 @@ def vote(to_parse, vote_manager: VoteManager):
     :return:
     """
 
+    max_vote_rate = settings['settings']['max_vote_rate']
+    cooldown_time = settings['settings']['cooldown_time']
+
+    message = to_parse.content
+    user = to_parse.author.name
+    active_profile = hf.get_active_profile(user)
+
     def convert_seconds(amount):
         # time calculation
         seconds_to_completion = int(
@@ -620,13 +628,6 @@ def vote(to_parse, vote_manager: VoteManager):
         else:
             return f"You have been added to the continuous add list. Logs will continue to add for " \
                    f"{seconds_to_completion} seconds. Type \"!vote stop\" to stop voting on this choice. "
-
-    max_vote_rate = settings['settings']['max_vote_rate']
-    cooldown_time = settings['settings']['cooldown_time']
-
-    message = to_parse.content
-    user = to_parse.author.name
-    active_profile = hf.get_active_profile(user)
 
     vote_data = hf.get_vote_data()
 
@@ -658,8 +659,10 @@ def vote(to_parse, vote_manager: VoteManager):
             return "Salamandbot scratches in the dirt. Spelling? Capitalization? A missing number? " \
                    "It didn't know what that story was."
 
+        vote_multiplier = vote_manager.calculate_multiplier(target)
+
         if vote_all:
-            hf.set_vote_option_value(target, hf.get_vote_option_value(target) + max_vote_rate)
+            hf.set_vote_option_value(target, hf.get_vote_option_value(target) + int(vote_multiplier*max_vote_rate))
             hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
             hf.add_vote_contributor(target, user, "all")
             hf.set_last_vote_time(target, time(), user)
@@ -676,8 +679,7 @@ def vote(to_parse, vote_manager: VoteManager):
                     return "You don't have enough logs for that."
 
                 if amount > max_vote_rate:
-                    hf.set_vote_option_value(target, hf.get_vote_option_value(target, user) + max_vote_rate,
-                                             user)
+                    hf.set_vote_option_value(target, hf.get_vote_option_value(target, user) + int(vote_multiplier*max_vote_rate), user)
                     hf.set_log_count(user, hf.get_log_count(user) - max_vote_rate)
                     hf.add_vote_contributor(target, user, max_vote_rate)
                     continuous_cooldown = time() + hf.get_dynamic_cooldown_amount(max_vote_rate)
@@ -688,13 +690,13 @@ def vote(to_parse, vote_manager: VoteManager):
 
                 else:
                     hf.set_log_count(user, hf.get_log_count(user) - amount)
-                    hf.set_vote_option_value(target, hf.get_vote_option_value(target, user) + amount,
+                    hf.set_vote_option_value(target, hf.get_vote_option_value(target, user) + int(vote_multiplier*amount),
                                              user)
                     hf.add_vote_contributor(target, user, amount)
                     hf.set_last_vote_time(target, time(), user)
                     cooldown = hf.get_dynamic_cooldown_amount(amount)
                     hf.add_user_to_cooldown(user, time() + cooldown, target, 0)
-                    output += f"{user} added {amount} logs to {target}'s campfire. It now sits at " \
+                    output += f"{user} added {int(amount*vote_multiplier)} logs to {target}'s campfire. It now sits at " \
                               f"{hf.get_vote_option_value(target, user)}"
                 return output
             except ValueError as e:

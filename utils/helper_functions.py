@@ -7,6 +7,7 @@ from playsound import playsound
 import requests
 import uuid
 import random
+from howlongtobeatpy import HowLongToBeat, HowLongToBeatEntry
 import events.MoonriseArtifacts.Artifact as Artifact
 
 settings_file = os.path.join(os.path.dirname(__file__), "settings.toml")
@@ -161,16 +162,30 @@ def set_active_profile(target):
 
 
 def add_vote_option(target, value, profile):
+    game_search = HowLongToBeat(input_minimum_similarity=0.9)
+    results = game_search.search(target)
+    game_duration = 0
+    output = ""
+    if len(results) == 1:
+        if results[0].gameplay_main_extra != -1:
+            before_parse = results[0].gameplay_main_extra
+            after_parse = before_parse.replace("½", ".5")
+            game_duration = float(after_parse)
+    else:
+        output = " Could not find a game duration on How Long To Beat. Please add one manually."
+
     data = get_vote_data()
     data['Profiles'][profile][target] = {
         "vote value": value,
-        "length of game": 0,
+        "length of game": game_duration,
         "votes list": {
         },
         "last added": time.time(),
         "contributor": ""
     }
     update_vote_data(data)
+
+    return output
 
 
 def delete_vote_option(target, profile):
@@ -189,6 +204,16 @@ def set_last_vote_time(target, new_value, user=None):
     if vote_exists(target, user):
         data["Profiles"][active_profile][target]['last added'] = new_value
     update_vote_data(data)
+
+
+def get_length_of_game(target, user=None):
+    active_profile = get_active_profile()
+
+    data = get_vote_data()
+    length_of_game = -1
+    if vote_exists(target, user):
+        length_of_game = data["Profiles"][active_profile][target]["length of game"]
+    return length_of_game
 
 
 def add_vote_contributor(target, user, amount):
