@@ -239,3 +239,6 @@ class VoteManager:
         for threshold in thresholds.keys():
             if length_of_game < threshold:
                 return thresholds[threshold]
+
+        # return no multiplier if it's not below a threshold
+        return 1
