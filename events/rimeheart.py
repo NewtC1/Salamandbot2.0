@@ -35,9 +35,9 @@ class RimeheartManager:
                 # remove the game from the list
                 data = self.load_rimeheart_data()
                 data["invalid_codes"][self.current_game] = data["valid_codes"][self.current_game]
+                codes = data['valid_codes'][self.current_game]
                 del data["valid_codes"][self.current_game]
                 self.update_rimeheart_data(data)
-                codes = data['valid_codes'][self.current_game]
                 logging.info(f"[Rimeheart] {winner} won the following codes: {codes}")
                 output += f"Cicero hands the glowing packet of light to {winner}. Keep hold of that. Don't let it " \
                        f"go."
@@ -50,7 +50,9 @@ class RimeheartManager:
                 output += f"Cicero croons quietly and puts the strange object back in his bag, pulling out " \
                        f"something new."
 
-            self.select_new_game()
+            new_game = self.select_new_game()
+            output += f" The object Cicero pulls out has a tag on it: {new_game}."
+            self.current_game = new_game
 
         return output
 
@@ -68,9 +70,10 @@ class RimeheartManager:
         if not data['valid_codes'].keys():
             self.reset_skipped_codes()
             data = self.load_rimeheart_data()
-        self.raffle_list = list(data["valid_codes"].keys())
-        self.current_game = random.choice(self.raffle_list)
-        logging.info(f"[Rimeheart] Selecting {self.current_game} as the next raffle target.")
+        option_list = list(data["valid_codes"].keys())
+        new_game = random.choice(option_list)
+        logging.info(f"[Rimeheart] Selecting {new_game} as the next raffle target.")
+        return new_game
 
     def buy_raffle(self, user):
         if hf.get_woodchip_count(user) > self.raffle_cost:
