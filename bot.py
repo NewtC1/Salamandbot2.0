@@ -131,7 +131,8 @@ async def update_user_roles(users=None):
         for user in roles[role]:
             user_id = helper_functions.get_user_id(user)
             result = helper_functions.add_user_role(user_id, role)
-            logging.info(f"[Bot] {result}")
+            if result:
+                logging.info(f"[Bot] {result}")
 
 
 async def payout_logs(users=None):
