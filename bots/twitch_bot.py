@@ -75,8 +75,3 @@ class TwitchBot(commands.bot.Bot):
         else: is_live = False
 
         return is_live
-
-    async def chat_is_active(self) -> bool:
-        response = requests.get("https://tmi.twitch.tv/group/user/newtc/chatters")
-        return len(response.json()["chatters"]["viewers"]) > 0
-

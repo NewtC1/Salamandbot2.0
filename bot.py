@@ -8,11 +8,16 @@ from inspect import getmembers, isfunction
 from utils.clock import Clock
 from input_parser import InputParser as Input
 from pathlib import Path
+
 from bots.twitch_bot import TwitchBot
 from bots.discord_bot import DiscordBot
+from bots.youtube_bot import YouTubeBot
+
 import utils.commands as command_list
 import utils.helper_functions as helper_functions
+
 from voting.vote_manager import VoteManager
+
 import events.overheat as overheat
 import events.stories as stories
 import events.moonrise as moonrise
@@ -342,10 +347,12 @@ async def start_loop(end_loop=None):
     # starting bots
     logging.info("[Bot] Starting bots...")
     bots["twitch"] = TwitchBot(parser)
+    bots["youtube"] = YouTubeBot(parser)
     discord = DiscordBot(parser)
     vote_manager.bots = [bots["twitch"]]
 
-    await asyncio.gather(clock.run(), bots["twitch"].start(), discord.start(os.environ["DISCORD_TOKEN"]),
+    await asyncio.gather(clock.run(), bots["twitch"].start(), bots["youtube"].start(),
+                         discord.start(os.environ["DISCORD_TOKEN"]),
                          vote_clock.run(), moonrise_clock.run(), rimeheart_clock.run(), reminder_clock.run())
 
     if end_loop:
