@@ -102,4 +102,5 @@ class RimeheartManager:
     def reset_skipped_codes(self):
         data = self.load_rimeheart_data()
         data["valid_codes"] = data["skipped_codes"]
+        del data["skipped_codes"]
         self.update_rimeheart_data(data)
