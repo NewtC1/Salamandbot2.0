@@ -444,11 +444,22 @@ def get_preferred_profile(username) -> str:
     user_id = get_user_id(username)
     return_value = ''
 
-    # preferred_profile is guaranteed to be correct if it exists, so no new testing needed here.
-    if "preferred_profile" in accounts[user_id].keys():
-        return_value = accounts[user_id]['preferred_profile']
+    if user_id:
+        # preferred_profile is guaranteed to be correct if it exists, so no new testing needed here.
+        if "preferred_profile" in accounts[user_id].keys():
+            return_value = accounts[user_id]['preferred_profile']
 
     return return_value
+
+
+def get_user_active_name(username) -> str:
+    accounts = load_accounts()
+    user_id = get_user_id(username)
+
+    if not user_id:
+        return username
+
+    return accounts[user_id]['active_name']
 
 
 # =============================================== Artifact Storage =====================================================

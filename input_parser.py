@@ -1,4 +1,9 @@
 import logging
+import os
+
+import utils.helper_functions as hf
+import asyncio
+
 
 class InputParser:
 
@@ -9,13 +14,13 @@ class InputParser:
                  rimeheart_manager = None):
         """
         Listens for results fired from input sources
-        :param input_sources: The bots that are sending events to the input parser
         """
         self.logger = logger
         self.clock = active_clock
         self.vote_manager = vote_manager
         self.moonrise_manager = moonrise_manager
         self.rimeheart_manager = rimeheart_manager
+        self.bots = []
 
     def parse_input(self, source, to_parse=None):
         """
@@ -34,7 +39,7 @@ class InputParser:
         elif source == "discord":
             content = to_parse.content.lower()
         elif source == "youtube":
-            pass
+            content = to_parse.content.lower()
 
         if content:
             first_word = content.split()[0]  # Gets the first word of the input to determine the command it should run
@@ -50,6 +55,18 @@ class InputParser:
             output = f"{output_prefix}{self.commands[first_word](to_parse, rimeheart_manager=self.rimeheart_manager)}"
         elif first_word in self.commands.keys():
             output = f"{output_prefix}{self.commands[first_word](to_parse)}"
+        else:
+            # send the message to all other bots if it's not a command
+            display_name = hf.get_user_active_name(to_parse.author.name)
+            names_to_ignore = [os.environ["YOUTUBE_BOT_CHANNEL_ID"], os.environ["BOT_NICK"]]
+            if display_name not in names_to_ignore:
+                output = f"[{display_name}] {to_parse.content}"
+                for bot in self.bots:
+                    loop = asyncio.get_running_loop()
+                    coroutine = bot.send_message(output)
+                    loop.create_task(coroutine)
+
+            return ""
 
         return output
 
@@ -70,3 +87,6 @@ class InputParser:
 
     def save_commands(self):
         pass
+
+    def add_bot(self, bot):
+        self.bots.append(bot)

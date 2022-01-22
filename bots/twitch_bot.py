@@ -26,6 +26,7 @@ class TwitchBot(commands.bot.Bot):
             # port=8080,
         )
         self.parser = parser
+        self.parser.add_bot(self)
         self.bot_ready = False
 
     async def event_ready(self):
