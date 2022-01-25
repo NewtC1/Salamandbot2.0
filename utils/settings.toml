@@ -80,7 +80,7 @@ cicero_time_heart_max = 1
 ######################
 # Rimeheart settings #
 ######################
-rimeheart_active = true
+rimeheart_active = false
 rimeheart_delay = 600
 raffle_cost = 10
 
@@ -106,6 +106,7 @@ log_gain_multiplier = 0.2
 follow_bonus = 300
 active_watch_bonus = 50
 vote_multiplier_threshold = [1.8, 1.4, 1.2, 1.1, 1.0]
+rebroadcast = false
 
 [loyalty_points]
 loyalty_blacklist = ["newtc",
