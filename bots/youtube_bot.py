@@ -5,7 +5,6 @@ import pickle
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-from twitchio.dataclasses import User
 
 class YouTubeBot:
 
@@ -17,27 +16,32 @@ class YouTubeBot:
 
     def __init__(self, parser):
         self.client_secrets_file = 'youtube_secrets.json'
-        self.credentials = None
 
-        if os.path.exists(os.path.join(os.getcwd(), "token.pickle")):
-            with open("token.pickle", "rb") as token:
-                self.credentials = pickle.load(token)
-        else:
+        self.streamer_youtube = self.create_youtube_object("streamer_token.pickle")
+        self.bot_youtube = self.create_youtube_object("bot_token.pickle")
 
-            self.flow = InstalledAppFlow.from_client_secrets_file(self.client_secrets_file, self.scopes)
-            self.credentials = self.flow.run_local_server(authorization_prompt_message="")
-
-            with open("token.pickle", "wb") as f:
-                print("Saving Credentials for Future Use...")
-                pickle.dump(self.credentials, f)
-
-        self.youtube = build(self.api_service_name, self.api_version, credentials=self.credentials)
         self.last_live_chat = self.get_last_live_chat()
         # ignore all chat messages from before the bot started.
         self.last_chat_message_count = self.get_last_chat_message_position(self.last_live_chat)
 
         self.parser = parser
         self.parser.add_bot(self)
+
+    def create_youtube_object(self, pickle_token):
+        if os.path.exists(os.path.join(os.getcwd(), pickle_token)):
+            with open(pickle_token, "rb") as token:
+                credentials = pickle.load(token)
+        else:
+
+            flow = InstalledAppFlow.from_client_secrets_file(self.client_secrets_file, self.scopes)
+            credentials = flow.run_local_server(authorization_prompt_message="")
+
+            with open(pickle_token, "wb") as f:
+                print("Saving Credentials for Future Use...")
+                pickle.dump(credentials, f)
+
+        youtube = build(self.api_service_name, self.api_version, credentials=credentials)
+        return youtube
 
     async def event_message(self, ctx):
         # make sure the bot ignores itself
@@ -50,7 +54,7 @@ class YouTubeBot:
 
     async def send_message(self, message):
         if message:
-            request = self.youtube.liveChatMessages().insert(
+            request = self.bot_youtube.liveChatMessages().insert(
                 part="snippet",
                 body={
                     "snippet": {
@@ -67,7 +71,7 @@ class YouTubeBot:
             return response
 
     async def is_live(self) -> bool:
-        broadcasts = self.youtube.liveBroadcasts().list(
+        broadcasts = self.streamer_youtube.liveBroadcasts().list(
             part="snippet,status",
             broadcastStatus="active",
             broadcastType="all"
@@ -75,17 +79,30 @@ class YouTubeBot:
         # should return any active broadcasts (but should never exceed more 1 broadcast)
         active_broadcasts = broadcasts.execute()
         if active_broadcasts["items"]:
+            if active_broadcasts["items"][0]['snippet']['liveChatId'] != self.last_live_chat:
+                self.last_live_chat = active_broadcasts["items"][0]['snippet']['liveChatId']
             return True
         else:
             return False
 
     def get_last_live_chat(self):
-        broadcasts = self.youtube.liveBroadcasts().list(
+        broadcasts = self.streamer_youtube.liveBroadcasts().list(
             part="snippet,status",
             broadcastStatus="all",
             broadcastType="all"
         ).execute()
         return broadcasts["items"][0]['snippet']['liveChatId']
+
+    @staticmethod
+    def _convert_to_seconds(milliseconds: str):
+        return float(milliseconds)/1000.0
+
+    @staticmethod
+    async def convert_to_ctx(message):
+        author = Author(message['snippet']['authorChannelId'])
+        content = message["snippet"]["displayMessage"]
+        output = Message(author=author, content=content)
+        return output
 
     async def _listen(self):
         """
@@ -95,35 +112,32 @@ class YouTubeBot:
         while True:
             # if the YouTube channel is not live, then go into low-request mode
             if await self.is_live():
-                chat_messages = self.youtube.liveChatMessages().list(
+                chat_messages = self.streamer_youtube.liveChatMessages().list(
                     liveChatId=self.last_live_chat,
                     part="snippet",
                     maxResults=10000
                 )
                 response = chat_messages.execute()
+                polling_interval = response.get('pollingIntervalMillis')
+                polling_interval = self._convert_to_seconds(polling_interval)
 
                 # if there aren't any new messages, then pass off handling events to something else.
                 total_results = response["pageInfo"]["totalResults"]
-                if total_results == self.last_chat_message_count:
-                    await asyncio.sleep(1)
+
                 # else, handle any waiting messages
-                else:
+                if total_results != self.last_chat_message_count:
                     for message in response["items"][self.last_chat_message_count: total_results]:
                         ctx = await self.convert_to_ctx(message)
                         await self.event_message(ctx)
                         self.last_chat_message_count += 1
+
+                # sleep until the next poll interval
+                await asyncio.sleep(polling_interval)
             else:
                 await asyncio.sleep(60)
 
-    @staticmethod
-    async def convert_to_ctx(message):
-        author = Author(message['snippet']['authorChannelId'])
-        content = message["snippet"]["displayMessage"]
-        output = Message(author=author, content=content)
-        return output
-
     def get_last_chat_message_position(self, chat_id):
-        chat_messages = self.youtube.liveChatMessages().list(
+        chat_messages = self.streamer_youtube.liveChatMessages().list(
             liveChatId=chat_id,
             part="snippet"
         )
@@ -138,7 +152,8 @@ class YouTubeBot:
         except KeyboardInterrupt:
             pass
         finally:
-            self.youtube.close()
+            self.streamer_youtube.close()
+            self.bot_youtube.close()
 
 
 # Data classes for youtube messages.

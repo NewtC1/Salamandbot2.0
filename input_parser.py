@@ -56,15 +56,16 @@ class InputParser:
         elif first_word in self.commands.keys():
             output = f"{output_prefix}{self.commands[first_word](to_parse)}"
         else:
-            # send the message to all other bots if it's not a command
-            display_name = hf.get_user_active_name(to_parse.author.name)
-            names_to_ignore = [os.environ["YOUTUBE_BOT_CHANNEL_ID"], os.environ["BOT_NICK"]]
-            if display_name not in names_to_ignore:
-                output = f"[{display_name}] {to_parse.content}"
-                for bot in self.bots:
-                    loop = asyncio.get_running_loop()
-                    coroutine = bot.send_message(output)
-                    loop.create_task(coroutine)
+            if hf.rebroadcast:
+                # send the message to all other bots if it's not a command
+                display_name = hf.get_user_active_name(to_parse.author.name)
+                names_to_ignore = [os.environ["YOUTUBE_BOT_CHANNEL_ID"], os.environ["BOT_NICK"]]
+                if display_name not in names_to_ignore:
+                    output = f"[{display_name}] {to_parse.content}"
+                    for bot in self.bots:
+                        loop = asyncio.get_running_loop()
+                        coroutine = bot.send_message(output)
+                        loop.create_task(coroutine)
 
             return ""
 

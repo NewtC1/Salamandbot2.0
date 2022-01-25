@@ -30,6 +30,8 @@ class DiscordBot(Client):
         # make sure the bot ignores itself
         if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
             return
+        if ctx.channel.name != os.environ['DISCORD_BOT_CHANNEL'].lower():
+            return
 
         parse_output = self.parser.parse_input("discord", ctx)
         if parse_output:
