@@ -38,6 +38,7 @@ moonrise_status_file = os.path.join(os.path.dirname(__file__), '..', settings['d
 base_cooldown = settings['settings']['cooldown_time']
 max_vote_rate = settings['settings']['max_vote_rate']
 loyalty_blacklist = settings["loyalty_points"]["loyalty_blacklist"]
+rebroadcast = settings["settings"]["rebroadcast"]
 
 
 def get_vote_option_value(option, user=None):
