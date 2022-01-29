@@ -21,6 +21,7 @@ class YouTubeBot:
         self.bot_youtube = self.create_youtube_object("bot_token.pickle")
 
         self.last_live_chat = self.get_last_live_chat()
+        self.live = False
         # ignore all chat messages from before the bot started.
         self.last_chat_message_count = self.get_last_chat_message_position(self.last_live_chat)
 
@@ -81,8 +82,10 @@ class YouTubeBot:
         if active_broadcasts["items"]:
             if active_broadcasts["items"][0]['snippet']['liveChatId'] != self.last_live_chat:
                 self.last_live_chat = active_broadcasts["items"][0]['snippet']['liveChatId']
+            self.live = True
             return True
         else:
+            self.live = False
             return False
 
     def get_last_live_chat(self):
@@ -134,16 +137,19 @@ class YouTubeBot:
                 # sleep until the next poll interval
                 await asyncio.sleep(polling_interval)
             else:
-                await asyncio.sleep(60)
+                await asyncio.sleep(600)
 
     def get_last_chat_message_position(self, chat_id):
         chat_messages = self.streamer_youtube.liveChatMessages().list(
             liveChatId=chat_id,
             part="snippet"
         )
-        response = chat_messages.execute()
 
-        return len(response['items'])
+        if self.live:
+            response = chat_messages.execute()
+            return len(response['items'])
+        else:
+            return 0
 
     async def start(self):
 
