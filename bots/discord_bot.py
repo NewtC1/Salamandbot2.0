@@ -2,6 +2,7 @@
 import asyncio
 import os  # for importing env vars for the bot to use
 
+import discord
 from discord.client import Client
 
 
@@ -30,8 +31,9 @@ class DiscordBot(Client):
         # make sure the bot ignores itself
         if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
             return
-        if ctx.channel.id != os.environ['DISCORD_BOT_CHANNEL_ID']:
-            return
+        if not isinstance(ctx.channel, discord.DMChannel):
+            if ctx.channel.id != os.environ['DISCORD_BOT_CHANNEL_ID']:
+                return
 
         parse_output = self.parser.parse_input("discord", ctx)
         if parse_output:
