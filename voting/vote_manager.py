@@ -2,6 +2,8 @@ import os
 import toml
 import logging
 import time
+
+import bots.discord_bot
 from utils import helper_functions as hf
 
 settings = toml.load(os.path.join(os.path.dirname(__file__), "..\\utils\\settings.toml"))
@@ -19,12 +21,13 @@ class OutOfLogsException(Exception):
 
 class VoteManager:
 
-    def __init__(self, logger, votes=None, bots=None):
+    def __init__(self, logger, votes=None, bots=None, discord_bot: bots.discord_bot.DiscordBot = None):
         self.vote_list = {}
         if votes:
             self.vote_list = votes
         self.logger = logger
         self.bots = bots
+        self.discord_bot = discord_bot
 
     async def apply_vote(self, target, voter, amount):
         amount_to_increase = max_vote_rate
@@ -185,16 +188,22 @@ class VoteManager:
 
                         logging.info(f"[Voting] Decaying {profile}: {vote} by {decay_total}")
 
+                        if self.discord_bot:
+                            await self.discord_bot.send_message(f"Decaying {profile}: {vote} by {decay_total}")
+
                         # checks if the value is less than 0 and corrects it.
                         if vote_data["Profiles"][profile][vote]["vote value"] < 0:
                             vote_data["Profiles"][profile][vote]["vote value"] = 0
 
                             if hf.get_active_profile() != "decayed":
-                                # move it to the stone of stories after it runs out of
+                                # move it to the stone of stories after it runs out of logs
                                 if "decayed" not in vote_data["Profiles"].keys():
                                     vote_data["Profiles"]["decayed"] = {}
                                 vote_data["Profiles"]["decayed"][vote] = vote_data["Profiles"][profile][vote]
                                 del vote_data["Profiles"][profile][vote]
+
+                                if self.discord_bot:
+                                    await self.discord_bot.send_message(f"{vote} has completely decayed from {profile}.")
 
             vote_data["Last Decay"] = time.time()
             hf.update_vote_data(vote_data)
@@ -202,7 +211,7 @@ class VoteManager:
     def stop_voting(self, user):
         """
         Sets the user's remaining amount to 0 and sets the cooldown based on the remaining amount.
-        :param user: The user to bew removed
+        :param user: The user to be removed
         :return:
         """
         data = hf.get_vote_data()

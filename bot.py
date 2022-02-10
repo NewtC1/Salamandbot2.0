@@ -350,6 +350,7 @@ async def start_loop(end_loop=None):
     bots["youtube"] = YouTubeBot(parser)
     discord = DiscordBot(parser)
     vote_manager.bots = [bots["twitch"]]
+    vote_manager.discord_bot = discord
 
     await asyncio.gather(clock.run(), bots["twitch"].start(), bots["youtube"].start(),
                          discord.start(os.environ["DISCORD_TOKEN"]),

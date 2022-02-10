@@ -1,7 +1,7 @@
 # twitch_bot.py
 import asyncio
 import os  # for importing env vars for the bot to use
-from discord.ext.commands import bot
+
 from discord.client import Client
 
 
@@ -30,7 +30,7 @@ class DiscordBot(Client):
         # make sure the bot ignores itself
         if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
             return
-        if ctx.channel.name != os.environ['DISCORD_BOT_CHANNEL'].lower():
+        if ctx.channel.id != os.environ['DISCORD_BOT_CHANNEL_ID']:
             return
 
         parse_output = self.parser.parse_input("discord", ctx)
@@ -39,11 +39,10 @@ class DiscordBot(Client):
 
         return
 
-    async def send_message(self, message):
+    async def send_message(self, message:str):
         if self.bot_ready:
-            # await self.join_channels(self.initial_channels)
-            for channel in self.initial_channels:
-                await message.channel.send(message)
+            channel = self.get_channel(int(os.environ['DISCORD_BOT_CHANNEL_ID']))
+            await channel.send(message)
         else:
             await asyncio.sleep(1)
 
