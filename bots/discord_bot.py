@@ -32,7 +32,7 @@ class DiscordBot(Client):
         if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
             return
         if not isinstance(ctx.channel, discord.DMChannel):
-            if ctx.channel.id != os.environ['DISCORD_BOT_CHANNEL_ID']:
+            if ctx.channel.name != os.environ['DISCORD_BOT_CHANNEL']:
                 return
 
         parse_output = self.parser.parse_input("discord", ctx)
