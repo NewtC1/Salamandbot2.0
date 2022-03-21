@@ -391,10 +391,12 @@ def prefer(to_parse, vote_manager):
                 hf.update_accounts(accounts)
                 return "Preferences for profiles have been cleared."
             if target_profile in vote_data["Profiles"].keys():
-                vote_manager.stop_voting(author)
-                accounts[account_id]["preferred_profile"] = target_profile
-                hf.update_accounts(accounts)
-                return "Successfully set a default vote profile."
+                if author not in hf.get_users_on_cooldown():
+                    accounts[account_id]["preferred_profile"] = target_profile
+                    hf.update_accounts(accounts)
+                    return "Successfully set a default vote profile."
+                else:
+                    return "Please wait until your vote cooldown finishes before changing profiles."
             else:
                 return 'That profile does not exist.'
 
