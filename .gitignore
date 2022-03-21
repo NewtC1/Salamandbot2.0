@@ -139,3 +139,6 @@ utils/sfx.py
 
 # idea
 /.idea
+
+# pickle
+.pickle
