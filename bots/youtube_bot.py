@@ -14,6 +14,9 @@ class YouTubeBot:
     youtube_api_key = os.environ["YOUTUBE_API"]
     youtube_channel_id = os.environ["YOUTUBE_CHANNEL_ID"]
 
+    maximum_polling_length = 120
+    minimum_polling_length = 1
+
     def __init__(self, parser):
         self.client_secrets_file = 'youtube_secrets.json'
 
@@ -22,6 +25,7 @@ class YouTubeBot:
 
         self.last_live_chat = self.get_last_live_chat()
         self.live = False
+        self.current_polling_interval = self.minimum_polling_length
         # ignore all chat messages from before the bot started.
         self.last_chat_message_count = self.get_last_chat_message_position(self.last_live_chat)
 
@@ -121,11 +125,15 @@ class YouTubeBot:
                     maxResults=10000
                 )
                 response = chat_messages.execute()
-                polling_interval = response.get('pollingIntervalMillis')
-                polling_interval = self._convert_to_seconds(polling_interval)
 
                 # if there aren't any new messages, then pass off handling events to something else.
                 total_results = response["pageInfo"]["totalResults"]
+
+                # backoff code
+                if self.current_polling_interval * 2 < self.maximum_polling_length:
+                    self.current_polling_interval = self.current_polling_interval * 2
+                else:
+                    self.current_polling_interval = self.maximum_polling_length
 
                 # else, handle any waiting messages
                 if total_results != self.last_chat_message_count:
@@ -134,8 +142,10 @@ class YouTubeBot:
                         await self.event_message(ctx)
                         self.last_chat_message_count += 1
 
+                    self.current_polling_interval = self.minimum_polling_length
+
                 # sleep until the next poll interval
-                await asyncio.sleep(polling_interval)
+                await asyncio.sleep(self.current_polling_interval)
             else:
                 await asyncio.sleep(600)
 
