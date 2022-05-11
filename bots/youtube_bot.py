@@ -2,6 +2,7 @@ import asyncio
 import os
 import pickle
 
+import googleapiclient.errors
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
@@ -14,7 +15,7 @@ class YouTubeBot:
     youtube_api_key = os.environ["YOUTUBE_API"]
     youtube_channel_id = os.environ["YOUTUBE_CHANNEL_ID"]
 
-    maximum_polling_length = 120
+    maximum_polling_length = 180
     minimum_polling_length = 1
 
     def __init__(self, parser):
@@ -116,38 +117,45 @@ class YouTubeBot:
         Listens for any new chat messages and sends them to the parser for response.
         :return:
         """
+
+
         while True:
             # if the YouTube channel is not live, then go into low-request mode
-            if await self.is_live():
-                chat_messages = self.streamer_youtube.liveChatMessages().list(
-                    liveChatId=self.last_live_chat,
-                    part="snippet",
-                    maxResults=10000
-                )
-                response = chat_messages.execute()
 
-                # if there aren't any new messages, then pass off handling events to something else.
-                total_results = response["pageInfo"]["totalResults"]
+            try:
+                if await self.is_live():
+                    chat_messages = self.streamer_youtube.liveChatMessages().list(
+                        liveChatId=self.last_live_chat,
+                        part="snippet",
+                        maxResults=10000
+                    )
+                    response = chat_messages.execute()
 
-                # backoff code
-                if self.current_polling_interval * 2 < self.maximum_polling_length:
-                    self.current_polling_interval = self.current_polling_interval * 2
+                    # if there aren't any new messages, then pass off handling events to something else.
+                    total_results = response["pageInfo"]["totalResults"]
+
+                    # backoff code
+                    if self.current_polling_interval * 2 < self.maximum_polling_length:
+                        self.current_polling_interval = self.current_polling_interval * 2
+                    else:
+                        self.current_polling_interval = self.maximum_polling_length
+
+                    # else, handle any waiting messages
+                    if total_results != self.last_chat_message_count:
+                        for message in response["items"][self.last_chat_message_count: total_results]:
+                            ctx = await self.convert_to_ctx(message)
+                            await self.event_message(ctx)
+                            self.last_chat_message_count += 1
+
+                        self.current_polling_interval = self.minimum_polling_length
+
+                    # sleep until the next poll interval
+                    await asyncio.sleep(self.current_polling_interval)
                 else:
-                    self.current_polling_interval = self.maximum_polling_length
-
-                # else, handle any waiting messages
-                if total_results != self.last_chat_message_count:
-                    for message in response["items"][self.last_chat_message_count: total_results]:
-                        ctx = await self.convert_to_ctx(message)
-                        await self.event_message(ctx)
-                        self.last_chat_message_count += 1
-
-                    self.current_polling_interval = self.minimum_polling_length
-
-                # sleep until the next poll interval
-                await asyncio.sleep(self.current_polling_interval)
-            else:
-                await asyncio.sleep(600)
+                    await asyncio.sleep(600)
+            except googleapiclient.errors.HttpError:
+                # if we run out of API calls, stop listening
+                break
 
     def get_last_chat_message_position(self, chat_id):
         chat_messages = self.streamer_youtube.liveChatMessages().list(
