@@ -1,6 +1,7 @@
 import asyncio
 import os
 import pickle
+import logging
 
 import googleapiclient.errors
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -73,8 +74,12 @@ class YouTubeBot:
                 }
             )
 
-            response = request.execute()
-            return response
+            try:
+                response = request.execute()
+
+                return response
+            except googleapiclient.errors.HttpError:
+                logging.info("[YouTube] Quota limit reached")
 
     async def is_live(self) -> bool:
         broadcasts = self.streamer_youtube.liveBroadcasts().list(
