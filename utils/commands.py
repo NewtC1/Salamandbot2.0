@@ -738,8 +738,8 @@ def redeem(to_parse=None):
         "recap": redeemable.Redeemable("recap", "Recap that story Newt!", -200, user),
         "drink": redeemable.Redeemable("drink", "Take a drink!", -500, user),
         "pet": redeemable.Redeemable("pet", "Pet that cat!", -600, user),
-        "story": redeemable.Redeemable("story", "Story time!", -1000, user),
-        "break": redeemable.Redeemable("break", "Time to hit the road.", -3000, user)
+        "break": redeemable.Redeemable("break", "Time to hit the road.", -3000, user),
+        "quiz": redeemable.Redeemable("quiz", "Quiz me!", -300, user)
     }
 
     if arg_count >= 3:
