@@ -646,7 +646,9 @@ def vote(to_parse, vote_manager: VoteManager):
         amount = matches.group(4)
         target = matches.group(3) if not vote_all else matches.group(1)
 
-        vote_options = vote_data["Profiles"][active_profile].keys()
+        vote_options = list(vote_data["Profiles"][active_profile].keys())
+        # used for case matching
+        vote_options_lower = [option.lower() for option in vote_options]
 
         if matches.group(0).lower() == "!vote stop":
             if user in hf.get_users_on_cooldown():
@@ -657,9 +659,11 @@ def vote(to_parse, vote_manager: VoteManager):
             else:
                 return f"You are not currently voting on anything."
 
-        if target not in vote_options:
+        if target.lower() not in vote_options_lower:
             return "Salamandbot scratches in the dirt. Spelling? Capitalization? A missing number? " \
                    "It didn't know what that story was."
+        else:
+            target = vote_options[vote_options_lower.index(target.lower())]
 
         vote_multiplier = vote_manager.calculate_multiplier(target)
 
