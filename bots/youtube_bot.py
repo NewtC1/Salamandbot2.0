@@ -27,9 +27,14 @@ class YouTubeBot:
 
         self.last_live_chat = self.get_last_live_chat()
         self.live = False
-        self.current_polling_interval = self.minimum_polling_length
-        # ignore all chat messages from before the bot started.
-        self.last_chat_message_count = self.get_last_chat_message_position(self.last_live_chat)
+
+        try:
+            self.current_polling_interval = self.minimum_polling_length
+            # ignore all chat messages from before the bot started.
+            self.last_chat_message_count = self.get_last_chat_message_position(self.last_live_chat)
+        except googleapiclient.errors.HttpError:
+            self.current_polling_interval = 0
+            self.last_chat_message_count = 0
 
         self.parser = parser
         self.parser.add_bot(self)
@@ -99,12 +104,16 @@ class YouTubeBot:
             return False
 
     def get_last_live_chat(self):
-        broadcasts = self.streamer_youtube.liveBroadcasts().list(
-            part="snippet,status",
-            broadcastStatus="all",
-            broadcastType="all"
-        ).execute()
-        return broadcasts["items"][0]['snippet']['liveChatId']
+        try:
+            broadcasts = self.streamer_youtube.liveBroadcasts().list(
+                part="snippet,status",
+                broadcastStatus="all",
+                broadcastType="all"
+            ).execute()
+            return broadcasts["items"][0]['snippet']['liveChatId']
+        except googleapiclient.errors.HttpError:
+            return None
+
 
     @staticmethod
     def _convert_to_seconds(milliseconds: str):
