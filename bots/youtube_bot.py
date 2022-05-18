@@ -93,15 +93,19 @@ class YouTubeBot:
             broadcastType="all"
         )
         # should return any active broadcasts (but should never exceed more 1 broadcast)
-        active_broadcasts = broadcasts.execute()
+        try:
+            active_broadcasts = broadcasts.execute()
+        except googleapiclient.errors.HttpError:
+            return False
+
         if active_broadcasts["items"]:
             if active_broadcasts["items"][0]['snippet']['liveChatId'] != self.last_live_chat:
                 self.last_live_chat = active_broadcasts["items"][0]['snippet']['liveChatId']
-            self.live = True
-            return True
-        else:
-            self.live = False
-            return False
+                self.live = True
+                return True
+            else:
+                self.live = False
+                return False
 
     def get_last_live_chat(self):
         try:
