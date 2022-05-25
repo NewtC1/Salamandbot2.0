@@ -15,7 +15,7 @@ pytest-asyncio = "*"
 google-auth-oauthlib = "*"
 google-auth-httplib2 = "*"
 googleapis-common-protos = "*"
-howlongtobeatpy = "*"
+howlongtobeatpy = "==0.1.22"
 
 [requires]
 python_version = "3.9"
