@@ -145,7 +145,7 @@ async def payout_logs(users=None):
     log_gain_multiplier = settings["settings"]["log_gain_multiplier"]
 
     users_in_chat = users
-    logging.info(f"[Logs] Users in chat: {users_in_chat.viewers}")
+    logging.info(f"[Logs] Users in chat: {users_in_chat.all}")
     if not users:
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
     for user in users_in_chat.viewers:
@@ -158,7 +158,7 @@ async def payout_logs(users=None):
 async def payout_woodchips(users=None):
     data = helper_functions.load_accounts()
     users_in_chat = users
-    logging.info(f"[Woodchips] Users in chat: {users_in_chat.viewers}")
+    logging.info(f"[Woodchips] Users in chat: {users_in_chat.all}")
     if not users:
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
     for user in users_in_chat.viewers:
