@@ -526,13 +526,52 @@ def deletevoteoption(to_parse):
 
 def selectnextgame(to_parse) -> str:
     """
-    Selects the next game on the active list.
+    Selects the next game on the active list and moves it to the current playing list.
     :param to_parse:
     :return:
     """
 
-    hf.get_active_profile()
-    return " "
+    votes = hf.get_vote_data()
+
+    options = {}
+    for option in votes["Profiles"][hf.get_active_profile()]:
+        options[option] = hf.get_vote_option_value(option, hf.get_active_profile())
+
+    sorted_votes = list(reversed(sorted(options.items(), key=operator.itemgetter(1))))
+
+    next_game = sorted_votes[0][0]
+
+    # make the currect active list if it doesn't exist yet.
+    if f"active_{hf.get_active_profile()}" not in votes["Profiles"].keys():
+        votes["Profiles"][f"active_{hf.get_active_profile()}"] = {}
+
+    # move the next game to the active games list
+    votes["Profiles"][f"active_{hf.get_active_profile()}"][next_game] = \
+        votes["Profiles"][hf.get_active_profile()][next_game]
+    del votes["Profiles"][hf.get_active_profile()][next_game]
+
+    # if the number of games in the active games list is more than the limit, move the oldest game back to vote list.
+    if len(votes["Profiles"][f"active_{hf.get_active_profile()}"]) > hf.maximum_active_games:
+        oldest_game = hf.get_oldest_vote_time(f"active_{hf.get_active_profile()}")
+        votes["Profiles"][hf.get_active_profile()][oldest_game] = votes["Profiles"][f"active_{hf.get_active_profile()}"][oldest_game]
+        del votes["Profiles"][f"active_{hf.get_active_profile()}"][oldest_game]
+
+    hf.update_vote_data(votes)
+
+    return f"Selected {next_game} as the next game for {hf.get_active_profile()}"
+
+
+def activegames(to_parse=None):
+    votes = hf.get_vote_data()
+
+    return_string = ""
+
+    for game in votes["Profiles"][f"active_{hf.get_active_profile()}"].keys():
+        return_string += f"{game}({votes['Profiles'][f'active_{hf.get_active_profile()}'][game]['vote value']}), "
+
+    return_string = return_string[:-2]
+
+    return return_string
 
 
 def checkoptions(to_parse=None):
@@ -710,6 +749,51 @@ def vote(to_parse, vote_manager: VoteManager):
 
     else:
         return "Salamandbot shakes its head. It scratches several words in the sand: !vote <name> <amount>."
+
+
+def stoke(to_parse=None):
+    """
+    Stokes a game in the current active game list, resetting the decay time to this moment and bumping it up in priority
+    :param to_parse:
+    :return:
+    """
+    message = to_parse.content
+    user = to_parse.author.name
+
+    matches = re.match("!stoke (.+)? (\d+)", message, flags=re.I)
+
+    if matches:
+        game_name = matches.group(1)
+        stoke_value = int(matches.group(2))
+
+        vote_data = hf.get_vote_data()
+
+        vote_options = list(vote_data["Profiles"][f"active_{hf.get_active_profile(user)}"].keys())
+        # used for case matching
+        vote_options_lower = [option.lower() for option in vote_options]
+
+        if game_name.lower() not in vote_options_lower:
+            return "Salamandbot scratches in the dirt. Spelling? Capitalization? A missing number? " \
+                   "It didn't know what that story was."
+        else:
+            game_name = vote_options[vote_options_lower.index(game_name.lower())]
+
+        if hf.get_woodchip_count(user) >= stoke_value:
+            # reduce the user's woodchip count
+            hf.set_woodchip_count(user, hf.get_woodchip_count(user) - stoke_value)
+
+            # reset decay time
+            vote_data["Profiles"][f"active_{hf.get_active_profile(user)}"][game_name]["last added"] = time()
+            vote_data["Profiles"][f"active_{hf.get_active_profile(user)}"][game_name]["vote value"] = \
+                vote_data["Profiles"][f"active_{hf.get_active_profile(user)}"][game_name]["vote value"] + stoke_value
+
+            hf.update_vote_data(vote_data)
+
+            return f"{user} stoked {game_name}'s fire with {stoke_value} woodchips."
+        else:
+            return "You don't have enough woodchips for that."
+    else:
+        return "!stoke <name> <amount>"
 
 
 # ======================================== Woodchips ===================================================================
@@ -947,3 +1031,15 @@ def topspenders(to_parse):
     output = output[:-2]
 
     return output
+
+# ============================================= Counter ================================================================
+def counter(to_parse):
+    pass
+
+# ============================================== Community Challenges ==================================================
+def community(to_parse):
+    message = to_parse.content
+    args = message.split()
+    if len(args) > 1:
+        if args[1] == "stoke":
+            pass

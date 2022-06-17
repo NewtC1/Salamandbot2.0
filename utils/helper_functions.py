@@ -39,6 +39,7 @@ base_cooldown = settings['settings']['cooldown_time']
 max_vote_rate = settings['settings']['max_vote_rate']
 loyalty_blacklist = settings["loyalty_points"]["loyalty_blacklist"]
 rebroadcast = settings["settings"]["rebroadcast"]
+maximum_active_games = settings["settings"]["maximum_active_games"]
 
 
 def get_vote_option_value(option, user=None):
@@ -196,6 +197,21 @@ def delete_vote_option(target, profile):
         return True
     else:
         return False
+
+
+def get_oldest_vote_time(profile):
+    data = get_vote_data()
+
+    first_option = list(data["Profiles"][profile].keys())[0]
+    oldest = data["Profiles"][profile][first_option]["last added"]
+    current_oldest = first_option
+
+    for option in data["Profiles"][profile].keys():
+        if data["Profiles"][profile][option]["last added"] < oldest:
+            oldest = data["Profiles"][profile][option]["last added"]
+        current_oldest = option
+
+    return current_oldest
 
 
 def set_last_vote_time(target, new_value, user=None):
