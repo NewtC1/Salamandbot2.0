@@ -561,6 +561,37 @@ def selectnextgame(to_parse) -> str:
     return f"Selected {next_game} as the next game for {hf.get_active_profile()}"
 
 
+def completegame(to_parse) -> str:
+    """
+    Selects the next game on the active list and moves it to the current playing list.
+    :param to_parse:
+    :return:
+    """
+
+    votes = hf.get_vote_data()
+
+    options = {}
+    for option in votes["Profiles"]["active_" + hf.get_active_profile()]:
+        options[option] = hf.get_vote_option_value(option, hf.get_active_profile())
+
+    sorted_votes = list(reversed(sorted(options.items(), key=operator.itemgetter(1))))
+
+    next_game = sorted_votes[0][0]
+
+    # make the currect completed list if it doesn't exist yet.
+    if f"completed_{hf.get_active_profile()}" not in votes["Profiles"].keys():
+        votes["Profiles"][f"completed_{hf.get_active_profile()}"] = {}
+
+    # move the top game to the completed games list
+    votes["Profiles"][f"completed_{hf.get_active_profile()}"][next_game] = \
+        votes["Profiles"][f"active_{hf.get_active_profile()}"][next_game]
+    del votes["Profiles"][f"active_{hf.get_active_profile()}"][next_game]
+
+    hf.update_vote_data(votes)
+
+    return f"Completed {next_game} for {hf.get_active_profile()}"
+
+
 def activegames(to_parse=None):
     votes = hf.get_vote_data()
 
