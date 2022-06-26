@@ -16,10 +16,10 @@ class YouTubeBot:
     youtube_api_key = os.environ["YOUTUBE_API"]
     youtube_channel_id = os.environ["YOUTUBE_CHANNEL_ID"]
 
-    maximum_polling_length = 180
-    minimum_polling_length = 1
-
     def __init__(self, parser):
+        self.maximum_polling_length = 180
+        self.minimum_polling_length = 1
+
         self.client_secrets_file = 'youtube_secrets.json'
 
         self.streamer_youtube = self.create_youtube_object("streamer_token.pickle")
@@ -60,7 +60,8 @@ class YouTubeBot:
         if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
             return
 
-        await self.send_message(self.parser.parse_input("youtube", ctx))
+        await self.send_message(
+            self.parser.parse_input("youtube", ctx))
 
         return
 
@@ -81,9 +82,9 @@ class YouTubeBot:
 
             try:
                 response = request.execute()
-
+                await asyncio.sleep(0.4)
                 return response
-            except googleapiclient.errors.HttpError:
+            except googleapiclient.errors.HttpError as e:
                 logging.info("[YouTube] Quota limit reached")
 
     async def is_live(self) -> bool:
@@ -99,13 +100,12 @@ class YouTubeBot:
             return False
 
         if active_broadcasts["items"]:
-            if active_broadcasts["items"][0]['snippet']['liveChatId'] != self.last_live_chat:
-                self.last_live_chat = active_broadcasts["items"][0]['snippet']['liveChatId']
-                self.live = True
-                return True
-            else:
-                self.live = False
-                return False
+            self.last_live_chat = active_broadcasts["items"][0]['snippet']['liveChatId']
+            self.live = True
+            return True
+        else:
+            self.live = False
+            return False
 
     def get_last_live_chat(self):
         try:
@@ -145,7 +145,7 @@ class YouTubeBot:
                     chat_messages = self.streamer_youtube.liveChatMessages().list(
                         liveChatId=self.last_live_chat,
                         part="snippet",
-                        maxResults=10000
+                        maxResults=75
                     )
                     response = chat_messages.execute()
 

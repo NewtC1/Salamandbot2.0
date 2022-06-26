@@ -136,7 +136,7 @@ def logs(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{to_parse.author.name} has gathered {hf.get_log_count(to_parse.author.name)} logs."
+    output = f"{hf.get_user_active_name(to_parse.author.name)} has gathered {hf.get_log_count(to_parse.author.name)} logs."
     return output
 
 
@@ -146,7 +146,7 @@ def lurk(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{to_parse.author.name} pulls up a log and sits down to enjoy the stories."
+    output = f"{hf.get_user_active_name(to_parse.author.name)} pulls up a log and sits down to enjoy the stories."
 
     users = hf.get_user_list()
     author_name = to_parse.author.name
@@ -417,7 +417,7 @@ def addlogs(to_parse):
             campfire_count = hf.get_campfire_count() + add_value
             hf.set_campfire_count(campfire_count)
             hf.set_log_count(user, hf.get_log_count(user) - add_value)
-            output = f"{to_parse.author.name} added {add_value} logs to the campfire. " \
+            output = f"{hf.get_user_active_name(to_parse.author.name)} added {add_value} logs to the campfire. " \
                      f"There are now {campfire_count} logs in the fire."
 
             # rimeheart log expenditure tracking.
@@ -465,11 +465,12 @@ def givelogs(to_parse):
                 hf.set_log_count(target, hf.get_log_count(target) + amount)
                 hf.set_log_count(to_parse.author.name,
                                                hf.get_log_count(to_parse.author.name.lower()) - amount)
-                output = f"{to_parse.author.name} gave {amount} logs to {target.lower()}."
+                output = f"{hf.get_user_active_name(to_parse.author.name)} gave {amount} logs to {target.lower()}."
             else:
-                output = f"{to_parse.author.name}, you don't have the logs to do that."
+                output = f"{hf.get_user_active_name(to_parse.author.name)}, you don't have the logs to do that."
         else:
-            output = f"{to_parse.author.name} doesn't yet have any logs. Stick around to earn more."
+            output = f"{hf.get_user_active_name(to_parse.author.name)} doesn't yet have any logs. " \
+                     f"Stick around to earn more."
 
         return output
     else:
@@ -820,7 +821,7 @@ def stoke(to_parse=None):
 
             hf.update_vote_data(vote_data)
 
-            return f"{user} stoked {game_name}'s fire with {stoke_value} woodchips."
+            return f"{hf.get_user_active_name(to_parse.author.name)} stoked {game_name}'s fire with {stoke_value} woodchips."
         else:
             return "You don't have enough woodchips for that."
     else:
@@ -834,7 +835,7 @@ def woodchips(to_parse=None):
     :param to_parse:
     :return:
     """
-    output = f"{to_parse.author.name} has gathered {hf.get_woodchip_count(to_parse.author.name)} woodchips."
+    output = f"{hf.get_user_active_name(to_parse.author.name)} has gathered {hf.get_woodchip_count(to_parse.author.name)} woodchips."
     return output
 
 
