@@ -130,6 +130,7 @@ def vote_exists(target, user=None):
 
 
 def set_vote_option_value(target, new_value, user=None):
+    logging.info(f"[Helper Functions] Setting {target} to {new_value}")
     active_profile = get_active_profile(user)
     data = get_vote_data()
     if vote_exists(target, user):
@@ -258,6 +259,7 @@ def get_campfire_count():
 
 
 def set_campfire_count(new_count: int):
+    logging.info(f"[Helper Functions] Setting campfire to {new_count}")
     with open(campfire_file, encoding='utf-8-sig', mode='w') as file:
         file.write(str(new_count))
 
@@ -327,6 +329,21 @@ def get_shield_damage():
 def set_shield_damage(value):
     shields = load_shields()
     shields["shield_damage"] = value
+    update_shields(shields)
+
+
+def get_explosion_damage():
+    shields = load_shields()
+    if "explosion_damage" in shields.keys():
+        return shields["explosion_damage"]
+    else:
+        return 0
+
+
+def set_explosion_damage(value):
+    logging.info(f"[Helper Functions] Setting explosion damage to {value}")
+    shields = load_shields()
+    shields["explosion_damage"] = value
     update_shields(shields)
 
 
