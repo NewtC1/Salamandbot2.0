@@ -223,10 +223,10 @@ async def reminders(reminders: list = helper_functions.settings["strings"]["remi
                 await bots[bot].send_message(output)
 
 
-async def overheat_tick():
+async def overheat_tick(manager: overheat.OverheatManager):
     global is_live
     if is_live and settings["events"]["overheat_active"]:
-        overheat_output = overheat.overheat()
+        overheat_output = manager.tick()
         if overheat_output:
             for bot in bots.keys():
                 await bots[bot].send_message(overheat_output)
@@ -284,6 +284,7 @@ async def start_loop(end_loop=None):
     story_manager = stories.StoryManager()
     moonrise_manager = moonrise.MoonriseManager(logger=logging.getLogger())
     rimeheart_manager = rimeheart.RimeheartManager()
+    overheat_manager = overheat.OverheatManager()
 
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clocks...")
@@ -292,11 +293,11 @@ async def start_loop(end_loop=None):
     vote_clock = Clock(function_dict={vote_manager.tick_vote: "",
                                       vote_manager.remove_users_from_cooldown: "",
                                       vote_manager.decay: "",
-                                      overheat_tick: ""
                                       },
                        tick_frequency=1)
     moonrise_clock = Clock(function_dict={moonrise_tick: moonrise_manager}, tick_frequency=5)
     rimeheart_clock = Clock(function_dict={rimeheart_tick: rimeheart_manager}, tick_frequency=10)
+    overheat_clock = Clock(function_dict={overheat_tick: overheat_manager}, tick_frequency=30)
     reminder_clock = Clock(function_dict={reminders: ""}, tick_frequency=1800)
 
     # parses inputs
@@ -354,7 +355,8 @@ async def start_loop(end_loop=None):
 
     await asyncio.gather(clock.run(), bots["twitch"].start(), bots["youtube"].start(),
                          discord.start(os.environ["DISCORD_TOKEN"]),
-                         vote_clock.run(), moonrise_clock.run(), rimeheart_clock.run(), reminder_clock.run())
+                         vote_clock.run(), moonrise_clock.run(), rimeheart_clock.run(), reminder_clock.run(),
+                         overheat_clock.run())
 
     if end_loop:
         loop = asyncio.get_running_loop()
