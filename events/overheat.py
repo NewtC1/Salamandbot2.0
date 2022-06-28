@@ -59,50 +59,52 @@ class OverheatManager:
             critical_attack = random.randint(0, 100) < critical_chance
 
             damage = self.calculate_damage(critical_attack)
+            if damage > 0:
+                # make sure it has enough logs to reduce by that much
+                if damage > hf.get_vote_option_value(choice):
+                    # if a crit occurs, delete the vote option entirely
+                    if critical_attack:
+                        crit_consume_fluff = ["The flames of the Campgrounds voraciously devour on %s's log pile. " \
+                                              "When it is done, nothing remains. The story has been consumed entirely." % choice,
+                                              "A pillar of flame lances from the center of the Campgrounds to %s's logpile. "
+                                              "When it is done, not a single splinter remains of the story." % choice,
+                                              "The eyes of the Salamander travel to %s's logpile. "
+                                              "Seconds later, vines of lilac fire blossom"
+                                              " forth and enshroud the story. When the smoke clears, nothing remains." % choice
+                                              ]
+                        output += random.choice(crit_consume_fluff)
+                        logging.info(f"[Overheat] Destroying {choice} from the vote list: Critical hit deals {damage} to {hf.get_vote_option_value(choice)}")
+                        hf.set_campfire_count(hf.get_campfire_count() + hf.get_vote_option_value(choice))
+                        hf.delete_vote_option(choice, hf.get_active_profile())
+                    else:
+                        logging.info(f"[Overheat] Ignoring {choice} from the vote list: {damage} to {hf.get_vote_option_value(choice)}")
+                        failure_fluff = [f'The questing tendrils of salamander flame pass up '
+                                         f'{choice}; It is too small to sate it\'s appetite.']
+                        output += random.choice(failure_fluff)
 
-            # make sure it has enough logs to reduce by that much
-            if damage > hf.get_vote_option_value(choice):
-                # if a crit occurs, delete the vote option entirely
-                if critical_attack:
-                    crit_consume_fluff = ["The flames of the Campgrounds voraciously devour on %s's log pile. " \
-                                          "When it is done, nothing remains. The story has been consumed entirely." % choice,
-                                          "A pillar of flame lances from the center of the Campgrounds to %s's logpile. "
-                                          "When it is done, not a single splinter remains of the story." % choice,
-                                          "The eyes of the Salamander travel to %s's logpile. "
-                                          "Seconds later, vines of lilac fire blossom"
-                                          " forth and enshroud the story. When the smoke clears, nothing remains." % choice
-                                          ]
-                    output += random.choice(crit_consume_fluff)
-                    logging.info(f"[Overheat] Destroying {choice} from the vote list: Critical hit deals {damage} to {hf.get_vote_option_value(choice)}")
-                    hf.set_campfire_count(hf.get_campfire_count() + hf.get_vote_option_value(choice))
-                    hf.delete_vote_option(choice, hf.get_active_profile())
                 else:
-                    logging.info(f"[Overheat] Ignoring {choice} from the vote list: {damage} to {hf.get_vote_option_value(choice)}")
-                    failure_fluff = [f'The questing tendrils of salamander flame pass up '
-                                     f'{choice}; It is too small to sate it\'s appetite.']
-                    output += random.choice(failure_fluff)
+                    if critical_attack:
+                        feed_fluff = [f"Purple fire sprouts from the campfire and sweeps between the other fires, eventually "
+                                      f"landing on the fire of {choice}. The pillar of flame rages and incinerates {damage} "
+                                      "logs from the that fire.",
+                                      f"Fire arches from the central campfire and dives onto {choice}"
+                                      f". {damage} logs are consumed."
+                                      ]
+                        output += random.choice(feed_fluff)
+                    else:
+                        output += f'The salamander flame gorges itself on {choice}\'s log pile, consuming ' + \
+                                  f'{damage} logs. It is sated... for now.'
 
+                    new_value = hf.get_vote_option_value(choice) - damage
+                    logging.info(f"[Overheat] Damaging {choice} from the vote list: {damage} to {hf.get_vote_option_value(choice)}")
+                    # Write the reduced log count to the file.
+                    hf.set_vote_option_value(choice, new_value)
+
+                    hf.set_campfire_count(hf.get_campfire_count() + damage)
+                    hf.set_explosion_damage(hf.get_explosion_damage() + damage*2)
+                output += self.resolve_post_attack()
             else:
-                if critical_attack:
-                    feed_fluff = [f"Purple fire sprouts from the campfire and sweeps between the other fires, eventually "
-                                  f"landing on the fire of {choice}. The pillar of flame rages and incinerates {damage} "
-                                  "logs from the that fire.",
-                                  f"Fire arches from the central campfire and dives onto {choice}"
-                                  f". {damage} logs are consumed."
-                                  ]
-                    output += random.choice(feed_fluff)
-                else:
-                    output += f'The salamander flame gorges itself on {choice}\'s log pile, consuming ' + \
-                              f'{damage} logs. It is sated... for now.'
-
-                new_value = hf.get_vote_option_value(choice) - damage
-                logging.info(f"[Overheat] Damaging {choice} from the vote list: {damage} to {hf.get_vote_option_value(choice)}")
-                # Write the reduced log count to the file.
-                hf.set_vote_option_value(choice, new_value)
-
-                hf.set_campfire_count(hf.get_campfire_count() + damage)
-                hf.set_explosion_damage(hf.get_explosion_damage() + damage*2)
-            output += self.resolve_post_attack()
+                output = "The Salamander's bashes against the shields, but can't break through the fire-resistant plants."
 
             return output
 
