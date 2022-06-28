@@ -104,7 +104,7 @@ class OverheatManager:
                     hf.set_explosion_damage(hf.get_explosion_damage() + damage*2)
                 output += self.resolve_post_attack()
             else:
-                output = "The Salamander's bashes against the shields, but can't break through the fire-resistant plants."
+                output = "The Salamander's attack bashes against the shields, but can't break through the fire-resistant plants."
 
             return output
 

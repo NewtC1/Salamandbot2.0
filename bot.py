@@ -297,7 +297,7 @@ async def start_loop(end_loop=None):
                        tick_frequency=1)
     moonrise_clock = Clock(function_dict={moonrise_tick: moonrise_manager}, tick_frequency=5)
     rimeheart_clock = Clock(function_dict={rimeheart_tick: rimeheart_manager}, tick_frequency=10)
-    overheat_clock = Clock(function_dict={overheat_tick: overheat_manager}, tick_frequency=30)
+    overheat_clock = Clock(function_dict={overheat_tick: overheat_manager}, tick_frequency=600)
     reminder_clock = Clock(function_dict={reminders: ""}, tick_frequency=1800)
 
     # parses inputs
