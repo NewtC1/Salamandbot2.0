@@ -29,7 +29,7 @@ overheat = "Help to calm the Salamander down: https://docs.google.com/document/d
 #####################
 # Overheat settings #
 #####################
-overheat_active = false
+overheat_active = true
 # explosions
 explosions = true
 
