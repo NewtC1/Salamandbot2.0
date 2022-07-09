@@ -459,10 +459,15 @@ def givelogs(to_parse):
         users = hf.get_user_list()
         author_name = to_parse.author.name
 
+        if target not in users:
+            output = f"{target} isn't yet known by the Campgrounds. Wait until they have been here for at " \
+                     f"least 10 minutes."
+            return output
+
         # set the values
         if author_name.lower() in users:
             if hf.get_log_count(author_name) > amount:
-                hf.set_log_count(target, hf.get_log_count(target) + amount)
+                hf.set_log_count(target.lower(), hf.get_log_count(target) + amount)
                 hf.set_log_count(to_parse.author.name,
                                                hf.get_log_count(to_parse.author.name.lower()) - amount)
                 output = f"{hf.get_user_active_name(to_parse.author.name)} gave {amount} logs to {target.lower()}."
