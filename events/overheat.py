@@ -54,7 +54,7 @@ class OverheatManager:
             choice = random.choice(choices)
 
             # figure out if we have a crit or not
-            critical_chance = self.base_critical_chance if self.queued_crits < 1 else self.base_critical_chance + 100
+            critical_chance = self.base_critical_chance if self.queued_crits < 1 else self.base_critical_chance + 20
             self.queued_crits = self.queued_crits-1 if self.queued_crits > 0 else 0
             critical_attack = random.randint(0, 100) < critical_chance
 
@@ -148,7 +148,7 @@ class OverheatManager:
             hf.set_shield_count(hf.get_shield_count() - blast_damage)
             hf.set_campfire_count(int(hf.get_campfire_count()*0.25))
             logging.info(f"[Overheat] Increasing the queued crits by {blast_damage}")
-            self.queued_crits = self.queued_crits + blast_damage + 1
+            self.queued_crits = self.queued_crits + blast_damage + 1 if blast_damage > 0 else 1
 
         elif campfire_count > self.shield_threshold + self.safety_threshold:
             # generate a shield.
