@@ -16,6 +16,7 @@ google-auth-oauthlib = "*"
 google-auth-httplib2 = "*"
 googleapis-common-protos = "*"
 howlongtobeatpy = "==0.1.22"
+pynacl = "*"
 
 [requires]
 python_version = "3.9"

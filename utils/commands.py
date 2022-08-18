@@ -1069,9 +1069,11 @@ def topspenders(to_parse):
 
     return output
 
+
 # ============================================= Counter ================================================================
 def counter(to_parse):
     pass
+
 
 # ============================================== Community Challenges ==================================================
 def community(to_parse):
@@ -1080,3 +1082,11 @@ def community(to_parse):
     if len(args) > 1:
         if args[1] == "stoke":
             pass
+
+
+# ============================================= Debug ==================================================================
+def join_voice(to_parse):
+    return "!discord join"
+
+def leave_voice(to_parse):
+    return "!discord leave"
