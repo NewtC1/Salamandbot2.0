@@ -70,6 +70,10 @@ class DiscordBot(Client):
 
         return
 
+    async def on_voice_state_update(self, member:discord.Member, before:discord.VoiceClient, after:discord.VoiceClient):
+        if member.display_name == "John Cena" and after.channel and before.channel != after.channel:
+            await self.play_audio(member, "sounds/john_cena.mp3")
+
     async def send_message(self, message:str):
         if self.bot_ready:
             channel = self.get_channel(int(os.environ['DISCORD_BOT_CHANNEL_ID']))
