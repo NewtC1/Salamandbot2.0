@@ -30,6 +30,10 @@ class DiscordBot(Client):
     async def on_message(self, ctx):
         """Runs every time a message is sent in chat."""
 
+        length_of_content = len(ctx.content)
+        if len(ctx.content) > 40:
+            hf.set_log_count(ctx.author, hf.get_log_count(ctx.author) + int(length_of_content/40))
+
         # make sure the bot ignores itself
         if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
             return
