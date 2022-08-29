@@ -108,6 +108,8 @@ active_watch_bonus = 50
 vote_multiplier_threshold = [1.8, 1.4, 1.2, 1.1, 1.0]
 rebroadcast = false
 maximum_active_games = 3
+discord_log_gain_rate = 40
+discord_woodchip_gain_rate = 2
 
 [loyalty_points]
 loyalty_blacklist = ["newtc",

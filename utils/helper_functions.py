@@ -40,6 +40,8 @@ max_vote_rate = settings['settings']['max_vote_rate']
 loyalty_blacklist = settings["loyalty_points"]["loyalty_blacklist"]
 rebroadcast = settings["settings"]["rebroadcast"]
 maximum_active_games = settings["settings"]["maximum_active_games"]
+discord_logs_gain_rate = settings["settings"]["discord_log_gain_rate"]
+discord_woodchip_gain_rate = settings["settings"]["discord_woodchip_gain_rate"]
 
 
 def get_vote_option_value(option, user=None):
