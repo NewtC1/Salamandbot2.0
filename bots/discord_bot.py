@@ -15,6 +15,7 @@ class DiscordBot(Client):
         self.initial_channels = [os.environ['CHANNEL']]
         super().__init__(
             # set up the bot
+            intents=discord.Intents.default(),
             command_prefix=os.environ['BOT_PREFIX'],
             loop=loop
         )

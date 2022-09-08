@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-twitchio = "==1.2.3"
 google-api-python-client = "*"
 toml = "*"
 irc = "*"
@@ -17,6 +16,7 @@ google-auth-httplib2 = "*"
 googleapis-common-protos = "*"
 howlongtobeatpy = "==0.1.22"
 pynacl = "*"
+twitchio = "*"
 
 [requires]
 python_version = "3.9"

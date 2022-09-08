@@ -14,7 +14,7 @@ class TwitchBot(commands.bot.Bot):
         self.initial_channels = [os.environ['CHANNEL']]
         super().__init__(
             # set up the bot
-            irc_token=os.environ['TMI_TOKEN'],
+            token=os.environ['TMI_TOKEN'],
             client_id=os.environ['CLIENT_ID'],
             nick=os.environ['BOT_NICK'],
             prefix=os.environ['BOT_PREFIX'],
@@ -32,15 +32,13 @@ class TwitchBot(commands.bot.Bot):
     async def event_ready(self):
         """Called once the bot goes online."""
         print(f"{os.environ['BOT_NICK']} opens its eyes, ready to accept commands!")
-        ws = self._ws  # this is only needed to send messages within event_ready
-        await ws.send_privmsg(os.environ['CHANNEL'], self.bot_startup)
         self.bot_ready = True
 
     async def event_message(self, ctx):
         """Runs every time a message is sent in chat."""
 
         # make sure the bot ignores itself
-        if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
+        if not ctx.author:
             return
 
         await ctx.channel.send(self.parser.parse_input("twitch", ctx))
