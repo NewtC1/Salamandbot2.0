@@ -13,9 +13,11 @@ class DiscordBot(Client):
 
     def __init__(self, parser, loop: asyncio.BaseEventLoop=None):
         self.initial_channels = [os.environ['CHANNEL']]
+        intents = discord.Intents.default()
+        intents.message_content = True
         super().__init__(
             # set up the bot
-            intents=discord.Intents.default(),
+            intents=intents,
             command_prefix=os.environ['BOT_PREFIX'],
             loop=loop
         )
