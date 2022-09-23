@@ -80,6 +80,8 @@ class DiscordBot(Client):
                     await self.play_audio(ctx.author, source)
             else:
                 await ctx.channel.send(parse_output)
+        else:
+            await self.play_audio(ctx.author, "sounds/information.mp3")
 
         return
 
