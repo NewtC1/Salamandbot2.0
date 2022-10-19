@@ -2,6 +2,7 @@
 import asyncio
 import os  # for importing env vars for the bot to use
 import requests
+
 import utils.helper_functions as hf
 from twitchio.ext import commands
 
@@ -10,15 +11,14 @@ class TwitchBot(commands.bot.Bot):
 
     bot_startup = f"/me opens its eyes and rolls over. It awaits commands."
 
-    def __init__(self, parser, loop: asyncio.BaseEventLoop=None):
-        self.initial_channels = [os.environ['CHANNEL']]
+    def __init__(self, parser, loop: asyncio.BaseEventLoop=None, initial_channels=[os.environ['CHANNEL']]):
         super().__init__(
             # set up the bot
             token=os.environ['TMI_TOKEN'],
             client_id=os.environ['CLIENT_ID'],
             nick=os.environ['BOT_NICK'],
             prefix=os.environ['BOT_PREFIX'],
-            initial_channels=self.initial_channels,
+            initial_channels=initial_channels,
             loop=loop,
             # webhook_server=False,
             # local_host="localhost",
@@ -28,6 +28,13 @@ class TwitchBot(commands.bot.Bot):
         self.parser = parser
         self.parser.add_bot(self)
         self.bot_ready = False
+
+        self.headers = {
+            'client-id': hf.client_id,
+            'Authorization': f'Bearer {hf.irc_token}'
+        }
+        self.channel_id = requests.get(f"https://api.twitch.tv/helix/users?login={hf.target_channel}", headers=self.headers).json()['data'][0]['id']
+        self.channel_obj = None
 
     async def event_ready(self):
         """Called once the bot goes online."""
@@ -48,11 +55,23 @@ class TwitchBot(commands.bot.Bot):
     async def send_message(self, message):
         if self.bot_ready:
             # await self.join_channels(self.initial_channels)
-            for channel in self.initial_channels:
-                receiver_channel = self.get_channel(channel)
-                await receiver_channel.send(f"/me {message}")
+            for channel in self.connected_channels:
+                await channel.send(f"{message}")
         else:
             await asyncio.sleep(1)
+
+    async def get_chatters(self, channel_name):
+        await self.wait_for_ready()
+        channels = await self.fetch_channels([self.channel_id])
+        channel = self.get_channel(channel_name)
+        if channel:
+            chatter_list = []
+            for chatter in channel.chatters:
+                if not any(x in chatter.name for x in ['.']):
+                    chatter_list.append(chatter.name)
+            return chatter_list
+        return
+
 
     async def is_live(self) -> bool:
         """
@@ -60,12 +79,7 @@ class TwitchBot(commands.bot.Bot):
         :return:
         """
 
-        headers = {
-            'client-id': hf.client_id,
-            'Authorization': f'Bearer {hf.irc_token}'
-        }
-        target_user = requests.get(f"https://api.twitch.tv/helix/users?login={hf.target_channel}", headers=headers).json()['data'][0]['id']
-        response = requests.get(f"https://api.twitch.tv/helix/streams?user_id={target_user}", headers=headers)
+        response = requests.get(f"https://api.twitch.tv/helix/streams?user_id={self.channel_id}", headers=self.headers)
         if response.status_code == requests.codes.ok:
             if response.json()["data"]:
                 is_live = True

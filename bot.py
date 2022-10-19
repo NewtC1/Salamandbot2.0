@@ -145,10 +145,10 @@ async def payout_logs(users=None):
     log_gain_multiplier = settings["settings"]["log_gain_multiplier"]
 
     users_in_chat = users
-    logging.info(f"[Logs] Users in chat: {users_in_chat.all}")
+    logging.info(f"[Logs] Users in chat: {users_in_chat}")
     if not users:
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
-    for user in users_in_chat.all:
+    for user in users_in_chat:
         if user not in helper_functions.loyalty_blacklist:
             logs_gained = int(shields*log_gain_multiplier)
             helper_functions.set_log_count(user, helper_functions.get_log_count(user) + logs_gained)
@@ -158,10 +158,10 @@ async def payout_logs(users=None):
 async def payout_woodchips(users=None):
     data = helper_functions.load_accounts()
     users_in_chat = users
-    logging.info(f"[Woodchips] Users in chat: {users_in_chat.all}")
+    logging.info(f"[Woodchips] Users in chat: {users_in_chat}")
     if not users:
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
-    for user in users_in_chat.all:
+    for user in users_in_chat:
         if user not in helper_functions.loyalty_blacklist:
             helper_functions.set_woodchip_count(user, helper_functions.get_woodchip_count(user) + WOODCHIP_PAYOUT_RATE)
             # logging.info(f"[Woodchips] {user} gained {WOODCHIP_PAYOUT_RATE} woodchips.")
@@ -172,8 +172,8 @@ async def user_is_in_chat(user):
     retval = False
     for bot in bots.keys():
         users_in_chat = await bots[bot].get_chatters(TWITCH_CHANNEL)
-        print(f"Users in chat: {users_in_chat[8]}")
-        if user in users_in_chat[8]:
+        print(f"Users in chat: {users_in_chat}")
+        if user in users_in_chat:
             print(f"{user} is in chat!")
             retval = True
             break
@@ -197,10 +197,10 @@ async def tick():
         # TODO: Make this channel type agnostic.
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
 
-        await payout_logs(users_in_chat)
-        await payout_woodchips(users_in_chat)
-        await update_user_roles(users_in_chat)
-        helper_functions.set_campfire_count(helper_functions.get_campfire_count() - 20)
+        # await payout_logs(users_in_chat)
+        # await payout_woodchips(users_in_chat)
+        # await update_user_roles(users_in_chat)
+        # helper_functions.set_campfire_count(helper_functions.get_campfire_count() - 20)
 
     return
 
@@ -288,8 +288,7 @@ async def start_loop(end_loop=None):
 
     # ticks on a seperate thread and handles functions as they are resolved.
     logging.info("[Bot] Creating clocks...")
-    clock = Clock(logger=logging.getLogger(), function_dict={tick: "",
-                                                             story_manager.tick: ""}, tick_frequency=BOT_TICK_RATE)
+    clock = Clock(logger=logging.getLogger(), function_dict={story_manager.tick: ""}, tick_frequency=BOT_TICK_RATE)
     vote_clock = Clock(function_dict={vote_manager.tick_vote: "",
                                       vote_manager.remove_users_from_cooldown: "",
                                       vote_manager.decay: "",
