@@ -4,7 +4,7 @@ import os  # for importing env vars for the bot to use
 import utils.helper_functions as hf
 
 import discord
-from discord.client import Client
+from discord.client import Client, ClientException
 
 
 class DiscordBot(Client):
@@ -101,16 +101,15 @@ class DiscordBot(Client):
         channel_to_join = instigating_member.voice.channel
 
         if channel_to_join:
-            voice_client = await channel_to_join.connect()
-            self.current_voice_client = voice_client
+            self.current_voice_client = await channel_to_join.connect()
         else:
             await self.send_message(f"{instigating_member} is not in a voice channel. "
                                     f"Join the channel you want Salamandbot to join.")
 
     async def leave_voice(self):
-        if self.current_voice_client:
-            await self.current_voice_client.voice_disconnect()
-            self.current_voice_client = None
+        if self.voice_clients:
+            for x in self.voice_clients:
+                    return await x.disconnect(force=True)
         else:
             await self.send_message(f"Salamandbot is not in a voice channel.")
 
