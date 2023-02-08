@@ -86,8 +86,18 @@ class DiscordBot(Client):
         return
 
     async def on_voice_state_update(self, member:discord.Member, before:discord.VoiceClient, after:discord.VoiceClient):
-        if member.display_name == "John Cena" and after.channel and before.channel != after.channel:
-            await self.play_audio(member, "sounds/john_cena.mp3")
+
+        user_enter_sound = {"nb_ff": "deja-vu.mp3",
+                            "quantum nuke": "quantum.mp3"}
+
+        name = member.name.lower()
+
+        if after.channel and before.channel != after.channel:
+            if name in user_enter_sound.keys():
+                await self.play_audio(member, f"sounds/{user_enter_sound[name]}")
+
+            if member.display_name == "John Cena":
+                await self.play_audio(member, f"sounds/john_cena.mp3")
 
     async def send_message(self, message:str):
         if self.bot_ready:
