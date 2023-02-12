@@ -89,7 +89,9 @@ class DiscordBot(Client):
 
         user_enter_sound = {"nb_ff": "deja-vu.mp3",
                             "quantum nuke": "quantum.mp3",
-                            "reagansmash": "murloc.mp3"}
+                            "reagansmash": "murloc.mp3",
+                            "dr black jack": "you_died.mp3",
+                            "ramsis": "stay_awhile.mp3"}
 
         name = member.name.lower()
 
