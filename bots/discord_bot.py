@@ -88,7 +88,8 @@ class DiscordBot(Client):
     async def on_voice_state_update(self, member:discord.Member, before:discord.VoiceClient, after:discord.VoiceClient):
 
         user_enter_sound = {"nb_ff": "deja-vu.mp3",
-                            "quantum nuke": "quantum.mp3"}
+                            "quantum nuke": "quantum.mp3",
+                            "reagansmash": "murloc.mp3"}
 
         name = member.name.lower()
 
