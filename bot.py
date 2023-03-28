@@ -3,6 +3,7 @@ import asyncio
 import json
 import logging
 import os
+import sys
 
 from inspect import getmembers, isfunction
 from utils.clock import Clock
@@ -373,4 +374,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(start_loop())
     finally:
-        pass
+        os.execv(sys.argv[0], sys.argv)
