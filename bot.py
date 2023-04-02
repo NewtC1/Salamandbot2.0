@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import asyncio
 import json
@@ -198,10 +200,10 @@ async def tick():
         # TODO: Make this channel type agnostic.
         users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
 
-        # await payout_logs(users_in_chat)
-        # await payout_woodchips(users_in_chat)
+        await payout_logs(users_in_chat)
+        await payout_woodchips(users_in_chat)
         # await update_user_roles(users_in_chat)
-        # helper_functions.set_campfire_count(helper_functions.get_campfire_count() - 20)
+        helper_functions.set_campfire_count(helper_functions.get_campfire_count() - 20)
 
     return
 
@@ -356,7 +358,7 @@ async def start_loop(end_loop=None):
     await asyncio.gather(clock.run(), bots["twitch"].start(), bots["youtube"].start(),
                          discord.start(os.environ["DISCORD_TOKEN"]),
                          vote_clock.run(), moonrise_clock.run(), rimeheart_clock.run(), reminder_clock.run(),
-                         overheat_clock.run())
+                         overheat_clock.run(), tick())
 
     if end_loop:
         loop = asyncio.get_running_loop()
