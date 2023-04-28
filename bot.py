@@ -376,4 +376,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(start_loop())
     finally:
-        os.execv(sys.argv[0], sys.argv)
+        pass

@@ -78,6 +78,19 @@ class DiscordBot(Client):
                 elif "play" in parse_output:
                     source = parse_output.split()[-1]
                     await self.play_audio(ctx.author, source)
+                elif "sfx" in parse_output:
+                    # check for an attachment
+                    if len(ctx.attachments) == 1:
+                        if 'audio' in ctx.attachments[0].content_type:
+                            output_file = f"sounds/{ctx.attachments[0].filename}"
+                            await ctx.attachments[0].save(output_file)
+                            sfx_name = ctx.attachments[0].filename
+                            await self.update_join_sfx(sfx_name, ctx.author.name)
+                            await self.send_message(f"Successfully updated join sfx to {sfx_name}")
+                    elif len(ctx.attachments) > 1:
+                        await self.send_message("Only one audio file can be attached at a time.")
+                    else:
+                        await self.send_message("Attach an audio file to the command string.")
             else:
                 await ctx.channel.send(parse_output)
         else:
@@ -87,17 +100,11 @@ class DiscordBot(Client):
 
     async def on_voice_state_update(self, member:discord.Member, before:discord.VoiceClient, after:discord.VoiceClient):
 
-        user_enter_sound = {"nb_ff": "deja-vu.mp3",
-                            "quantum nuke": "quantum.mp3",
-                            "reagansmash": "murloc.mp3",
-                            "dr black jack": "you_died.mp3",
-                            "ramsis": "stay_awhile.mp3"}
-
-        name = member.name.lower()
+        user_enter_sound = hf.get_user_sfx(member.name.lower())
 
         if after.channel and before.channel != after.channel:
-            if name in user_enter_sound.keys():
-                await self.play_audio(member, f"sounds/{user_enter_sound[name]}")
+            if user_enter_sound:
+                await self.play_audio(member, f"sounds/{user_enter_sound}")
 
             if member.display_name == "John Cena":
                 await self.play_audio(member, f"sounds/john_cena.mp3")
@@ -140,3 +147,7 @@ class DiscordBot(Client):
         :return:
         """
         return False
+
+    async def update_join_sfx(self, sfx_file_name, member):
+        # check if the member already has an sfx
+        hf.update_user_sfx(sfx_file_name, member)

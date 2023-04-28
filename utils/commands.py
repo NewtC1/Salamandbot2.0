@@ -1090,3 +1090,6 @@ def join_voice(to_parse):
 
 def leave_voice(to_parse):
     return "!discord leave"
+
+def update_join_sfx(to_parse):
+    return "!discord sfx"

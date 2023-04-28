@@ -851,3 +851,18 @@ def move_option_to_top(option):
 def create_and_move(option):
     add_to_votes(option)
     move_option_to_top(option)
+
+
+def update_user_sfx(sfx_file_name, username):
+    user_id = get_user_id(username)
+    accounts = load_accounts()
+    accounts[user_id]["join_sfx"] = sfx_file_name
+    update_accounts(accounts)
+
+def get_user_sfx(username):
+    user_id = get_user_id(username)
+    accounts = load_accounts()
+    if "join_sfx" in accounts[user_id].keys():
+        return accounts[user_id]["join_sfx"]
+    else:
+        return None
