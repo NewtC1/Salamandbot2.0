@@ -35,12 +35,14 @@ class DiscordBot(Client):
 
         # make sure to handle woodchip and log gain first
         length_of_content = len(ctx.content)
+        author_name = ctx.author.name.lower()
+
         if len(ctx.content) > hf.discord_logs_gain_rate:
-            hf.set_log_count(ctx.author.name, hf.get_log_count(ctx.author.name) +
+            hf.set_log_count(author_name, hf.get_log_count(author_name) +
                              int(length_of_content/hf.discord_logs_gain_rate))
 
         if len(ctx.content) > hf.discord_woodchip_gain_rate:
-            hf.set_woodchip_count(ctx.author.name, hf.get_woodchip_count(ctx.author.name) +
+            hf.set_woodchip_count(author_name, hf.get_woodchip_count(author_name) +
                                   int(length_of_content/hf.discord_woodchip_gain_rate))
 
         # make sure the bot ignores itself
