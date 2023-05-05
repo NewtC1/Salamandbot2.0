@@ -74,12 +74,12 @@ class DiscordBot(Client):
         if parse_output:
             if "!discord" in parse_output:
                 if "join" in parse_output:
-                    await self.join_voice(ctx.author)
+                    await self.join_voice(author_name)
                 elif "leave" in parse_output:
                     await self.leave_voice()
                 elif "play" in parse_output:
                     source = parse_output.split()[-1]
-                    await self.play_audio(ctx.author, source)
+                    await self.play_audio(author_name, source)
                 elif "sfx" in parse_output:
                     # check for an attachment
                     if len(ctx.attachments) == 1:
@@ -87,7 +87,7 @@ class DiscordBot(Client):
                             output_file = f"sounds/{ctx.attachments[0].filename}"
                             await ctx.attachments[0].save(output_file)
                             sfx_name = ctx.attachments[0].filename
-                            await self.update_join_sfx(sfx_name, ctx.author.name)
+                            await self.update_join_sfx(sfx_name, author_name)
                             await self.send_message(f"Successfully updated join sfx to {sfx_name}")
                     elif len(ctx.attachments) > 1:
                         await self.send_message("Only one audio file can be attached at a time.")
@@ -96,7 +96,7 @@ class DiscordBot(Client):
             else:
                 await ctx.channel.send(parse_output)
         else:
-            await self.play_audio(ctx.author, "sounds/information.mp3")
+            await self.play_audio(author_name, "sounds/information.mp3")
 
         return
 
