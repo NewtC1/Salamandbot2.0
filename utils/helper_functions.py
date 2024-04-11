@@ -3,7 +3,7 @@ import logging
 import os
 import toml
 import time
-from playsound import playsound
+import playsoundsimple as pss
 import requests
 import uuid
 import random
@@ -384,7 +384,9 @@ def play_audio(target: str):
     if not os.path.exists(target):
         return False
 
-    playsound(target)
+
+    player = pss.Sound(target)
+    player.play()
     return True
 
 # =========================================== User Account Functions ===================================================
