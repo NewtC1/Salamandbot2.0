@@ -41,6 +41,9 @@ class InputParser:
         elif source == "youtube":
             content = to_parse.content.lower()
 
+        # give logs to the user for each message
+        hf.set_log_count(to_parse.author.name, hf.get_log_count(to_parse.author.name) + len(to_parse.content.split()))
+
         if content:
             first_word = content.split()[0]  # Gets the first word of the input to determine the command it should run
         else:

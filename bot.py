@@ -198,10 +198,10 @@ async def tick():
     await update_live_status()
     if is_live:
         # TODO: Make this channel type agnostic.
-        users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
+        # users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
 
-        await payout_logs(users_in_chat)
-        await payout_woodchips(users_in_chat)
+        # await payout_logs(users_in_chat)
+        # await payout_woodchips(users_in_chat)
         # await update_user_roles(users_in_chat)
         helper_functions.set_campfire_count(helper_functions.get_campfire_count() - 20)
 
@@ -350,12 +350,12 @@ async def start_loop(end_loop=None):
     # starting bots
     logging.info("[Bot] Starting bots...")
     bots["twitch"] = TwitchBot(parser)
-    bots["youtube"] = YouTubeBot(parser)
+    # bots["youtube"] = YouTubeBot(parser)
     discord = DiscordBot(parser)
     vote_manager.bots = [bots["twitch"]]
     vote_manager.discord_bot = discord
 
-    await asyncio.gather(clock.run(), bots["twitch"].start(), bots["youtube"].start(),
+    await asyncio.gather(clock.run(), bots["twitch"].start(), # bots["youtube"].start(),
                          discord.start(os.environ["DISCORD_TOKEN"]),
                          vote_clock.run(), moonrise_clock.run(), rimeheart_clock.run(), reminder_clock.run(),
                          overheat_clock.run(), tick())
