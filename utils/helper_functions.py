@@ -409,6 +409,7 @@ def get_user_id(username) -> str:
     for account in accounts.keys():
         if username in accounts[account]['aliases']:
             matching_account = account
+            break
 
     return matching_account
 
