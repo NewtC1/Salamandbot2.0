@@ -42,6 +42,7 @@ rebroadcast = settings["settings"]["rebroadcast"]
 maximum_active_games = settings["settings"]["maximum_active_games"]
 discord_logs_gain_rate = settings["settings"]["discord_log_gain_rate"]
 discord_woodchip_gain_rate = settings["settings"]["discord_woodchip_gain_rate"]
+discord_blacklisted_channels = settings["settings"]["blacklisted_channels"]
 
 
 def get_vote_option_value(option, user=None):

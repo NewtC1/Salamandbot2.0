@@ -110,6 +110,7 @@ rebroadcast = false
 maximum_active_games = 3
 discord_log_gain_rate = 40
 discord_woodchip_gain_rate = 2
+blacklisted_channels = []
 
 [loyalty_points]
 loyalty_blacklist = ["newtc",

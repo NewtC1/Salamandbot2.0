@@ -1,6 +1,9 @@
 # twitch_bot.py
 import asyncio
 import os  # for importing env vars for the bot to use
+
+import toml
+
 import utils.helper_functions as hf
 
 import discord
@@ -10,6 +13,7 @@ from discord.client import Client, ClientException
 class DiscordBot(Client):
 
     bot_startup = f"/me opens its eyes and rolls over. It awaits commands."
+    blacklisted_channels = hf.discord_blacklisted_channels
 
     def __init__(self, parser, loop: asyncio.BaseEventLoop=None):
         self.initial_channels = [os.environ['CHANNEL']]
@@ -105,7 +109,7 @@ class DiscordBot(Client):
         user_enter_sound = hf.get_user_sfx(member.name.lower())
 
         if after.channel and before.channel != after.channel:
-            if user_enter_sound:
+            if user_enter_sound and after.channel.name not in self.blacklisted_channels:
                 await self.play_audio(member, f"sounds/{user_enter_sound}")
 
             if member.display_name == "John Cena":
