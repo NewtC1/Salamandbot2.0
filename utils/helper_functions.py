@@ -3,11 +3,11 @@ import logging
 import os
 import toml
 import time
-import playsoundsimple as pss
 import requests
 import uuid
 import random
 from howlongtobeatpy import HowLongToBeat, HowLongToBeatEntry
+from playsound import playsound
 import events.MoonriseArtifacts.Artifact as Artifact
 
 settings_file = os.path.join(os.path.dirname(__file__), "settings.toml")
@@ -386,8 +386,7 @@ def play_audio(target: str):
         return False
 
 
-    player = pss.Sound(target)
-    player.play()
+    playsound(target)
     return True
 
 # =========================================== User Account Functions ===================================================
