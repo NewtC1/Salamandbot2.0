@@ -7,7 +7,7 @@ name = "pypi"
 google-api-python-client = "*"
 toml = "*"
 irc = "*"
-"discord.py" = "==2.2.2"
+"discord.py" = "*"
 pytest = "*"
 pytest-asyncio = "*"
 google-auth-oauthlib = "*"
@@ -19,6 +19,6 @@ twitchio = "*"
 playsound = "==1.2.2"
 
 [requires]
-python_version = "3.9"
+python_version = "3.11"
 
 [dev-packages]

@@ -1,34 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="52cd02a1-1c50-4db1-892d-050a7e9ce694" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/bots/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bots/discord_bot.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data_classes/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data_classes/community_challenge.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data_classes/redeemable.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/events/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/events/overheat.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/events/stories.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/merge_jsons.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/user_id_convertor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" />
+    <list default="true" id="52cd02a1-1c50-4db1-892d-050a7e9ce694" name="Default Changelist" comment="Updated playsound to stay at 1.2.2">
+      <change beforePath="$PROJECT_DIR$/.idea/Salamandbot2.0.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Salamandbot2.0.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/input_parser.py" beforeDir="false" afterPath="$PROJECT_DIR$/input_parser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/twitch_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bots/twitch_bot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/commands.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bots/twitch_bot.py" beforeDir="false" afterPath="$PROJECT_DIR$/bots/twitch_bot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/helper_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/helper_functions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/settings.toml" beforeDir="false" afterPath="$PROJECT_DIR$/utils/settings.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/voting/vote_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/voting/vote_manager.py" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -40,38 +33,152 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;NewtC1&quot;
+  }
+}</component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/NewtC1/Salamandbot2.0.git&quot;,
+    &quot;accountId&quot;: &quot;bf0b5d5e-0df1-43e4-a8e5-c37b0ec4ffc3&quot;
+  }
+}</component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="1qe9N7WfmkUvssrBIv5lZwNYRRV" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\james\PycharmProjects\Salamandbot2.0\bots" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\james\PycharmProjects\Salamandbot2.0\values" />
-    </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.bot.executor": "Run",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/james/.virtualenvs/Salamandbot2.0-l_LVT0dY/Scripts/python.exe",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  }
+}]]></component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="Salamandbot2.0" is-module-sdk="true">
+        <option name="myUseModuleSdk" value="true" />
+        <option name="myModuleName" value="Salamandbot2.0" />
+      </console-settings>
     </option>
   </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\james\PycharmProjects\Salamandbot2.0\sounds" />
+      <recent name="C:\Users\james\PycharmProjects\TestProjects" />
+      <recent name="C:\Users\james\PycharmProjects\Salamandbot2.0\events" />
+      <recent name="C:\Users\james\PycharmProjects\Salamandbot2.0\values" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\james\PycharmProjects\Salamandbot2.0\sounds" />
+      <recent name="C:\Users\james\PycharmProjects\TestProjects" />
+      <recent name="C:\Users\james\PycharmProjects\Salamandbot2.0" />
+      <recent name="C:\Users\james\PycharmProjects\Salamandbot2.0\bots" />
+    </key>
+  </component>
   <component name="RunManager" selected="Python.bot">
+    <configuration name="HowLongToBeatTesting" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="TestProjects" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\james\.virtualenvs\Salamandbot2.0-l_LVT0dY\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+          <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../TestProjects/HowLongToBeatTesting.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="YouTubeTesting" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="TestProjects" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\james\.virtualenvs\Salamandbot2.0-l_LVT0dY\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+          <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../TestProjects/YouTubeTesting.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="Salamandbot2.0" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -89,11 +196,44 @@
         <option name="IS_IGNORE_MISSING_FILES" value="false" />
         <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
         <ENTRIES>
-          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
-          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+          <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
         </ENTRIES>
       </EXTENSION>
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/bot.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="accounts_sql_database_generator" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Salamandbot2.0" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\james\.virtualenvs\Salamandbot2.0-l_LVT0dY\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+          <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/accounts_sql_database_generator.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -103,7 +243,9 @@
       <method v="2" />
     </configuration>
     <configuration name="bot" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <log_file alias="C:\Users\james\PycharmProjects\Salamandbot2.0\Salamandbot2.log" path="$PROJECT_DIR$/Salamandbot2.log" />
       <module name="Salamandbot2.0" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -111,7 +253,7 @@
       </envs>
       <option name="SDK_HOME" value="C:\Users\james\.virtualenvs\Salamandbot2.0-l_LVT0dY\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="net.ashald.envfile">
@@ -121,8 +263,8 @@
         <option name="IS_IGNORE_MISSING_FILES" value="false" />
         <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
         <ENTRIES>
-          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
-          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+          <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
         </ENTRIES>
       </EXTENSION>
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/bot.py" />
@@ -134,8 +276,9 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="discordtest" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="rimeheart_fix" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Salamandbot2.0" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -153,11 +296,11 @@
         <option name="IS_IGNORE_MISSING_FILES" value="false" />
         <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
         <ENTRIES>
-          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
-          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+          <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
         </ENTRIES>
       </EXTENSION>
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/discordtest.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/rimeheart_fix.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -166,8 +309,9 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="sound_testing" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="user_id_convertor" type="PythonConfigurationType" factoryName="Python">
       <module name="Salamandbot2.0" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -185,72 +329,8 @@
         <option name="IS_IGNORE_MISSING_FILES" value="false" />
         <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
         <ENTRIES>
-          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
-          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
-        </ENTRIES>
-      </EXTENSION>
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/sound_testing.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="twitchtest" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Salamandbot2.0" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\Users\james\.virtualenvs\Salamandbot2.0-l_LVT0dY\Scripts\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="net.ashald.envfile">
-        <option name="IS_ENABLED" value="true" />
-        <option name="IS_SUBST" value="false" />
-        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
-        <option name="IS_IGNORE_MISSING_FILES" value="false" />
-        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
-        <ENTRIES>
-          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
-          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
-        </ENTRIES>
-      </EXTENSION>
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/twitchtest.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="user_id_convertor" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Salamandbot2.0" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\Users\james\.virtualenvs\Salamandbot2.0-l_LVT0dY\Scripts\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="net.ashald.envfile">
-        <option name="IS_ENABLED" value="true" />
-        <option name="IS_SUBST" value="false" />
-        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
-        <option name="IS_IGNORE_MISSING_FILES" value="false" />
-        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
-        <ENTRIES>
-          <ENTRY IS_ENABLED="true" PARSER="runconfig" />
-          <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+          <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
         </ENTRIES>
       </EXTENSION>
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/user_id_convertor.py" />
@@ -262,15 +342,148 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="youtube_bot" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Salamandbot2.0" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\james\.virtualenvs\Salamandbot2.0-l_LVT0dY\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+          <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/bots/youtube_bot.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Unittests">
+      <module name="scripts" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="_new_pattern" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="py.test">
+      <module name="scripts" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="C:\Users\james\.virtualenvs\Salamandbot2.0-l_LVT0dY\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+          <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/unit_tests/test_core.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest in test_core.py" type="tests" factoryName="py.test" nameIsGenerated="true">
+      <module name="scripts" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="C:\Users\james\.virtualenvs\Salamandbot2.0-l_LVT0dY\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+          <ENTRY IS_ENABLED="true" PARSER="env" IS_EXECUTABLE="false" PATH=".env" />
+        </ENTRIES>
+      </EXTENSION>
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;-l&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/test_core.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.HowLongToBeatTesting" />
+      <item itemvalue="Python.bot" />
+      <item itemvalue="Python.user_id_convertor" />
+      <item itemvalue="Python.YouTubeTesting" />
+      <item itemvalue="Python.accounts_sql_database_generator" />
+      <item itemvalue="Python.rimeheart_fix" />
+      <item itemvalue="Python.youtube_bot" />
+      <item itemvalue="Python tests.pytest in test_core.py" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.user_id_convertor" />
-        <item itemvalue="Python.discordtest" />
-        <item itemvalue="Python.twitchtest" />
-        <item itemvalue="Python.sound_testing" />
+        <item itemvalue="Python.accounts_sql_database_generator" />
+        <item itemvalue="Python.rimeheart_fix" />
+        <item itemvalue="Python.youtube_bot" />
+        <item itemvalue="Python.YouTubeTesting" />
       </list>
     </recent_temporary>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-14705d77f0bb-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.25659.43" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -282,6 +495,350 @@
       <option name="presentableId" value="Default" />
       <updated>1622303959645</updated>
     </task>
+    <task id="LOCAL-00033" summary="Added rebroadcast value to helper_functions.py">
+      <created>1643085553119</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1643085553119</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Significantly reduced YouTube API usage while the stream is offline.">
+      <created>1643443423939</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1643443423939</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Added the ability for vote manager to send decay messages to Discord.">
+      <created>1644453526151</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1644453526151</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Reimplemented bot DM functionality.">
+      <created>1644453883351</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1644453883351</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Fixed channel parsing.">
+      <created>1644460715863</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1644460715863</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Added pickle files to the git ignore list.">
+      <created>1647838699800</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1647838699800</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Added a check to make sure a user isn't on cooldown before changing profiles.">
+      <created>1647845509838</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1647845509838</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Added a push back to the YouTube poll requests. Hopefully this will allow me to run the poll requests for a whole stream.">
+      <created>1652145820814</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1652145820814</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Added another try except to the YouTube bot's send message check. It should no longer crash when sending messages after the quota has been reached.">
+      <created>1652573430339</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1652573430340</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Updated redeemables. Removed story and added quiz.">
+      <created>1652627130191</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1652627130191</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Updated the redeemables helper text to include the new changes.">
+      <created>1652627288319</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1652627288319</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Added case insensitivity to !vote.">
+      <created>1652628338784</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1652628338784</updated>
+    </task>
+    <task id="LOCAL-00045" summary="Added yet another try except.">
+      <created>1652845405339</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1652845405339</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Added yet another try except.">
+      <created>1652845696726</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1652845696726</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Updated HowLongToBeat interaction library">
+      <created>1653521152228</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1653521152228</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Updated log gain targets to &quot;all&quot; instead of &quot;viewers&quot; to allow VIP users to gain logs again.">
+      <created>1654399023231</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1654399023231</updated>
+    </task>
+    <task id="LOCAL-00049" summary="Another update to fix the VIPs can't gain logs issue.">
+      <created>1654485565665</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1654485565665</updated>
+    </task>
+    <task id="LOCAL-00050" summary="Initial commit for active voting update.">
+      <created>1655430704970</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1655430704971</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Added a command to complete a game.">
+      <created>1655653421428</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1655653421429</updated>
+    </task>
+    <task id="LOCAL-00052" summary="Updated YouTube bot and basic commands. Most commands should now work on the YouTube bot and show the correct name after linking.">
+      <created>1656224348994</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1656224348995</updated>
+    </task>
+    <task id="LOCAL-00053" summary="Overheat and Helper Function updates.">
+      <created>1656444773124</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1656444773125</updated>
+    </task>
+    <task id="LOCAL-00054" summary="Bot update to use the new Overheat module.">
+      <created>1656444813233</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1656444813233</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Added a line for if the Salamander fails an attack completely.">
+      <created>1656445077980</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1656445077981</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Update to fix some mistakes in a previous commit.">
+      <created>1656445435079</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1656445435079</updated>
+    </task>
+    <task id="LOCAL-00057" summary="Added the correct overheat link to the settings.">
+      <created>1656481191443</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1656481191444</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Activating overheat.">
+      <created>1656944355000</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1656944355001</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Fixing givelogs">
+      <created>1657342509051</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1657342509052</updated>
+    </task>
+    <task id="LOCAL-00060" summary="Nerfing critical chance after an explosion to 20.">
+      <created>1657496722732</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1657496722732</updated>
+    </task>
+    <task id="LOCAL-00061" summary="Update to allow Salamandbot to play SFX on Discord.">
+      <created>1660802430020</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1660802430021</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Added the John Cena meme">
+      <created>1661551443254</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1661551443255</updated>
+    </task>
+    <task id="LOCAL-00063" summary="Included the John Cena file">
+      <created>1661551488611</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1661551488611</updated>
+    </task>
+    <task id="LOCAL-00064" summary="Added a test log gain system to Discord">
+      <created>1661748896193</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1661748896194</updated>
+    </task>
+    <task id="LOCAL-00065" summary="Added Discord log and woodchip gain per message. Gain rates have been added to the settings.toml file and can be adjusted from there.">
+      <created>1661750277360</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1661750277360</updated>
+    </task>
+    <task id="LOCAL-00066" summary="Updated Discord.py and TwitchIO to the latest versions.">
+      <created>1662609579215</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1662609579216</updated>
+    </task>
+    <task id="LOCAL-00067" summary="Updated discord bot's intents list to include message_content.">
+      <created>1662865314499</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1662865314500</updated>
+    </task>
+    <task id="LOCAL-00068" summary="Added a &quot;I'm sorry dave&quot; response to invalid commands.">
+      <created>1663906906988</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1663906906989</updated>
+    </task>
+    <task id="LOCAL-00069" summary="Disabled log gain and role updates for Twitch">
+      <created>1666156518294</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1666156518295</updated>
+    </task>
+    <task id="LOCAL-00070" summary="Fixed a problem with leave_voice that meant the bot wasn't correctly closing out all voice clients.">
+      <created>1667793791614</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1667793791615</updated>
+    </task>
+    <task id="LOCAL-00071" summary="Added Discord user entry SFX code">
+      <created>1675895849593</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1675895849594</updated>
+    </task>
+    <task id="LOCAL-00072" summary="Added reagan's entry SFX">
+      <created>1676164275824</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1676164275825</updated>
+    </task>
+    <task id="LOCAL-00073" summary="Added ramsis and blackjack's SFX">
+      <created>1676165392544</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1676165392544</updated>
+    </task>
+    <task id="LOCAL-00074" summary="Added ramsis and blackjack's SFX">
+      <created>1676165399389</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1676165399389</updated>
+    </task>
+    <task id="LOCAL-00075" summary="Added auto-restart if the bot crashes unexpectedly">
+      <created>1680025779157</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1680025779157</updated>
+    </task>
+    <task id="LOCAL-00076" summary="Updated Discord.py to fix SFXs not playing correctly after joining.">
+      <created>1680451392002</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1680451392003</updated>
+    </task>
+    <task id="LOCAL-00077" summary="Fixed Twitch chatters check.">
+      <created>1680461247286</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1680461247286</updated>
+    </task>
+    <task id="LOCAL-00078" summary="Added ability for users to upload their own join SFX files.">
+      <created>1682645160503</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1682645160503</updated>
+    </task>
+    <task id="LOCAL-00079" summary="Fixed Discord user names not being recorded with a .lower()">
+      <created>1683221609533</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1683221609534</updated>
+    </task>
+    <task id="LOCAL-00080" summary="Replaced multiple locations with the new author_name variable to ensure lower() is being used consistently.">
+      <created>1683328052980</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1683328052980</updated>
+    </task>
+    <task id="LOCAL-00081" summary="Added a start file to Salamandbot 2">
+      <created>1693716263211</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1693716263211</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -289,12 +846,80 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Nerfing critical chance after an explosion to 20." />
+    <MESSAGE value="Update to allow Salamandbot to play SFX on Discord." />
+    <MESSAGE value="Added the John Cena meme" />
+    <MESSAGE value="Included the John Cena file" />
+    <MESSAGE value="Added a test log gain system to Discord" />
+    <MESSAGE value="Added Discord log and woodchip gain per message. Gain rates have been added to the settings.toml file and can be adjusted from there." />
+    <MESSAGE value="Updated Discord.py and TwitchIO to the latest versions." />
+    <MESSAGE value="Updated discord bot's intents list to include message_content." />
+    <MESSAGE value="Added a &quot;I'm sorry dave&quot; response to invalid commands." />
+    <MESSAGE value="Disabled log gain and role updates for Twitch" />
+    <MESSAGE value="Fixed a problem with leave_voice that meant the bot wasn't correctly closing out all voice clients." />
+    <MESSAGE value="Added Discord user entry SFX code" />
+    <MESSAGE value="Added reagan's entry SFX" />
+    <MESSAGE value="Added ramsis and blackjack's SFX" />
+    <MESSAGE value="Added auto-restart if the bot crashes unexpectedly" />
+    <MESSAGE value="Updated Discord.py to fix SFXs not playing correctly after joining." />
+    <MESSAGE value="Fixed Twitch chatters check." />
+    <MESSAGE value="Added ability for users to upload their own join SFX files." />
+    <MESSAGE value="Fixed Discord user names not being recorded with a .lower()" />
+    <MESSAGE value="Replaced multiple locations with the new author_name variable to ensure lower() is being used consistently." />
+    <MESSAGE value="Added a start file to Salamandbot 2" />
+    <MESSAGE value="Added support for Twitch log gain based on amount of words said in chat" />
+    <MESSAGE value="Added blacklisting channels to voice entry checks" />
+    <MESSAGE value="Update pipenv with the most recent discord.py and swaps playsoundsimple with playsound due to PSS no longer being supported." />
+    <MESSAGE value="Updated playsound to stay at 1.2.2" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated playsound to stay at 1.2.2" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/events/rimeheart.py</url>
+          <line>26</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/scripts/rimeheart_fix.py</url>
+          <line>6</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/scripts/accounts_sql_database_generator.py</url>
+          <line>62</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/bots/youtube_bot.py</url>
+          <line>144</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/bots/youtube_bot.py</url>
+          <line>170</line>
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/utils/helper_functions.py</url>
+          <line>20</line>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="self" />
+        <watch expression="oauth_request" language="Python" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

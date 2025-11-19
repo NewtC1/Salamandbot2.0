@@ -13,7 +13,7 @@ import events.MoonriseArtifacts.Artifact as Artifact
 settings_file = os.path.join(os.path.dirname(__file__), "settings.toml")
 
 client_id = os.environ['CLIENT_ID']
-client_secret = os.environ["CLIENTSECRET"]
+client_secret = os.environ["CLIENT_SECRET_TWITCH"]
 target_channel = os.environ["CHANNEL"]
 
 oauth_request = requests.post(

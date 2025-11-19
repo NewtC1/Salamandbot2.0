@@ -6,6 +6,8 @@ import requests
 import utils.helper_functions as hf
 from twitchio.ext import commands
 
+from utils.helper_functions import client_id
+
 
 class TwitchBot(commands.bot.Bot):
 
@@ -14,12 +16,11 @@ class TwitchBot(commands.bot.Bot):
     def __init__(self, parser, loop: asyncio.BaseEventLoop=None, initial_channels=[os.environ['CHANNEL']]):
         super().__init__(
             # set up the bot
-            token=os.environ['TMI_TOKEN'],
             client_id=os.environ['CLIENT_ID'],
-            nick=os.environ['BOT_NICK'],
+            client_secret=os.environ['CLIENT_SECRET_TWITCH'],
+            bot_id=os.environ['BOT_ID_TWITCH'],
+            owner_id=os.environ['OWNER_ID_TWITCH'],
             prefix=os.environ['BOT_PREFIX'],
-            initial_channels=initial_channels,
-            loop=loop,
             # webhook_server=False,
             # local_host="localhost",
             # port=8080,
@@ -30,7 +31,7 @@ class TwitchBot(commands.bot.Bot):
         self.bot_ready = False
 
         self.headers = {
-            'client-id': hf.client_id,
+            'client-id': client_id,
             'Authorization': f'Bearer {hf.irc_token}'
         }
         self.channel_id = requests.get(f"https://api.twitch.tv/helix/users?login={hf.target_channel}", headers=self.headers).json()['data'][0]['id']

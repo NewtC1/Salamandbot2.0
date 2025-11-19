@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Salamandbot2.0.iml" filepath="$PROJECT_DIR$/.idea/Salamandbot2.0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../TestProjects/.idea/TestProjects.iml" filepath="$PROJECT_DIR$/../TestProjects/.idea/TestProjects.iml" />
+      <module fileurl="file://E:/Program Files/obs-studio/data/obs-plugins/frontend-tools/scripts/.idea/scripts.iml" filepath="E:/Program Files/obs-studio/data/obs-plugins/frontend-tools/scripts/.idea/scripts.iml" />
     </modules>
   </component>
 </project>
