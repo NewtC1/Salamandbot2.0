@@ -31,10 +31,12 @@ class InputParser:
         """
         content = ""
         output_prefix = ""
+        author = ""
 
-        # Get the message content based on which
+        # Get the message content based on which environment it came from. Set author and content.
         if source == "twitch":
-            content = to_parse.content.lower()
+            content = to_parse.text.lower()
+            author = to_parse.chatter.channel.name.lower()
             output_prefix = "/me "
         elif source == "discord":
             content = to_parse.content.lower()
@@ -42,7 +44,7 @@ class InputParser:
             content = to_parse.content.lower()
 
         # give logs to the user for each message
-        hf.set_log_count(to_parse.author.name, hf.get_log_count(to_parse.author.name) + len(to_parse.content.split()))
+        hf.set_log_count(author, hf.get_log_count(author) + len(content.split()))
 
         if content:
             first_word = content.split()[0]  # Gets the first word of the input to determine the command it should run
@@ -61,7 +63,7 @@ class InputParser:
         else:
             if hf.rebroadcast:
                 # send the message to all other bots if it's not a command
-                display_name = hf.get_user_active_name(to_parse.author.name)
+                display_name = hf.get_user_active_name(author)
                 names_to_ignore = [os.environ["YOUTUBE_BOT_CHANNEL_ID"], os.environ["BOT_NICK"]]
                 if display_name not in names_to_ignore:
                     output = f"[{display_name}] {to_parse.content}"

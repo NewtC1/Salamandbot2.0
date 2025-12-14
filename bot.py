@@ -4,17 +4,24 @@ import argparse
 import asyncio
 import json
 import logging
+
+import asqlite
+import twitchio
 import os
-import sys
 
 from inspect import getmembers, isfunction
+
+from Tools.scripts.generate_token import load_tokens
+
 from utils.clock import Clock
 from input_parser import InputParser as Input
 from pathlib import Path
 
 from bots.twitch_bot import TwitchBot
 from bots.discord_bot import DiscordBot
-from bots.youtube_bot import YouTubeBot
+# from bots.youtube_bot import YouTubeBot
+
+from bots.twitch_bot import setup_database
 
 import utils.commands as command_list
 import utils.helper_functions as helper_functions
@@ -34,7 +41,6 @@ BOT_TICK_RATE = 600
 WOODCHIP_PAYOUT_RATE = 32
 is_live = False
 reminders_position = 0
-
 
 def parse_args():
     """
@@ -195,7 +201,7 @@ async def tick():
 
     # check for the bot going live.
     # await update_active_status()
-    await update_live_status()
+    # await update_live_status()
     if is_live:
         # TODO: Make this channel type agnostic.
         # users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
@@ -347,23 +353,31 @@ async def start_loop(end_loop=None):
 
     print(f"Commands: {parser.commands}")
 
-    # starting bots
-    logging.info("[Bot] Starting bots...")
-    bots["twitch"] = TwitchBot(parser)
-    # bots["youtube"] = YouTubeBot(parser)
-    discord = DiscordBot(parser)
-    vote_manager.bots = [bots["twitch"]]
-    vote_manager.discord_bot = discord
+    # setting up the token database
+    async with asqlite.create_pool("tokens.db") as tdb:
+        tokens, subs = await setup_database(tdb)
 
-    await asyncio.gather(clock.run(), bots["twitch"].start(), # bots["youtube"].start(),
-                         discord.start(os.environ["DISCORD_TOKEN"]),
-                         vote_clock.run(), moonrise_clock.run(), rimeheart_clock.run(), reminder_clock.run(),
-                         overheat_clock.run(), tick())
+        # set up the twitch bot
+        async with TwitchBot(parser=parser, token_database=tdb, subs=subs) as bots["twitch"]:
+            for pair in tokens:
+                await bots["twitch"].add_token(*pair)
 
-    if end_loop:
-        loop = asyncio.get_running_loop()
-        loop.stop()
-        loop.close()
+            # starting bots
+            logging.info("[Bot] Starting bots...")
+            # bots["youtube"] = YouTubeBot(parser)
+            discord = DiscordBot(parser)
+            vote_manager.bots = [bots["twitch"]]
+            vote_manager.discord_bot = discord
+
+            await asyncio.gather(clock.run(), bots["twitch"].start(load_tokens=False), # bots["youtube"].start(),
+                                 discord.start(os.environ["DISCORD_TOKEN"]),
+                                 vote_clock.run(), moonrise_clock.run(), rimeheart_clock.run(), reminder_clock.run(),
+                                 overheat_clock.run(), tick())
+
+            if end_loop:
+                loop = asyncio.get_running_loop()
+                loop.stop()
+                loop.close()
 
 
 args = parse_args()
@@ -371,6 +385,9 @@ args = parse_args()
 # file_log = logging.FileHandler(args.logfile, encoding='utf-8')
 logging.basicConfig(filename=args.logfile, filemode="w", level=logging.INFO,
                     format="{asctime}:{levelname}:{name}:{message}", style="{")
+
+twitchio.utils.setup_logging(root=True)
+
 
 if __name__ == "__main__":
     try:
