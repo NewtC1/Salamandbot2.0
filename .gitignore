@@ -142,3 +142,6 @@ utils/sfx.py
 
 # pickle
 .pickle
+
+#youtube setup
+youtube_secrets.json
