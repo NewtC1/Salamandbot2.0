@@ -4,6 +4,7 @@ A twitch bot designed to connect multiple 3rd Party Platforms into one chat, whi
 A couple of things to get started:
 First, the bot needs a .env file at the root directory. Below is an example of one.
 
+```
 # .env
 TMI_TOKEN=
 CLIENT_ID=
@@ -13,7 +14,7 @@ CHANNEL=
 USERID=
 CLIENTSECRET=
 DISCORD_TOKEN=
-
+```
 Most of these names are self explanatory. TMI_TOKEN is the oauth token used to access the Twitch API. CLIENT_ID refers
 to the ID of the bot. You will have to make one of these yourself on https://dev.twitch.tv/. BOT_NICK is the name of the
 account the bot uses to interact with chat. BOT_PREFIX is actually unused, but TwitchIO likes to have it if development
