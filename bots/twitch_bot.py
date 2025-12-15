@@ -78,18 +78,6 @@ class TwitchBot(commands.AutoBot):
         return resp
 
 
-    async def setup_hook(self) -> None:
-        with open(".tio.tokens.json", "rb") as fp:
-            tokens = json.load(fp)
-
-        for user_id in tokens:
-            if user_id == self.bot_id:
-                continue
-
-            # Subscribe to chat for everyone we have a token...
-            chat = eventsub.ChatMessageSubscription(broadcaster_user_id=user_id, user_id=self.bot_id)
-            await self.subscribe_websocket(chat)
-
     async def event_ready(self):
         """Called once the bot goes online."""
         print(f"{os.environ['BOT_NICK']} opens its eyes, ready to accept commands!")
