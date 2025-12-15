@@ -95,16 +95,24 @@ class TwitchBot(commands.AutoBot):
         print(f"{os.environ['BOT_NICK']} opens its eyes, ready to accept commands!")
         self.bot_ready = True
 
-    async def event_message(self, ctx):
+    async def event_message(self, chat_message):
         """Runs every time a message is sent in chat."""
 
+        context = self.get_context(chat_message)
+
         # make sure the bot ignores itself
-        if ctx.chatter.name == os.environ["BOT_NICK"].lower():
+        if chat_message.chatter.name == os.environ["BOT_NICK"].lower():
             return
 
         user = self.create_partialuser(user_id=self.owner_id)
         await user.send_message(sender=self.user, message="Parsing...")
-        # await user.send_message(sender=self.user, message=self.parser.parse_input("twitch", ctx))
+
+        # parse the output
+        parse_result = self.parser.parse_input("twitch", context)
+
+        # return any result
+        if parse_result:
+            await user.send_message(sender=self.user, message=parse_result)
 
         return
 
