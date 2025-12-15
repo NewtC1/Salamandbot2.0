@@ -262,6 +262,7 @@ async def update_live_status():
     Updates live status when called.
     :return:
     """
+
     global is_live
     channel_status = []
 
