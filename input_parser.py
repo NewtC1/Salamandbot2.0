@@ -35,8 +35,8 @@ class InputParser:
 
         # Get the message content based on which environment it came from. Set author and content.
         if source == "twitch":
-            content = to_parse.text.lower()
-            author = to_parse.chatter.channel.name.lower()
+            content = to_parse.content.lower()
+            author = to_parse.author.name.lower()
             output_prefix = "/me "
         elif source == "discord":
             content = to_parse.content.lower()
@@ -51,6 +51,7 @@ class InputParser:
         else:
             return ""
 
+
         output = ""
         if first_word == "!vote" or first_word == '!prefer': # requires special command lines due to needing access to the vote manager
             output = f"{output_prefix}{self.commands[first_word](to_parse, vote_manager=self.vote_manager)}"
@@ -63,7 +64,7 @@ class InputParser:
         else:
             if hf.rebroadcast:
                 # send the message to all other bots if it's not a command
-                display_name = hf.get_user_active_name(author)
+                display_name = hf.get_user_active_name(to_parse.author.name)
                 names_to_ignore = [os.environ["YOUTUBE_BOT_CHANNEL_ID"], os.environ["BOT_NICK"]]
                 if display_name not in names_to_ignore:
                     output = f"[{display_name}] {to_parse.content}"
