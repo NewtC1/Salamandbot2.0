@@ -93,7 +93,6 @@ class TwitchBot(commands.AutoBot):
             return
 
         user = self.create_partialuser(user_id=self.owner_id)
-        await user.send_message(sender=self.user, message="Parsing...")
 
         # parse the output
         parse_result = self.parser.parse_input("twitch", context)
@@ -103,6 +102,18 @@ class TwitchBot(commands.AutoBot):
             await user.send_message(sender=self.user, message=parse_result)
 
         return
+
+    async def is_live(self):
+        import requests
+        channelName = os.environ["CHANNEL"]
+
+        contents = requests.get('https://www.twitch.tv/' + channelName).content.decode('utf-8')
+
+        if 'isLiveBroadcast' in contents:
+            return True
+        else:
+            return False
+
 
 async def setup_database(db: asqlite.Pool) -> tuple[list[tuple[str, str]], list[eventsub.SubscriptionPayload]]:
     # Create our token table, if it doesn't exist..
