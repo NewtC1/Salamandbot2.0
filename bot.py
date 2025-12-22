@@ -198,15 +198,9 @@ async def tick():
     global is_live
 
     # check for the bot going live.
-    # await update_active_status()
-    # await update_live_status()
+    await update_live_status()
     if is_live:
         # TODO: Make this channel type agnostic.
-        # users_in_chat = await bots["twitch"].get_chatters(TWITCH_CHANNEL)
-
-        # await payout_logs(users_in_chat)
-        # await payout_woodchips(users_in_chat)
-        # await update_user_roles(users_in_chat)
         helper_functions.set_campfire_count(helper_functions.get_campfire_count() - 20)
 
     return

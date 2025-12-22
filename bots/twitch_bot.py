@@ -105,7 +105,7 @@ class TwitchBot(commands.AutoBot):
 
     async def is_live(self):
         import requests
-        channelName = os.environ["CHANNEL"]
+        channelName = os.environ["CHANNEL"].lower()
 
         contents = requests.get('https://www.twitch.tv/' + channelName).content.decode('utf-8')
 
