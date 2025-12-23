@@ -216,6 +216,8 @@ async def reminders(reminders: list = helper_functions.settings["strings"]["remi
 
         output = reminders[reminders_position]
         reminders_position += 1
+
+        # cycle through the existing reminders
         if reminders_position >= len(reminders):
             reminders_position = 0
 

@@ -103,6 +103,18 @@ class TwitchBot(commands.AutoBot):
 
         return
 
+
+    async def send_message(self, content: str):
+        """
+        Send a message to the twitch chat
+        :param content: Message content
+        :return:
+        """
+        user = self.create_partialuser(user_id=self.owner_id)
+        await user.send_message(sender=self.user, message=content)
+
+        return
+
     async def is_live(self):
         import requests
         channelName = os.environ["CHANNEL"].lower()
