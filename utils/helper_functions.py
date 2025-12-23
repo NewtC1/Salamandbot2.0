@@ -173,10 +173,8 @@ def add_vote_option(target, value, profile):
     game_duration = 0
     output = ""
     if len(results) == 1:
-        if results[0].gameplay_main_extra != -1:
-            before_parse = results[0].gameplay_main_extra
-            after_parse = before_parse.replace("½", ".5")
-            game_duration = float(after_parse)
+        if results[0].main_extra != -1:
+            game_duration = results[0].main_extra
     else:
         output = " Could not find a game duration on How Long To Beat. Please add one manually."
 
